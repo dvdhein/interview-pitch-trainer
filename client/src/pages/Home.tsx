@@ -50,7 +50,15 @@ const qa: PracticeItem[] = [
   { id: "q4", title: "What sets you apart from other candidates?", en: "What sets me apart is that I'm both a high-level architect and an active hands-on engineer. I don't just write guidelines — I've learned how to understand what developers go through and build solutions with them. Combined with a real willingness to learn, I bring both strategic thinking and practical execution.", pt: "O que me diferencia é que transito muito bem entre o desenho estratégico e a execução com a mão na massa. Eu não fico só desenhando diagramas — aprendi a entender o dia a dia de quem constrói e trabalhar junto com o time. Somando isso a uma enorme disposição para aprender, consigo unir visão de negócio com entrega prática." },
 ];
 
-const skills = ["Enterprise Security Architecture", "GenAI & AI Security", "GRC & Compliance", "Proteção de Dados & Criptografia", "Cloud & Redes", "DevSecOps & Modelagem de Ameaças", "Tech Product Management", "Web3 & Tecnologias Emergentes"];
+const skills = ["Enterprise Security Architecture", "GenAI & AI Security", "Architecture-as-Code & ADRs", "GRC & Compliance", "Proteção de Dados & Criptografia", "Cloud, Application & API Security", "DevSecOps & Modelagem de Ameaças", "Liderança & Comunicação Executiva"];
+const career = [
+  ["04.2025 — presente", "Aché Laboratórios Farmacêuticos", "Information Security Architect", "Modernização do pipeline de arquitetura, governança de ADRs, padrões seguros de GenAI e auditoria automatizada com Fitness Functions e Policy-as-Code."],
+  ["06.2024 — 03.2025", "Independent Researcher", "Web3, Cripto & AI Security", "Pesquisa aplicada em agentes de IA, segurança de smart contracts, DeFi, custódia de ativos digitais e modelos regulatórios."],
+  ["05.2022 — 05.2024", "Grupo Boticário", "Information Security Architecture Specialist II", "Arquitetura de soluções para InfoSec, prospecção tecnológica, PoCs, health checks e planejamento financeiro estratégico."],
+  ["09.2019 — 05.2022", "Banco BV", "Senior Information Security Architect", "Controles de segurança para ambientes on-premises e cloud, alinhamento a NIST/CSA/CIS e arquitetura orientada a risco."],
+  ["09.2014 — 09.2019", "Atento", "Senior Information Security Analyst", "Gestão de riscos sistêmicos, prevenção a fraudes, análise de incidentes, auditorias ISO 27001/PCI e treinamentos."],
+  ["12.2011 — 09.2014", "LSI-TEC (USP)", "Information Security Consultant", "Consultoria técnica em segurança da informação, análise de riscos e revisão de segurança de software."],
+];
 const starters = ["A big part of my role is...", "I have strong skills and experience in...", "I know how to...", "One of my strongest assets is...", "I've learned how to...", "What sets me apart is..."];
 const ptStarters = ["Uma grande parte do meu papel é", "Tenho sólidas habilidades e experiência em", "Eu sei como", "Um dos meus maiores diferenciais é", "Aprendi a", "O que me diferencia é"];
 
@@ -58,7 +66,7 @@ function renderSpokenAnswer(text: string, language: Language) {
   const phraseList = language === "en" ? starters.map((phrase) => phrase.replace("...", "")) : ptStarters;
   const phrase = phraseList.find((candidate) => text.toLowerCase().startsWith(candidate.toLowerCase()));
   if (!phrase) return text;
-  return <>{text.slice(0, phrase.length)}<mark className="starter-highlight">{text.slice(phrase.length, phrase.length + (language === "en" && text.charAt(phrase.length) === " " ? 1 : 0))}</mark>{text.slice(phrase.length + (language === "en" && text.charAt(phrase.length) === " " ? 1 : 0))}</>;
+  return <><mark className="starter-highlight">{text.slice(0, phrase.length)}</mark>{text.slice(phrase.length)}</>;
 }
 
 function speak(text: string, lang: Language, speed: number) {
@@ -118,7 +126,7 @@ export default function Home() {
             <span className="leading-none"><span className="block font-serif text-xl tracking-[-0.04em]">Pitch</span><span className="block text-[10px] font-extrabold uppercase tracking-[0.24em] text-[#d96c4f]">Studio</span></span>
           </button>
           <nav className="hidden items-center gap-8 lg:flex" aria-label="Navegação principal">
-            {[['pitches', 'Master pitches'], ['qa', 'Quick Q&A'], ['skills', 'Skill map'], ['coach', 'Coach notes']].map(([id, label]) => <button key={id} onClick={() => goSection(id)} className={`nav-link ${section === id ? 'nav-link-active' : ''}`}>{label}</button>)}
+            {[['pitches', 'Master pitches'], ['qa', 'Quick Q&A'], ['profile', 'My profile'], ['skills', 'Skill map'], ['coach', 'Coach notes']].map(([id, label]) => <button key={id} onClick={() => goSection(id)} className={`nav-link ${section === id ? 'nav-link-active' : ''}`}>{label}</button>)}
           </nav>
           <div className="flex items-center gap-2">
             <div className="hidden items-center rounded-full border border-[#292827]/15 p-1 sm:flex" aria-label="Idioma">
@@ -128,7 +136,7 @@ export default function Home() {
             <button onClick={() => setMenuOpen(!menuOpen)} className="icon-btn lg:hidden" aria-label="Abrir menu">{menuOpen ? <X size={20} /> : <Menu size={20} />}</button>
           </div>
         </div>
-        {menuOpen && <div className="border-t border-[#292827]/10 bg-[#f5f0e7] px-5 py-3 lg:hidden">{[['pitches','Master pitches'],['qa','Quick Q&A'],['skills','Skill map'],['coach','Coach notes']].map(([id,label]) => <button key={id} onClick={() => goSection(id)} className="block w-full border-b border-[#292827]/10 py-3 text-left text-sm font-bold">{label}</button>)}</div>}
+        {menuOpen && <div className="border-t border-[#292827]/10 bg-[#f5f0e7] px-5 py-3 lg:hidden">{[['pitches','Master pitches'],['qa','Quick Q&A'],['profile','My profile'],['skills','Skill map'],['coach','Coach notes']].map(([id,label]) => <button key={id} onClick={() => goSection(id)} className="block w-full border-b border-[#292827]/10 py-3 text-left text-sm font-bold">{label}</button>)}</div>}
       </header>
 
       <main className="mx-auto max-w-[1440px] px-5 pb-20 lg:px-10">
@@ -137,14 +145,14 @@ export default function Home() {
           <div className="relative max-w-4xl">
             <div className="eyebrow"><span className="eyebrow-dot" /> INTERVIEW REHEARSAL / 01</div>
             <h1 className="mt-7 max-w-4xl font-serif text-5xl leading-[0.96] tracking-[-0.055em] text-[#292827] sm:text-7xl lg:text-[7.2rem]">Say it like<br /><em>you mean it.</em></h1>
-            <p className="mt-8 max-w-xl text-base leading-7 text-[#292827]/65 lg:text-lg">Um estúdio de ensaio para transformar experiência em respostas claras, naturais e prontas para a conversa.</p>
+            <p className="mt-8 max-w-xl text-base leading-7 text-[#292827]/65 lg:text-lg">Um estúdio de ensaio para transformar experiência em respostas claras, naturais e prontas para a conversa.</p><div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-extrabold uppercase tracking-[0.12em] text-[#292827]/55"><span>David Hein Crem</span><span className="text-[#d96c4f]">Information Security Architect</span><span>GenAI Governance</span></div>
             <div className="mt-10 flex flex-wrap items-center gap-3"><button onClick={() => handleSpeak(pitches[0])} className="coral-btn"><Play size={16} fill="currentColor" /> Ouvir o pitch principal</button><button onClick={() => document.getElementById('practice')?.scrollIntoView({ behavior: 'smooth' })} className="text-btn">Ir direto para praticar <ArrowRight size={16} /></button></div>
           </div>
           <div className="hero-note relative mt-14 max-w-sm lg:absolute lg:bottom-10 lg:right-8 lg:mt-0"><div className="note-line" /><span className="font-serif text-3xl leading-none">22</span><p className="mt-2 text-xs font-bold uppercase tracking-[0.14em] text-[#292827]/55">anos de arquitetura,<br />segurança e entrega</p></div>
         </section>
 
         <div className="grid gap-10 pt-10 lg:grid-cols-[220px_1fr] lg:gap-16">
-          <aside className="hidden lg:block"><div className="sticky top-28"><div className="mb-8 text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#292827]/45">Seu roteiro</div>{[['pitches','01','Master pitches'],['qa','02','Quick Q&A'],['skills','03','Skill map'],['coach','04','Coach notes']].map(([id,num,label]) => <button key={id} onClick={() => goSection(id)} className={`side-item ${section === id ? 'side-active' : ''}`}><span>{num}</span>{label}</button>)}<div className="mt-16 border-t border-[#292827]/10 pt-5"><div className="flex items-center gap-2 text-xs font-bold"><span className="status-dot" /> Seu progresso</div><div className="mt-3 h-1 overflow-hidden bg-[#292827]/10"><div className="h-full w-[64%] bg-[#d96c4f]" /></div><div className="mt-2 text-[11px] text-[#292827]/50">4 de 6 fundamentos explorados</div></div></div></aside>
+          <aside className="hidden lg:block"><div className="sticky top-28"><div className="mb-8 text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#292827]/45">Seu roteiro</div>{[['pitches','01','Master pitches'],['qa','02','Quick Q&A'],['profile','03','My profile'],['skills','04','Skill map'],['coach','05','Coach notes']].map(([id,num,label]) => <button key={id} onClick={() => goSection(id)} className={`side-item ${section === id ? 'side-active' : ''}`}><span>{num}</span>{label}</button>)}<div className="mt-16 border-t border-[#292827]/10 pt-5"><div className="flex items-center gap-2 text-xs font-bold"><span className="status-dot" /> Seu progresso</div><div className="mt-3 h-1 overflow-hidden bg-[#292827]/10"><div className="h-full w-[64%] bg-[#d96c4f]" /></div><div className="mt-2 text-[11px] text-[#292827]/50">4 de 6 fundamentos explorados</div></div></div></aside>
 
           <section className="min-w-0">
             {section === "pitches" || section === "qa" ? <>
@@ -153,13 +161,17 @@ export default function Home() {
                 <div className="space-y-2">{items.map((item, index) => <button key={item.id} onClick={() => { setActiveId(item.id); setPractice(false); }} className={`choice-card ${active.id === item.id ? 'choice-active' : ''}`}><span className="choice-number">0{index + 1}</span><span className="min-w-0"><span className="block text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#d96c4f]">{item.tag ?? 'QUESTION'}</span><span className="mt-1 block text-sm font-bold leading-5">{item.title}</span></span><ChevronDown className="ml-auto shrink-0 opacity-40" size={16} /></button>)}</div>
                 <article id="practice" className="answer-card"><div className="flex items-start justify-between gap-4"><div><div className="eyebrow">{language === 'en' ? 'ENGLISH / SPOKEN VERSION' : 'PORTUGUÊS / VERSÃO FALADA'}</div><h3 className="mt-3 max-w-2xl font-serif text-3xl leading-tight tracking-[-0.03em] sm:text-4xl">{active.title}</h3></div><div className="audio-bars" data-playing={playingId === active.id}>{[1,2,3,4,5,6,7].map((n) => <i key={n} style={{ height: `${9 + (n % 4) * 4}px` }} />)}</div></div><div className="loop-strip" aria-label="Ciclo de prática"><span className="loop-step loop-current"><b>01</b> escolher</span><span className="loop-rule" /><span className="loop-step"><b>02</b> ouvir</span><span className="loop-rule" /><span className="loop-step"><b>03</b> praticar</span><span className="loop-rule" /><span className="loop-step"><b>04</b> seguir</span></div><p className={`answer-copy ${practice ? 'answer-blurred' : ''}`}>{renderSpokenAnswer(active[language], language)}</p>{practice && <div className="practice-overlay"><Mic2 size={22} /><strong>Agora é sua vez.</strong><span>Fale seguindo a sequência: contexto → habilidade → diferencial.</span></div>}<div className="mt-8 flex flex-wrap items-center gap-3 border-t border-[#292827]/10 pt-5"><button onClick={() => handleSpeak()} className="coral-btn">{playingId === active.id ? <Pause size={16} fill="currentColor" /> : <Volume2 size={16} />} {playingId === active.id ? 'Pausar áudio' : 'Ouvir resposta'}</button><button onClick={() => setPractice(!practice)} className="outline-btn">{practice ? <BookOpen size={16} /> : <Mic2 size={16} />} {practice ? 'Mostrar resposta' : 'Praticar sem olhar'}</button><div className="ml-auto flex items-center gap-2 text-xs text-[#292827]/55"><label htmlFor="speed">Ritmo</label><select id="speed" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="speed-select"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1">1×</option><option value="1.15">1.15×</option></select></div></div></article>
               </div>
-            </> : section === "skills" ? <SkillMap /> : <CoachNotes />}
+            </> : section === "profile" ? <Profile /> : section === "skills" ? <SkillMap /> : <CoachNotes />}
           </section>
         </div>
       </main>
       <footer className="border-t border-[#292827]/10 px-5 py-8 lg:px-10"><div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-3 text-xs text-[#292827]/50 sm:flex-row"><span>Interview Pitch Trainer · feito para falar, não decorar.</span><span className="flex items-center gap-2"><Sparkles size={13} className="text-[#d96c4f]" /> Breathe. Then begin.</span></div></footer>
     </div>
   );
+}
+
+function Profile() {
+  return <div><div className="eyebrow">03 / MY PROFILE</div><h2 className="mt-3 max-w-3xl font-serif text-5xl tracking-[-0.04em]">Experiência que conecta risco, arquitetura e inovação.</h2><p className="mt-6 max-w-3xl text-base leading-7 text-[#292827]/65">David é um Information Security Architect com mais de 22 anos de carreira em ambientes regulados de finanças, saúde, farmacêutico e varejo. Seu foco combina Enterprise Security Architecture, governança de GenAI, Architecture-as-Code e decisões técnicas defensáveis.</p><div className="mt-10 grid gap-4 sm:grid-cols-3"><div className="profile-stat"><span>22+</span><small>anos de carreira</small></div><div className="profile-stat"><span>6</span><small>organizações no percurso</small></div><div className="profile-stat"><span>3</span><small>setores regulados em foco</small></div></div><div className="mt-12"><div className="eyebrow">CAREER TIMELINE</div><div className="mt-5 space-y-0">{career.map(([period, company, role, detail]) => <div key={company} className="career-row"><div className="career-period">{period}</div><div><h3 className="font-bold">{role}</h3><p className="text-sm font-bold text-[#d96c4f]">{company}</p><p className="mt-2 max-w-2xl text-sm leading-6 text-[#292827]/60">{detail}</p></div></div>)}</div></div><div className="mt-12 border-t border-[#292827]/10 pt-6 text-sm text-[#292827]/60"><strong className="text-[#292827]">Formação:</strong> MBA em Information Security Management (IBTA, 2013) · Bacharelado em Data Processing (FAI Centro Universitário, 2011).</div></div>;
 }
 
 function SkillMap() {
