@@ -63,7 +63,7 @@
 .loop-current { color: #292827; } .loop-current b { color: #d96c4f; }
 .loop-rule { height: 1px; width: 16px; background: rgba(41,40,39,.16); }
 .answer-copy { max-width: 790px; margin-top: 25px; font-family: "Manrope", sans-serif; font-size: clamp(1rem, 1.25vw, 1.2rem); font-weight: 600; line-height: 1.9; letter-spacing: -.012em; color: rgba(41,40,39,.82); }
-.starter-highlight { background: transparent; color: #d96c4f; font-weight: 800; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.starter-highlight { background: transparent; color: #d96c4f; font-weight: 900; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; } .term-bold { font-weight: 900; color: #292827; } .keyword-panel { margin-top: 28px; border-top: 3px solid #292827; background: rgba(255,255,255,.2); padding: 24px; } .question-line { display: flex; gap: 12px; align-items: baseline; border-bottom: 1px solid rgba(41,40,39,.1); padding: 10px 0; font-size: .78rem; line-height: 1.5; } .question-line span { color: #d96c4f; font-family: "DM Serif Display", serif; font-size: 1.15rem; } .question-line strong { font-weight: 900; } .term-chip { display: inline-block; border: 1px solid rgba(217,108,79,.45); padding: 7px 9px; color: #292827; font-size: .7rem; line-height: 1.2; }
 .answer-blurred { filter: blur(8px); user-select: none; opacity: .33; }
 .practice-overlay { position: absolute; inset: 130px 25px 90px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; border: 1px dashed #d96c4f; background: rgba(245,240,231,.82); text-align: center; color: #292827; }
 .practice-overlay svg { color: #d96c4f; }

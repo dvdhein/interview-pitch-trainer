@@ -61,12 +61,20 @@ const career = [
 ];
 const starters = ["A big part of my role is...", "I have strong skills and experience in...", "I know how to...", "One of my strongest assets is...", "I've learned how to...", "What sets me apart is..."];
 const ptStarters = ["Uma grande parte do meu papel é", "Tenho sólidas habilidades e experiência em", "Eu sei como", "Um dos meus maiores diferenciais é", "Aprendi a", "O que me diferencia é"];
+const promptQuestions = ["What skills do you have that will benefit our team?", "What would you say are your biggest strengths?", "Why do you think you’d be a good fit for this role?", "What makes me a strong candidate for this position?", "Can you tell me about your working style and what you do well?", "What do you bring to the table that others might not?", "What skills or experience do you have that would help you succeed in this role?"];
+const reviewTerms = ["I'm good at", "I know how to", "I have strong skills and experience in", "One of my strongest asset is", "I've learned how to", "A big part of my role is", "What sets me apart is my ability to", "securing", "protecting", "building", "enforcing", "assets", "you are always ready to do something", "you have a willingness to learn new barbecue recipes", "sets me apart"];
+
+function renderBoldTerms(text: string) {
+  const escaped = reviewTerms.map((term) => term.replace(/[.*+?^${}()|[\\]\\]/g, "\\\\$&"));
+  const parts = text.split(new RegExp(`(${escaped.join("|")})`, "gi"));
+  return <>{parts.map((part, index) => reviewTerms.some((term) => term.toLowerCase() === part.toLowerCase()) ? <strong key={`${part}-${index}`} className="term-bold">{part}</strong> : <span key={`${part}-${index}`}>{part}</span>)}</>;
+}
 
 function renderSpokenAnswer(text: string, language: Language) {
   const phraseList = language === "en" ? starters.map((phrase) => phrase.replace("...", "")) : ptStarters;
   const phrase = phraseList.find((candidate) => text.toLowerCase().startsWith(candidate.toLowerCase()));
-  if (!phrase) return text;
-  return <><mark className="starter-highlight">{text.slice(0, phrase.length)}</mark>{text.slice(phrase.length)}</>;
+  if (!phrase) return renderBoldTerms(text);
+  return <><mark className="starter-highlight">{text.slice(0, phrase.length)}</mark>{renderBoldTerms(text.slice(phrase.length))}</>;
 }
 
 function speak(text: string, lang: Language, speed: number) {
@@ -160,7 +168,7 @@ export default function Home() {
               <div className="grid gap-6 xl:grid-cols-[260px_1fr]">
                 <div className="space-y-2">{items.map((item, index) => <button key={item.id} onClick={() => { setActiveId(item.id); setPractice(false); }} className={`choice-card ${active.id === item.id ? 'choice-active' : ''}`}><span className="choice-number">0{index + 1}</span><span className="min-w-0"><span className="block text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#d96c4f]">{item.tag ?? 'QUESTION'}</span><span className="mt-1 block text-sm font-bold leading-5">{item.title}</span></span><ChevronDown className="ml-auto shrink-0 opacity-40" size={16} /></button>)}</div>
                 <article id="practice" className="answer-card"><div className="flex items-start justify-between gap-4"><div><div className="eyebrow">{language === 'en' ? 'ENGLISH / SPOKEN VERSION' : 'PORTUGUÊS / VERSÃO FALADA'}</div><h3 className="mt-3 max-w-2xl font-serif text-3xl leading-tight tracking-[-0.03em] sm:text-4xl">{active.title}</h3></div><div className="audio-bars" data-playing={playingId === active.id}>{[1,2,3,4,5,6,7].map((n) => <i key={n} style={{ height: `${9 + (n % 4) * 4}px` }} />)}</div></div><div className="loop-strip" aria-label="Ciclo de prática"><span className="loop-step loop-current"><b>01</b> escolher</span><span className="loop-rule" /><span className="loop-step"><b>02</b> ouvir</span><span className="loop-rule" /><span className="loop-step"><b>03</b> praticar</span><span className="loop-rule" /><span className="loop-step"><b>04</b> seguir</span></div><p className={`answer-copy ${practice ? 'answer-blurred' : ''}`}>{renderSpokenAnswer(active[language], language)}</p>{practice && <div className="practice-overlay"><Mic2 size={22} /><strong>Agora é sua vez.</strong><span>Fale seguindo a sequência: contexto → habilidade → diferencial.</span></div>}<div className="mt-8 flex flex-wrap items-center gap-3 border-t border-[#292827]/10 pt-5"><button onClick={() => handleSpeak()} className="coral-btn">{playingId === active.id ? <Pause size={16} fill="currentColor" /> : <Volume2 size={16} />} {playingId === active.id ? 'Pausar áudio' : 'Ouvir resposta'}</button><button onClick={() => setPractice(!practice)} className="outline-btn">{practice ? <BookOpen size={16} /> : <Mic2 size={16} />} {practice ? 'Mostrar resposta' : 'Praticar sem olhar'}</button><div className="ml-auto flex items-center gap-2 text-xs text-[#292827]/55"><label htmlFor="speed">Ritmo</label><select id="speed" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="speed-select"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1">1×</option><option value="1.15">1.15×</option></select></div></div></article>
-              </div>
+              </div>{section === "qa" && <div className="keyword-panel"><div><div className="eyebrow">QUESTION BANK / PERGUNTAS-CHAVE</div><h3 className="mt-3 font-serif text-3xl tracking-[-0.03em]">Treine para reconhecer o que está sendo perguntado.</h3></div><div className="mt-6 grid gap-x-8 gap-y-3 md:grid-cols-2">{promptQuestions.map((question, index) => <div key={question} className="question-line"><span>0{index + 1}</span><strong>{question}</strong></div>)}</div><div className="mt-8 border-t border-[#292827]/10 pt-6"><div className="eyebrow">SENTENCE STARTERS / PALAVRAS DE APOIO</div><div className="mt-4 flex flex-wrap gap-2">{reviewTerms.slice(0, 7).map((term) => <strong key={term} className="term-chip">{term}</strong>)}</div><p className="mt-4 text-xs leading-5 text-[#292827]/55">As expressões abaixo aparecem em negrito no texto falado para facilitar a revisão visual.</p></div></div>}
             </> : section === "profile" ? <Profile /> : section === "skills" ? <SkillMap /> : <CoachNotes />}
           </section>
         </div>

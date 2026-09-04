@@ -6,3 +6,9 @@
 - [x] Preservar controles de áudio, prática sem olhar e alternância EN/PT.
 - [x] Validar TypeScript, build, responsividade e conteúdo factual.
 - [ ] Salvar checkpoint da versão enriquecida.
+
+## Atualização solicitada — negrito
+
+- [x] Destacar as perguntas de entrevista listadas pelo usuário.
+- [x] Destacar em negrito os sentence starters e as palavras-chave solicitadas.
+- [x] Validar a renderização e salvar novo checkpoint.
