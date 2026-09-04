@@ -28,6 +28,7 @@ import {
 } from "../data/cvTracks";
 import { InteractiveLab } from "../components/InteractiveLab";
 import { RoleplayScenarios } from "../components/RoleplayScenarios";
+import { ApiSecurityModule } from "../components/ApiSecurityModule";
 import { CVTrackSelector } from "../components/CVTrackSelector";
 import { SessionReportModal } from "../components/SessionReportModal";
 
@@ -421,6 +422,7 @@ export default function Home() {
             {[
               ["pitches", "Master pitches"],
               ["qa", "Quick Q&A"],
+              ["apisec", "API & AppSec"],
               ["training", "Laboratório interativo"],
               ["scenarios", "Cenários de roleplay"],
               ["profile", "My profile"],
@@ -491,6 +493,7 @@ export default function Home() {
             {[
               ["pitches", "Master pitches"],
               ["qa", "Quick Q&A"],
+              ["apisec", "API & AppSec"],
               ["training", "Laboratório interativo"],
               ["scenarios", "Cenários de roleplay"],
               ["profile", "My profile"],
@@ -585,11 +588,12 @@ export default function Home() {
               {[
                 ["pitches", "01", "Master pitches"],
                 ["qa", "02", "Quick Q&A"],
-                ["training", "03", "Laboratório interativo"],
-                ["scenarios", "04", "Cenários de roleplay"],
-                ["profile", "05", "My profile"],
-                ["skills", "06", "Skill map"],
-                ["coach", "07", "Coach notes"],
+                ["apisec", "03", "API & AppSec"],
+                ["training", "04", "Laboratório interativo"],
+                ["scenarios", "05", "Cenários de roleplay"],
+                ["profile", "06", "My profile"],
+                ["skills", "07", "Skill map"],
+                ["coach", "08", "Coach notes"],
               ].map(([id, num, label]) => (
                 <button
                   key={id}
@@ -853,6 +857,11 @@ export default function Home() {
                   </div>
                 )}
               </>
+            ) : section === "apisec" ? (
+              <ApiSecurityModule
+                language={language}
+                speakFn={(txt, lang, spd) => speak(txt, lang, spd, activeVoice)}
+              />
             ) : section === "training" ? (
               <InteractiveLab
                 onScoreUpdate={handleScoreUpdate}
