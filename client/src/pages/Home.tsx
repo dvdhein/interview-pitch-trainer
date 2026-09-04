@@ -77,13 +77,18 @@ function renderSpokenAnswer(text: string, language: Language) {
   return <><mark className="starter-highlight">{text.slice(0, phrase.length)}</mark>{renderBoldTerms(text.slice(phrase.length))}</>;
 }
 
-function speak(text: string, lang: Language, speed: number) {
+function speak(text: string, lang: Language, speed: number, voice?: SpeechSynthesisVoice, onDone?: () => void) {
   if (!("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = lang === "en" ? "en-US" : "pt-BR";
   utterance.rate = speed;
   utterance.pitch = 1;
+  if (voice) utterance.voice = voice;
+  if (onDone) {
+    utterance.onend = onDone;
+    utterance.onerror = onDone;
+  }
   window.speechSynthesis.speak(utterance);
 }
 
@@ -91,6 +96,8 @@ export default function Home() {
   const [section, setSection] = useState("pitches");
   const [language, setLanguage] = useState<Language>("en");
   const [speed, setSpeed] = useState(0.9);
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoiceName, setSelectedVoiceName] = useState(() => window.localStorage.getItem("pitch-studio-voice") ?? "");
   const [activeId, setActiveId] = useState("executive");
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [practice, setPractice] = useState(false);
@@ -98,10 +105,26 @@ export default function Home() {
 
   const items = section === "pitches" ? pitches : qa;
   const active = useMemo(() => items.find((item) => item.id === activeId) ?? items[0], [activeId, items]);
+  const voicesForLanguage = useMemo(() => voices.filter((voice) => voice.lang.toLowerCase().startsWith(language === "en" ? "en" : "pt")), [language, voices]);
+  const activeVoice = useMemo(() => voicesForLanguage.find((voice) => voice.name === selectedVoiceName) ?? voicesForLanguage.find((voice) => voice.default) ?? voicesForLanguage[0], [selectedVoiceName, voicesForLanguage]);
 
   useEffect(() => {
-    return () => window.speechSynthesis?.cancel();
+    const loadVoices = () => setVoices(window.speechSynthesis?.getVoices().sort((a, b) => Number(b.default) - Number(a.default)) ?? []);
+    loadVoices();
+    window.speechSynthesis?.addEventListener("voiceschanged", loadVoices);
+    return () => {
+      window.speechSynthesis?.removeEventListener("voiceschanged", loadVoices);
+      window.speechSynthesis?.cancel();
+    };
   }, []);
+
+  useEffect(() => {
+    if (activeVoice && activeVoice.name !== selectedVoiceName) setSelectedVoiceName(activeVoice.name);
+  }, [activeVoice, selectedVoiceName]);
+
+  useEffect(() => {
+    if (selectedVoiceName) window.localStorage.setItem("pitch-studio-voice", selectedVoiceName);
+  }, [selectedVoiceName]);
 
   const handleSpeak = (item: PracticeItem = active) => {
     if (playingId === item.id) {
@@ -111,8 +134,12 @@ export default function Home() {
     }
     setActiveId(item.id);
     setPlayingId(item.id);
-    speak(item[language], language, speed);
-    setTimeout(() => setPlayingId(null), Math.max(2200, item[language].length * 47));
+    speak(item[language], language, speed, activeVoice, () => setPlayingId(null));
+  };
+
+  const handleTestVoice = () => {
+    const testText = language === "en" ? "Hi, I'm David. I turn complex security risks into practical architecture." : "Olá, eu sou David. Transformo riscos complexos de segurança em arquitetura prática.";
+    speak(testText, language, speed, activeVoice);
   };
 
   const goSection = (next: string) => {
@@ -167,7 +194,7 @@ export default function Home() {
               <div className="mb-8 flex flex-col justify-between gap-5 border-b border-[#292827]/10 pb-6 sm:flex-row sm:items-end"><div><div className="eyebrow">{section === 'pitches' ? '01 / MASTER PITCHES' : '02 / QUICK Q&A'}</div><h2 className="mt-3 font-serif text-4xl tracking-[-0.04em] sm:text-5xl">{section === 'pitches' ? 'Aberturas que soam como você.' : 'Respostas para manter o ritmo.'}</h2></div><div className="flex items-center gap-2 text-xs font-bold text-[#292827]/55"><Headphones size={15} /> áudio nativo do navegador</div></div>
               <div className="grid gap-6 xl:grid-cols-[260px_1fr]">
                 <div className="space-y-2">{items.map((item, index) => <button key={item.id} onClick={() => { setActiveId(item.id); setPractice(false); }} className={`choice-card ${active.id === item.id ? 'choice-active' : ''}`}><span className="choice-number">0{index + 1}</span><span className="min-w-0"><span className="block text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#d96c4f]">{item.tag ?? 'QUESTION'}</span><span className="mt-1 block text-sm font-bold leading-5">{item.title}</span></span><ChevronDown className="ml-auto shrink-0 opacity-40" size={16} /></button>)}</div>
-                <article id="practice" className="answer-card"><div className="flex items-start justify-between gap-4"><div><div className="eyebrow">{language === 'en' ? 'ENGLISH / SPOKEN VERSION' : 'PORTUGUÊS / VERSÃO FALADA'}</div><h3 className="mt-3 max-w-2xl font-serif text-3xl leading-tight tracking-[-0.03em] sm:text-4xl">{active.title}</h3></div><div className="audio-bars" data-playing={playingId === active.id}>{[1,2,3,4,5,6,7].map((n) => <i key={n} style={{ height: `${9 + (n % 4) * 4}px` }} />)}</div></div><div className="loop-strip" aria-label="Ciclo de prática"><span className="loop-step loop-current"><b>01</b> escolher</span><span className="loop-rule" /><span className="loop-step"><b>02</b> ouvir</span><span className="loop-rule" /><span className="loop-step"><b>03</b> praticar</span><span className="loop-rule" /><span className="loop-step"><b>04</b> seguir</span></div><p className={`answer-copy ${practice ? 'answer-blurred' : ''}`}>{renderSpokenAnswer(active[language], language)}</p>{practice && <div className="practice-overlay"><Mic2 size={22} /><strong>Agora é sua vez.</strong><span>Fale seguindo a sequência: contexto → habilidade → diferencial.</span></div>}<div className="mt-8 flex flex-wrap items-center gap-3 border-t border-[#292827]/10 pt-5"><button onClick={() => handleSpeak()} className="coral-btn">{playingId === active.id ? <Pause size={16} fill="currentColor" /> : <Volume2 size={16} />} {playingId === active.id ? 'Pausar áudio' : 'Ouvir resposta'}</button><button onClick={() => setPractice(!practice)} className="outline-btn">{practice ? <BookOpen size={16} /> : <Mic2 size={16} />} {practice ? 'Mostrar resposta' : 'Praticar sem olhar'}</button><div className="ml-auto flex items-center gap-2 text-xs text-[#292827]/55"><label htmlFor="speed">Ritmo</label><select id="speed" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="speed-select"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1">1×</option><option value="1.15">1.15×</option></select></div></div></article>
+                <article id="practice" className="answer-card"><div className="flex items-start justify-between gap-4"><div><div className="eyebrow">{language === 'en' ? 'ENGLISH / SPOKEN VERSION' : 'PORTUGUÊS / VERSÃO FALADA'}</div><h3 className="mt-3 max-w-2xl font-serif text-3xl leading-tight tracking-[-0.03em] sm:text-4xl">{active.title}</h3></div><div className="audio-bars" data-playing={playingId === active.id}>{[1,2,3,4,5,6,7].map((n) => <i key={n} style={{ height: `${9 + (n % 4) * 4}px` }} />)}</div></div><div className="loop-strip" aria-label="Ciclo de prática"><span className="loop-step loop-current"><b>01</b> escolher</span><span className="loop-rule" /><span className="loop-step"><b>02</b> ouvir</span><span className="loop-rule" /><span className="loop-step"><b>03</b> praticar</span><span className="loop-rule" /><span className="loop-step"><b>04</b> seguir</span></div><p className={`answer-copy ${practice ? 'answer-blurred' : ''}`}>{renderSpokenAnswer(active[language], language)}</p>{practice && <div className="practice-overlay"><Mic2 size={22} /><strong>Agora é sua vez.</strong><span>Fale seguindo a sequência: contexto → habilidade → diferencial.</span></div>}<div className="mt-8 flex flex-wrap items-center gap-3 border-t border-[#292827]/10 pt-5"><button onClick={() => handleSpeak()} className="coral-btn">{playingId === active.id ? <Pause size={16} fill="currentColor" /> : <Volume2 size={16} />} {playingId === active.id ? 'Pausar áudio' : 'Ouvir resposta'}</button><button onClick={() => setPractice(!practice)} className="outline-btn">{practice ? <BookOpen size={16} /> : <Mic2 size={16} />} {practice ? 'Mostrar resposta' : 'Praticar sem olhar'}</button><div className="voice-controls"><label htmlFor="voice">Voz</label><select id="voice" value={activeVoice?.name ?? selectedVoiceName} onChange={(e) => setSelectedVoiceName(e.target.value)} className="voice-select" disabled={!voicesForLanguage.length}><option value="">{voicesForLanguage.length ? 'Escolha uma voz' : voices.length ? 'Sem voz para este idioma' : 'Voz padrão do navegador'}</option>{voicesForLanguage.map((voice) => <option key={`${voice.name}-${voice.lang}`} value={voice.name}>{voice.name} · {voice.lang}</option>)}</select><button onClick={handleTestVoice} className="test-voice-btn" title="Testar voz" aria-label="Testar voz"><Headphones size={14} /></button></div><div className="speed-control"><label htmlFor="speed">Ritmo</label><select id="speed" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="speed-select"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1">1×</option><option value="1.15">1.15×</option></select></div></div></article>
               </div>{section === "qa" && <div className="keyword-panel"><div><div className="eyebrow">QUESTION BANK / PERGUNTAS-CHAVE</div><h3 className="mt-3 font-serif text-3xl tracking-[-0.03em]">Treine para reconhecer o que está sendo perguntado.</h3></div><div className="mt-6 grid gap-x-8 gap-y-3 md:grid-cols-2">{promptQuestions.map((question, index) => <div key={question} className="question-line"><span>0{index + 1}</span><strong>{question}</strong></div>)}</div><div className="mt-8 border-t border-[#292827]/10 pt-6"><div className="eyebrow">SENTENCE STARTERS / PALAVRAS DE APOIO</div><div className="mt-4 flex flex-wrap gap-2">{reviewTerms.slice(0, 7).map((term) => <strong key={term} className="term-chip">{term}</strong>)}</div><p className="mt-4 text-xs leading-5 text-[#292827]/55">As expressões abaixo aparecem em negrito no texto falado para facilitar a revisão visual.</p></div></div>}
             </> : section === "profile" ? <Profile /> : section === "skills" ? <SkillMap /> : <CoachNotes />}
           </section>

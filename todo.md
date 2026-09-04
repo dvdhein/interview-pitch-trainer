@@ -12,3 +12,11 @@
 - [x] Destacar as perguntas de entrevista listadas pelo usuário.
 - [x] Destacar em negrito os sentence starters e as palavras-chave solicitadas.
 - [x] Validar a renderização e salvar novo checkpoint.
+
+## Atualização solicitada — vozes de áudio
+
+- [x] Carregar e filtrar vozes disponíveis por idioma no navegador.
+- [x] Adicionar seletor de voz e botão de teste rápido.
+- [x] Usar a voz escolhida na reprodução do pitch e preservar a preferência.
+- [x] Validar TypeScript, build e compatibilidade do fluxo de áudio.
+- [ ] Salvar novo checkpoint.
