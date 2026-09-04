@@ -332,8 +332,8 @@ export default function Home() {
             aria-label="Ir para início"
           >
             <img
-              src="/manus-storage/pitch-mark_8ce53f32.png"
-              alt=""
+              src="/pitch-mark.svg"
+              alt="Pitch Studio Logo"
               className="h-10 w-10 object-contain"
             />
             <span className="leading-none">
@@ -415,11 +415,6 @@ export default function Home() {
 
       <main className="mx-auto max-w-[1440px] px-5 pb-20 lg:px-10">
         <section className="hero-grid relative overflow-hidden border-b border-[#292827]/10 py-14 lg:py-24">
-          <img
-            src="/manus-storage/rehearsal-paper-texture_5a2d9204.png"
-            alt=""
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30 mix-blend-multiply"
-          />
           <div className="relative max-w-4xl">
             <div className="eyebrow">
               <span className="eyebrow-dot" /> INTERVIEW REHEARSAL / 01
