@@ -14,41 +14,24 @@ import {
   Sparkles,
   Volume2,
   X,
+  Clock,
+  Award,
+  ShieldAlert,
 } from "lucide-react";
 
-type Language = "en" | "pt";
-type PracticeItem = {
-  id: string;
-  title: string;
-  en: string;
-  pt: string;
-  tag?: string;
-};
+import {
+  allPitches,
+  cvTracks,
+  type CVTrack,
+  type Language,
+  type PracticeItem,
+} from "../data/cvTracks";
+import { InteractiveLab } from "../components/InteractiveLab";
+import { RoleplayScenarios } from "../components/RoleplayScenarios";
+import { CVTrackSelector } from "../components/CVTrackSelector";
+import { SessionReportModal } from "../components/SessionReportModal";
 
-const pitches: PracticeItem[] = [
-  {
-    id: "executive",
-    tag: "60–75 SEC",
-    title: "Executive master pitch",
-    en: "Throughout my 22-year career, a big part of my role is building solid enterprise architectures and protecting vital company assets. I've spent a lot of time in banking, healthcare, and retail — environments where security and uptime can make or break the business. I have strong skills and experience in securing modern platforms and enforcing industry standards like NIST and ISO 27001. My philosophy is simple: security should never get in the way of shipping products. I know how to turn policies into code and automated guardrails, so engineering teams can move fast with confidence. What sets me apart is that I am always ready to jump into complex challenges and lead teams through change. I also bring a continuous willingness to learn — whether that means mastering cloud security or using generative AI to streamline architecture reviews. In short, I bring technical depth, clear communication, and dependable leadership to your team.",
-    pt: "Ao longo dos meus 22 anos de carreira, uma grande parte do meu papel é construir arquiteturas sólidas e proteger os ativos mais importantes da empresa. Atuei muito em bancos, saúde e varejo — setores onde segurança e disponibilidade são fundamentais para o negócio. Tenho sólidas habilidades e experiência em proteger plataformas modernas e fazer cumprir normas como NIST e ISO 27001. Mas a minha visão é prática: segurança não deve travar entregas. Eu sei como transformar políticas em código e guardrails automáticos, permitindo que a engenharia entregue rápido e com segurança. O que me diferencia é que estou sempre pronto para encarar desafios complexos e guiar o time em momentos de mudança. Além disso, trago uma constante disposição para aprender — seja dominando nuvem ou usando IA generativa para agilizar revisões técnicas. Em resumo, trago bagagem técnica sólida, facilidade de diálogo e liderança confiável.",
-  },
-  {
-    id: "technical",
-    tag: "ARCHITECTURE PANEL",
-    title: "Technical solutions architect",
-    en: "In my work as a solutions architect, a big part of my role is making sure our security directly supports business growth instead of blocking it. I am good at designing end-to-end architectures that keep systems safe while keeping developer velocity high. Over the years, I've learned how to enforce baseline security policies by working side-by-side with developers and cloud engineers. One of my strongest assets is taking high-level business risks and turning them into simple, concrete technical designs that protect data. What sets me apart is my ability to stay ahead of new technologies. Whether that means running structured threat modeling or building AI copilots to automate architecture reviews, I am always ready to solve hard problems and deliver real value.",
-    pt: "No meu trabalho com arquitetura de soluções, uma grande parte do meu papel é garantir que a segurança ajude o negócio a crescer, em vez de ser um obstáculo. Sou muito bom em desenhar arquiteturas completas que protegem os sistemas e mantêm a velocidade dos desenvolvedores alta. Com o tempo, aprendi a aplicar boas práticas de segurança trabalhando lado a lado com os times de desenvolvimento e nuvem. Um dos meus maiores diferenciais é pegar riscos complexos de negócio e traduzir isso em soluções técnicas diretas que protegem nossos dados. O que me diferencia é minha capacidade de me manter à frente das novas tecnologias. Seja fazendo modelagem de ameaças ou criando copilotos com IA para automatizar revisões de arquitetura, estou sempre pronto para resolver problemas difíceis e gerar valor real.",
-  },
-  {
-    id: "ai",
-    tag: "AI-FIRST ROLE",
-    title: "AI security & modernization",
-    en: "Right now, a big part of my role is bridging traditional cybersecurity with Artificial Intelligence. I have strong skills and experience in building secure pipelines for Large Language Models and protecting company data assets from leaks and emerging AI risks. I know how to enforce practical guardrails using tools like LangChain, Ollama, and Azure AI. At Aché, for example, I've learned how to build an AI copilot that automatically reviews architecture decision records. That cut our review times drastically and kept documentation quality consistently high. What sets me apart is combining real, hands-on AI work with over 20 years of enterprise architecture experience. I am always ready to help companies adopt AI safely, and my constant willingness to learn keeps me right on top of this fast-moving space.",
-    pt: "Hoje, uma grande parte do meu papel é conectar a segurança da informação à Inteligência Artificial. Tenho sólidas habilidades e experiência em construir esteiras seguras para modelos de IA e proteger os ativos e dados da empresa contra vazamentos e novos riscos de IA. Eu sei como aplicar guardrails práticos usando ferramentas como LangChain, Ollama e Azure AI. Na Aché, por exemplo, aprendi a construir um copiloto de IA que revisa automaticamente documentos de arquitetura. Isso reduziu drasticamente o tempo de aprovação e manteve o padrão de qualidade lá em cima. O que me diferencia é juntar a prática direta com IA a mais de 20 anos de vivência em grandes empresas. Estou sempre pronto para ajudar o time a adotar IA com segurança, e minha constante disposição para aprender me mantém sempre atualizado nesse mercado que muda todo dia.",
-  },
-];
-
+// Q&A Original Preservado
 const qa: PracticeItem[] = [
   {
     id: "q1",
@@ -86,6 +69,7 @@ const skills = [
   "DevSecOps & Modelagem de Ameaças",
   "Liderança & Comunicação Executiva",
 ];
+
 const career = [
   [
     "04.2025 — presente",
@@ -124,6 +108,40 @@ const career = [
     "Consultoria técnica em segurança da informação, análise de riscos e revisão de segurança de software.",
   ],
 ];
+
+const sixPillars = [
+  {
+    num: "01",
+    title: "Builder + Defender Mindset",
+    desc: "Segurança como viabilizador de negócio que acelera a engenharia em vez de bloqueá-la (Golden Paths e Shift-left).",
+  },
+  {
+    num: "02",
+    title: "C-Level Risk Translation",
+    desc: "Capacidade comprovada de traduzir riscos técnicos em impacto financeiro, ROI e decisões executivas defensáveis.",
+  },
+  {
+    num: "03",
+    title: "Hands-on AI Innovation",
+    desc: "Construção de agentes de IA e copilotos (Aché) para automatizar revisões de arquitetura e eliminar burocracias manuais.",
+  },
+  {
+    num: "04",
+    title: "Leadership by Influence",
+    desc: "Conquista de confiança dos desenvolvedores através de mentoria, ADRs colaborativas e ferramentas que facilitam o dia a dia.",
+  },
+  {
+    num: "05",
+    title: "Always Ready & Calm",
+    desc: "Antecipação proativa de ameaças (STRIDE/PASTA), mantendo serenidade e assertividade em incidentes de alta pressão.",
+  },
+  {
+    num: "06",
+    title: "Lifelong Learner",
+    desc: "Capacidade ágil e autodidata de dominar novas ondas tecnológicas como GenAI, Web3 e Cloud Security.",
+  },
+];
+
 const starters = [
   "A big part of my role is...",
   "I have strong skills and experience in...",
@@ -132,6 +150,7 @@ const starters = [
   "I've learned how to...",
   "What sets me apart is...",
 ];
+
 const ptStarters = [
   "Uma grande parte do meu papel é",
   "Tenho sólidas habilidades e experiência em",
@@ -140,6 +159,7 @@ const ptStarters = [
   "Aprendi a",
   "O que me diferencia é",
 ];
+
 const promptQuestions = [
   "What skills do you have that will benefit our team?",
   "What would you say are your biggest strengths?",
@@ -149,6 +169,7 @@ const promptQuestions = [
   "What do you bring to the table that others might not?",
   "What skills or experience do you have that would help you succeed in this role?",
 ];
+
 const reviewTerms = [
   "A big part of my role is",
   "I have strong skills and experience in",
@@ -177,7 +198,7 @@ const reviewTerms = [
 
 function renderBoldTerms(text: string) {
   const escaped = reviewTerms.map(term =>
-    term.replace(/[.*+?^${}()|[\\]\\]/g, "\\\\$&")
+    term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
   );
   const parts = text.split(new RegExp(`(${escaped.join("|")})`, "gi"));
   return (
@@ -235,6 +256,7 @@ function speak(
 
 export default function Home() {
   const [section, setSection] = useState("pitches");
+  const [selectedTrackId, setSelectedTrackId] = useState("all");
   const [language, setLanguage] = useState<Language>("en");
   const [speed, setSpeed] = useState(0.9);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -246,11 +268,52 @@ export default function Home() {
   const [practice, setPractice] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const items = section === "pitches" ? pitches : qa;
-  const active = useMemo(
-    () => items.find(item => item.id === activeId) ?? items[0],
-    [activeId, items]
-  );
+  // Métricas de Sessão
+  const [sessionSeconds, setSessionSeconds] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [totalAnswered, setTotalAnswered] = useState(0);
+  const [spokenCount, setSpokenCount] = useState(0);
+  const [isReportOpen, setIsReportOpen] = useState(false);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSessionSeconds(prev => prev + 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleScoreUpdate = (correctDelta: number, totalDelta: number) => {
+    setCorrectAnswers(prev => prev + correctDelta);
+    setTotalAnswered(prev => prev + totalDelta);
+  };
+
+  const handleSpeechRecorded = () => {
+    setSpokenCount(prev => prev + 1);
+  };
+
+  const handleResetSession = () => {
+    setSessionSeconds(0);
+    setCorrectAnswers(0);
+    setTotalAnswered(0);
+    setSpokenCount(0);
+  };
+
+  // Filtragem de pitches por modelo de CV selecionado
+  const filteredPitches = useMemo(() => {
+    if (selectedTrackId === "all") return allPitches;
+    const track = cvTracks.find(t => t.id === selectedTrackId);
+    if (!track) return allPitches;
+    return allPitches.filter(item => track.itemIds.includes(item.id));
+  }, [selectedTrackId]);
+
+  const items = section === "pitches" ? filteredPitches : qa;
+
+  // Garante item ativo válido ao trocar de filtro
+  const active = useMemo(() => {
+    const found = items.find(item => item.id === activeId);
+    return found ?? items[0] ?? allPitches[0];
+  }, [activeId, items]);
+
   const voicesForLanguage = useMemo(
     () =>
       voices.filter(voice =>
@@ -321,6 +384,10 @@ export default function Home() {
     if (next === "qa") setActiveId("q1");
   };
 
+  const mins = Math.floor(sessionSeconds / 60);
+  const secs = sessionSeconds % 60;
+  const sessionFormatted = `${mins}:${String(secs).padStart(2, "0")}`;
+
   return (
     <div className="min-h-screen bg-[#f5f0e7] text-[#292827]">
       <div className="paper-noise" />
@@ -345,13 +412,17 @@ export default function Home() {
               </span>
             </span>
           </button>
+
+          {/* Navegação Principal Expandida */}
           <nav
-            className="hidden items-center gap-8 lg:flex"
+            className="hidden items-center gap-6 lg:flex"
             aria-label="Navegação principal"
           >
             {[
               ["pitches", "Master pitches"],
               ["qa", "Quick Q&A"],
+              ["training", "Laboratório interativo"],
+              ["scenarios", "Cenários de roleplay"],
               ["profile", "My profile"],
               ["skills", "Skill map"],
               ["coach", "Coach notes"],
@@ -365,9 +436,29 @@ export default function Home() {
               </button>
             ))}
           </nav>
-          <div className="flex items-center gap-2">
+
+          {/* Widgets de Sessão e Idioma */}
+          <div className="flex items-center gap-3">
+            {/* Chips de Sessão */}
+            <div className="hidden items-center gap-2 xl:flex">
+              <span className="flex items-center gap-1.5 rounded-full border border-[#292827]/15 bg-white/40 px-3 py-1 text-[11px] font-bold text-[#292827]">
+                <Clock size={12} className="text-[#d96c4f]" />{" "}
+                {sessionFormatted}
+              </span>
+              <span className="flex items-center gap-1.5 rounded-full border border-[#292827]/15 bg-white/40 px-3 py-1 text-[11px] font-bold text-[#292827]">
+                ✔ {correctAnswers} / {totalAnswered}
+              </span>
+              <button
+                onClick={() => setIsReportOpen(true)}
+                className="rounded-full bg-[#292827] px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-[#fffaf2] hover:bg-[#d96c4f]"
+              >
+                Relatório
+              </button>
+            </div>
+
+            {/* Alternância EN / PT */}
             <div
-              className="hidden items-center rounded-full border border-[#292827]/15 p-1 sm:flex"
+              className="flex items-center rounded-full border border-[#292827]/15 p-1"
               aria-label="Idioma"
             >
               <button
@@ -383,6 +474,7 @@ export default function Home() {
                 PT
               </button>
             </div>
+
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="icon-btn lg:hidden"
@@ -392,11 +484,15 @@ export default function Home() {
             </button>
           </div>
         </div>
+
+        {/* Menu Mobile */}
         {menuOpen && (
           <div className="border-t border-[#292827]/10 bg-[#f5f0e7] px-5 py-3 lg:hidden">
             {[
               ["pitches", "Master pitches"],
               ["qa", "Quick Q&A"],
+              ["training", "Laboratório interativo"],
+              ["scenarios", "Cenários de roleplay"],
               ["profile", "My profile"],
               ["skills", "Skill map"],
               ["coach", "Coach notes"],
@@ -409,6 +505,21 @@ export default function Home() {
                 {label}
               </button>
             ))}
+            <div className="mt-3 flex items-center justify-between pt-2">
+              <span className="text-xs font-bold">
+                Sessão: {sessionFormatted} · {correctAnswers}/{totalAnswered}{" "}
+                acertos
+              </span>
+              <button
+                onClick={() => {
+                  setIsReportOpen(true);
+                  setMenuOpen(false);
+                }}
+                className="rounded bg-[#292827] px-3 py-1 text-xs font-bold text-white"
+              >
+                Ver Relatório
+              </button>
+            </div>
           </div>
         )}
       </header>
@@ -437,7 +548,7 @@ export default function Home() {
             </div>
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <button
-                onClick={() => handleSpeak(pitches[0])}
+                onClick={() => handleSpeak(allPitches[0])}
                 className="coral-btn"
               >
                 <Play size={16} fill="currentColor" /> Ouvir o pitch principal
@@ -474,9 +585,11 @@ export default function Home() {
               {[
                 ["pitches", "01", "Master pitches"],
                 ["qa", "02", "Quick Q&A"],
-                ["profile", "03", "My profile"],
-                ["skills", "04", "Skill map"],
-                ["coach", "05", "Coach notes"],
+                ["training", "03", "Laboratório interativo"],
+                ["scenarios", "04", "Cenários de roleplay"],
+                ["profile", "05", "My profile"],
+                ["skills", "06", "Skill map"],
+                ["coach", "07", "Coach notes"],
               ].map(([id, num, label]) => (
                 <button
                   key={id}
@@ -492,10 +605,15 @@ export default function Home() {
                   <span className="status-dot" /> Seu progresso
                 </div>
                 <div className="mt-3 h-1 overflow-hidden bg-[#292827]/10">
-                  <div className="h-full w-[64%] bg-[#d96c4f]" />
+                  <div
+                    className="h-full bg-[#d96c4f] transition-all duration-300"
+                    style={{
+                      width: `${totalAnswered > 0 ? Math.min(100, Math.round((totalAnswered / 20) * 100)) : 30}%`,
+                    }}
+                  />
                 </div>
                 <div className="mt-2 text-[11px] text-[#292827]/50">
-                  4 de 6 fundamentos explorados
+                  {totalAnswered} exercícios respondidos
                 </div>
               </div>
             </div>
@@ -521,7 +639,24 @@ export default function Home() {
                     <Headphones size={15} /> áudio nativo do navegador
                   </div>
                 </div>
-                <div className="grid gap-6 xl:grid-cols-[260px_1fr]">
+
+                {/* Seletor de Modelo de CV (apenas em pitches) */}
+                {section === "pitches" && (
+                  <div className="mb-8">
+                    <CVTrackSelector
+                      selectedTrackId={selectedTrackId}
+                      onSelectTrack={trackId => {
+                        setSelectedTrackId(trackId);
+                        const track = cvTracks.find(t => t.id === trackId);
+                        if (track && track.itemIds.length > 0) {
+                          setActiveId(track.itemIds[0]);
+                        }
+                      }}
+                    />
+                  </div>
+                )}
+
+                <div className="grid gap-6 xl:grid-cols-[280px_1fr]">
                   <div className="space-y-2">
                     {items.map((item, index) => (
                       <button
@@ -559,6 +694,11 @@ export default function Home() {
                         <h3 className="mt-3 max-w-2xl font-serif text-3xl leading-tight tracking-[-0.03em] sm:text-4xl">
                           {active.title}
                         </h3>
+                        {active.tips && (
+                          <p className="mt-2 text-xs italic text-[#d96c4f]">
+                            💡 {active.tips}
+                          </p>
+                        )}
                       </div>
                       <div
                         className="audio-bars"
@@ -590,7 +730,7 @@ export default function Home() {
                       </span>
                     </div>
                     <p
-                      className={`answer-copy ${practice ? "answer-blurred" : ""}`}
+                      className={`answer-copy whitespace-pre-line ${practice ? "answer-blurred" : ""}`}
                     >
                       {renderSpokenAnswer(active[language], language)}
                     </p>
@@ -713,6 +853,18 @@ export default function Home() {
                   </div>
                 )}
               </>
+            ) : section === "training" ? (
+              <InteractiveLab
+                onScoreUpdate={handleScoreUpdate}
+                onSpeechRecorded={handleSpeechRecorded}
+                speakFn={(txt, lang, spd) => speak(txt, lang, spd, activeVoice)}
+              />
+            ) : section === "scenarios" ? (
+              <RoleplayScenarios
+                language={language}
+                speakFn={(txt, lang, spd) => speak(txt, lang, spd, activeVoice)}
+                onRecordSpeech={handleSpeechRecorded}
+              />
             ) : section === "profile" ? (
               <Profile />
             ) : section === "skills" ? (
@@ -723,6 +875,7 @@ export default function Home() {
           </section>
         </div>
       </main>
+
       <footer className="border-t border-[#292827]/10 px-5 py-8 lg:px-10">
         <div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-3 text-xs text-[#292827]/50 sm:flex-row">
           <span>Interview Pitch Trainer · feito para falar, não decorar.</span>
@@ -732,6 +885,17 @@ export default function Home() {
           </span>
         </div>
       </footer>
+
+      {/* Modal de Relatório de Sessão */}
+      <SessionReportModal
+        isOpen={isReportOpen}
+        onClose={() => setIsReportOpen(false)}
+        correctAnswers={correctAnswers}
+        totalAnswered={totalAnswered}
+        spokenCount={spokenCount}
+        sessionSeconds={sessionSeconds}
+        onResetAll={handleResetSession}
+      />
     </div>
   );
 }
@@ -739,7 +903,7 @@ export default function Home() {
 function Profile() {
   return (
     <div>
-      <div className="eyebrow">03 / MY PROFILE</div>
+      <div className="eyebrow">05 / MY PROFILE</div>
       <h2 className="mt-3 max-w-3xl font-serif text-5xl tracking-[-0.04em]">
         Experiência que conecta risco, arquitetura e inovação.
       </h2>
@@ -763,6 +927,8 @@ function Profile() {
           <small>setores regulados em foco</small>
         </div>
       </div>
+
+      {/* Linha do Tempo da Carreira */}
       <div className="mt-12">
         <div className="eyebrow">CAREER TIMELINE</div>
         <div className="mt-5 space-y-0">
@@ -780,6 +946,33 @@ function Profile() {
           ))}
         </div>
       </div>
+
+      {/* Os 6 Pilares de Diferenciação Estratégica */}
+      <div className="mt-14 border-t border-[#292827]/10 pt-10">
+        <div className="eyebrow">CORE DIFFERENTIATORS</div>
+        <h3 className="mt-3 font-serif text-3xl tracking-[-0.03em]">
+          Os 6 Pilares Estratégicos que diferenciam David Hein:
+        </h3>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          {sixPillars.map(pillar => (
+            <div
+              key={pillar.num}
+              className="rounded-[3px] border border-[#292827]/12 bg-white/40 p-5"
+            >
+              <span className="font-serif text-2xl text-[#d96c4f]">
+                {pillar.num}
+              </span>
+              <h4 className="mt-1 text-sm font-extrabold text-[#292827]">
+                {pillar.title}
+              </h4>
+              <p className="mt-2 text-xs leading-relaxed text-[#292827]/70">
+                {pillar.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="mt-12 border-t border-[#292827]/10 pt-6 text-sm text-[#292827]/60">
         <strong className="text-[#292827]">Formação:</strong> MBA em Information
         Security Management (IBTA, 2013) · Bacharelado em Data Processing (FAI
@@ -792,7 +985,7 @@ function Profile() {
 function SkillMap() {
   return (
     <div>
-      <div className="eyebrow">03 / SKILL MAP</div>
+      <div className="eyebrow">06 / SKILL MAP</div>
       <h2 className="mt-3 max-w-2xl font-serif text-5xl tracking-[-0.04em]">
         Sua experiência, organizada para aparecer.
       </h2>
@@ -831,7 +1024,7 @@ function SkillMap() {
 function CoachNotes() {
   return (
     <div>
-      <div className="eyebrow">04 / COACH NOTES</div>
+      <div className="eyebrow">07 / COACH NOTES</div>
       <h2 className="mt-3 max-w-2xl font-serif text-5xl tracking-[-0.04em]">
         Não decore. Encontre o ritmo.
       </h2>
