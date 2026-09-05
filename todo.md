@@ -20,3 +20,17 @@
 - [x] Usar a voz escolhida na reprodução do pitch e preservar a preferência.
 - [x] Validar TypeScript, build e compatibilidade do fluxo de áudio.
 - [ ] Salvar novo checkpoint.
+
+## Avaliação solicitada — Kokoro-FastAPI
+
+- [ ] Consultar a documentação pública e identificar o catálogo de vozes Kokoro.
+- [ ] Verificar requisitos de hospedagem, licenciamento e exposição da API.
+- [ ] Comparar integração via backend hospedado com o SpeechSynthesis local.
+- [ ] Definir se a implementação será feita agora ou se depende de um serviço externo/persistente.
+
+## Sincronização GitHub — conflito a resolver
+
+- [ ] Preservar as alterações locais atuais antes da integração.
+- [ ] Integrar o commit remoto `de6bb6f3` com as alterações locais sem descartar funcionalidades.
+- [ ] Validar TypeScript, build e interface após a integração.
+- [ ] Salvar checkpoint sincronizado.
