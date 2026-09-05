@@ -48,3 +48,12 @@
 - [x] Revisar visualmente a interface e os fluxos principais.
 - [x] Registrar sugestões de ajustes de UX, conteúdo e performance.
 - [x] Salvar checkpoint sincronizado.
+
+## Nova estrutura — rounds de entrevista
+
+- [ ] Definir interlocutor, objetivo e sinal de sucesso para cada round.
+- [ ] Criar pitches específicos para RH, gestor, técnico e diretoria.
+- [ ] Criar perguntas e contexto de preparação para cada round.
+- [ ] Implementar filtro/seleção de round na interface.
+- [ ] Validar conteúdo, áudio e navegação após a reorganização.
+- [ ] Salvar checkpoint da nova estrutura.

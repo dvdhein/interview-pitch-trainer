@@ -174,6 +174,70 @@ const promptQuestions = [
   "What skills or experience do you have that would help you succeed in this role?",
 ];
 
+type InterviewRound = {
+  id: string;
+  number: string;
+  label: string;
+  audience: string;
+  purpose: string;
+  looksFor: string[];
+  context: { en: string; pt: string };
+  guidance: { en: string; pt: string };
+  pitchIds: string[];
+  questions: string[];
+};
+
+const interviewRounds: InterviewRound[] = [
+  {
+    id: "hr",
+    number: "01",
+    label: "People & Culture",
+    audience: "Recruiter / RH",
+    purpose: "Validar aderência, comunicação, motivação e clareza de trajetória.",
+    looksFor: ["Clareza", "Motivação", "Comunicação", "Fit cultural"],
+    context: { en: "Keep it human and accessible. HR is mapping your story, motivation, communication style and expectations — not testing architecture depth yet.", pt: "Mantenha a conversa humana e acessível. O RH está entendendo sua história, motivação, comunicação e expectativas — ainda não é hora de mergulhar na arquitetura." },
+    guidance: { en: "Lead with your 30–45 second introduction, then connect your experience to the kind of environment where you can contribute and keep learning.", pt: "Comece pela apresentação de 30–45 segundos e conecte sua experiência ao tipo de ambiente em que você pode contribuir e continuar aprendendo." },
+    pitchIds: ["first_intro", "the_ultimate_pitch"],
+    questions: ["Tell me about yourself.", "Why are you considering this opportunity?", "What kind of environment helps you do your best work?"]
+  },
+  {
+    id: "manager",
+    number: "02",
+    label: "Hiring Manager",
+    audience: "Gestor da área / Hiring Manager",
+    purpose: "Entender como você gera resultado, influencia times e transforma risco em entrega.",
+    looksFor: ["Impacto", "Autonomia", "Influência", "Prioridade"],
+    context: { en: "Move from biography to value. The manager wants to see how your judgment, collaboration and delivery would improve the team’s current problems.", pt: "Saia da biografia e vá para o valor. O gestor quer entender como seu julgamento, colaboração e capacidade de entrega melhorariam os problemas atuais do time." },
+    guidance: { en: "Use the executive pitch, explain security as an enabler, and anchor your claims in regulated environments, Policy-as-Code and measurable engineering velocity.", pt: "Use o pitch executivo, explique segurança como habilitadora e ancore sua resposta em ambientes regulados, Policy-as-Code e velocidade de engenharia." },
+    pitchIds: ["executive", "resume_about_me", "brazil_exec_pitch"],
+    questions: ["How would you create value in your first 90 days?", "How do you influence teams without direct authority?", "What makes your approach different?"]
+  },
+  {
+    id: "technical",
+    number: "03",
+    label: "Technical Deep Dive",
+    audience: "Painel técnico / Principal Architect / Security Lead",
+    purpose: "Comprovar profundidade técnica, raciocínio arquitetural e capacidade de explicar trade-offs.",
+    looksFor: ["Profundidade", "Trade-offs", "Risco", "Execução"],
+    context: { en: "This is the evidence round. Expect follow-ups on architecture decisions, threat modeling, cloud/API security, resilience and how you work with engineers.", pt: "Esta é a rodada de evidências. Prepare-se para perguntas sobre decisões arquiteturais, modelagem de ameaças, segurança de cloud/API, resiliência e trabalho com engenharia." },
+    guidance: { en: "Use the technical architect pitch, then switch to concrete cases: PIX, mTLS/HSMs, threat modeling, ADRs, guardrails and secure delivery paths.", pt: "Use o pitch de arquitetura técnica e siga para casos concretos: PIX, mTLS/HSMs, modelagem de ameaças, ADRs, guardrails e caminhos seguros de entrega." },
+    pitchIds: ["technical", "principal_turbi", "pix_scale", "solutions_aplin"],
+    questions: ["Walk me through a difficult architecture decision.", "How do you balance security and developer velocity?", "How would you threat-model this system?"]
+  },
+  {
+    id: "executive",
+    number: "04",
+    label: "Executive Alignment",
+    audience: "Diretor / VP / C-Level stakeholder",
+    purpose: "Demonstrar maturidade, visão de negócio, síntese e capacidade de liderar mudança.",
+    looksFor: ["Síntese", "Risco de negócio", "Liderança", "Visão"],
+    context: { en: "Make the altitude change. Executives need business consequences, decision quality and confidence — not a long list of tools or controls.", pt: "Mude a altitude da conversa. A diretoria precisa entender consequências para o negócio, qualidade das decisões e confiança — não uma lista longa de ferramentas." },
+    guidance: { en: "Open with the executive master pitch, quantify the business stakes, and frame AI governance as a way to increase speed with defensible risk decisions.", pt: "Abra com o pitch executivo, quantifique o impacto para o negócio e apresente governança de IA como forma de aumentar velocidade com decisões de risco defensáveis." },
+    pitchIds: ["executive", "resume_about_me", "the_ultimate_pitch", "video_3min_pitch"],
+    questions: ["How do you communicate security risk to the board?", "What would you change in our security operating model?", "How do you make innovation safe enough to scale?"]
+  }
+];
+
 const reviewTerms = [
   "A big part of my role is",
   "I have strong skills and experience in",
@@ -267,6 +331,7 @@ function speak(
 
 export default function Home() {
   const [section, setSection] = useState("pitches");
+  const [activeRoundId, setActiveRoundId] = useState("hr");
   const [selectedTrackId, setSelectedTrackId] = useState("all");
   const [language, setLanguage] = useState<Language>("en");
   const [speed, setSpeed] = useState(0.9);
@@ -326,6 +391,9 @@ export default function Home() {
     const found = items.find(item => item.id === activeId);
     return found ?? items[0] ?? allPitches[0];
   }, [activeId, items]);
+  const activeRound = interviewRounds.find(round => round.id === activeRoundId) ?? interviewRounds[0];
+  const roundPitches = useMemo(() => activeRound.pitchIds.map(id => allPitches.find(item => item.id === id)).filter((item): item is PracticeItem => Boolean(item)), [activeRound]);
+  const roundActive = roundPitches.find(item => item.id === activeId) ?? roundPitches[0] ?? allPitches[0];
 
   const voicesForLanguage = useMemo(
     () =>
@@ -409,6 +477,7 @@ export default function Home() {
     setMoreMenuOpen(false);
     if (next === "pitches") setActiveId("first_intro");
     if (next === "qa") setActiveId("q1");
+    if (next === "rounds") setActiveRoundId("hr");
   };
 
   const mins = Math.floor(sessionSeconds / 60);
@@ -445,8 +514,9 @@ export default function Home() {
             className="hidden items-center gap-6 lg:flex xl:gap-8"
             aria-label="Navegação principal"
           >
-            {[
+            {              [
               ["pitches", "Pitches"],
+              ["rounds", "Rounds"],
               ["training", "Laboratório"],
               ["followups", "Follow-ups"],
               ["profile", "My Profile"],
@@ -555,8 +625,9 @@ export default function Home() {
         {/* Menu Mobile */}
         {menuOpen && (
           <div className="border-t border-[#292827]/10 bg-[#f5f0e7] px-5 py-3 lg:hidden">
-            {[
+            {              [
               ["pitches", "Master pitches"],
+              ["rounds", "Interview rounds"],
               ["qa", "Quick Q&A"],
               ["apisec", "API & AppSec"],
               ["training", "Laboratório interativo"],
@@ -651,16 +722,17 @@ export default function Home() {
               <div className="mb-8 text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#292827]/45">
                 Seu roteiro
               </div>
-              {[
+              {                [
                 ["pitches", "01", "Master pitches"],
-                ["qa", "02", "Quick Q&A"],
-                ["apisec", "03", "API & AppSec"],
-                ["training", "04", "Laboratório interativo"],
-                ["scenarios", "05", "Cenários de roleplay"],
-                ["followups", "06", "Follow-ups (Deep Dive)"],
-                ["profile", "07", "My profile"],
-                ["skills", "08", "Skill map"],
-                ["coach", "09", "Coach notes"],
+                ["rounds", "02", "Interview rounds"],
+                ["qa", "03", "Quick Q&A"],
+                ["apisec", "04", "API & AppSec"],
+                ["training", "05", "Laboratório interativo"],
+                ["scenarios", "06", "Cenários de roleplay"],
+                ["followups", "07", "Follow-ups (Deep Dive)"],
+                ["profile", "08", "My profile"],
+                ["skills", "09", "Skill map"],
+                ["coach", "10", "Coach notes"],
               ].map(([id, num, label]) => (
                 <button
                   key={id}
@@ -691,7 +763,29 @@ export default function Home() {
           </aside>
 
           <section className="min-w-0">
-            {section === "pitches" || section === "qa" ? (
+            {section === "rounds" ? (
+              <div className="rounds-shell">
+                <div className="mb-8 flex flex-col justify-between gap-5 border-b border-[#292827]/10 pb-6 lg:flex-row lg:items-end">
+                  <div>
+                    <div className="eyebrow">INTERVIEW MAP / 04 ROUNDS</div>
+                    <h2 className="mt-3 max-w-3xl font-serif text-4xl tracking-[-0.04em] sm:text-5xl">Cada conversa pede uma altitude diferente.</h2>
+                  </div>
+                  <div className="max-w-xs text-xs font-bold leading-5 text-[#292827]/55">Escolha quem está do outro lado da mesa antes de escolher o que dizer.</div>
+                </div>
+                <div className="round-tabs" role="tablist" aria-label="Rounds da entrevista">
+                  {interviewRounds.map(round => <button key={round.id} role="tab" aria-selected={activeRound.id === round.id} onClick={() => { setActiveRoundId(round.id); setActiveId(round.pitchIds[0]); setPractice(false); }} className={`round-tab ${activeRound.id === round.id ? "round-tab-active" : ""}`}><span>{round.number}</span><strong>{round.label}</strong><small>{round.audience}</small></button>)}
+                </div>
+                <div className="round-brief-grid">
+                  <div className="round-brief-card"><div className="eyebrow">QUEM ESTÁ TE OUVINDO</div><h3 className="mt-3 font-serif text-3xl tracking-[-0.03em]">{activeRound.audience}</h3><p className="mt-4 text-sm leading-6 text-[#292827]/70">{activeRound[language === "en" ? "context" : "context"][language]}</p><div className="mt-5 border-t border-[#292827]/10 pt-4"><div className="eyebrow">O QUE ESSA PESSOA PROCURA</div><div className="mt-3 flex flex-wrap gap-2">{activeRound.looksFor.map(signal => <span key={signal} className="round-signal">{signal}</span>)}</div></div></div>
+                  <div className="round-brief-card round-brief-card-accent"><div className="eyebrow">OBJETIVO DO ROUND</div><h3 className="mt-3 font-serif text-3xl tracking-[-0.03em]">{activeRound.purpose}</h3><p className="mt-5 text-sm leading-6 text-[#292827]/70">{activeRound.guidance[language]}</p><div className="mt-5 border-t border-[#292827]/10 pt-4"><div className="eyebrow">PERGUNTAS PROVÁVEIS</div><div className="mt-3 space-y-2">{activeRound.questions.map((question, index) => <div key={question} className="round-question"><span>0{index + 1}</span><strong>{question}</strong></div>)}</div></div></div>
+                </div>
+                <div className="mt-10 flex items-end justify-between border-b border-[#292827]/10 pb-5"><div><div className="eyebrow">PITCHES RECOMENDADOS</div><h3 className="mt-2 font-serif text-3xl tracking-[-0.03em]">Treine a resposta certa para esta conversa.</h3></div><div className="hidden items-center gap-2 text-xs font-bold text-[#292827]/55 sm:flex"><Headphones size={15} /> áudio nativo do navegador</div></div>
+                <div className="mt-6 grid gap-6 xl:grid-cols-[280px_1fr]">
+                  <div className="space-y-2">{roundPitches.map((item, index) => <button key={item.id} onClick={() => { setActiveId(item.id); setPractice(false); }} className={`choice-card ${roundActive.id === item.id ? "choice-active" : ""}`}><span className="choice-number">0{index + 1}</span><span className="min-w-0"><span className="block text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#d96c4f]">{item.tag ?? "PITCH"}</span><span className="mt-1 block text-sm font-bold leading-5">{item.title}</span></span><ChevronDown className="ml-auto shrink-0 opacity-40" size={16} /></button>)}</div>
+                  <article className="answer-card"><div className="flex items-start justify-between gap-4"><div><div className="eyebrow">{language === "en" ? "ENGLISH / SPOKEN VERSION" : "PORTUGUÊS / VERSÃO FALADA"}</div><h3 className="mt-3 max-w-2xl font-serif text-3xl leading-tight tracking-[-0.03em] sm:text-4xl">{roundActive.title}</h3></div><div className="audio-bars" data-playing={playingId === roundActive.id}>{[1,2,3,4,5,6,7].map(n => <i key={n} style={{ height: `${9 + (n % 4) * 4}px` }} />)}</div></div><div className="loop-strip" aria-label="Ciclo de prática"><span className="loop-step loop-current"><b>01</b> escolher</span><span className="loop-rule" /><span className="loop-step"><b>02</b> ouvir</span><span className="loop-rule" /><span className="loop-step"><b>03</b> praticar</span><span className="loop-rule" /><span className="loop-step"><b>04</b> seguir</span></div><p className={`answer-copy ${practice ? "answer-blurred" : ""}`}>{renderSpokenAnswer(roundActive[language], language)}</p>{practice && <div className="practice-overlay"><Mic2 size={22} /><strong>Agora é sua vez.</strong><span>Fale usando o contexto e a altitude deste round.</span></div>}<div className="mt-8 flex flex-wrap items-center gap-3 border-t border-[#292827]/10 pt-5"><button onClick={() => handleSpeak(roundActive)} className="coral-btn">{playingId === roundActive.id ? <Pause size={16} fill="currentColor" /> : <Volume2 size={16} />} {playingId === roundActive.id ? "Pausar áudio" : "Ouvir resposta"}</button><button onClick={() => setPractice(!practice)} className="outline-btn">{practice ? <BookOpen size={16} /> : <Mic2 size={16} />} {practice ? "Mostrar resposta" : "Praticar sem olhar"}</button><div className="voice-controls"><label htmlFor="round-voice">Voz</label><select id="round-voice" value={activeVoice?.name ?? selectedVoiceName} onChange={e => setSelectedVoiceName(e.target.value)} className="voice-select" disabled={!voicesForLanguage.length}><option value="">{voicesForLanguage.length ? "Escolha uma voz" : voices.length ? "Sem voz para este idioma" : "Voz padrão do navegador"}</option>{voicesForLanguage.map(voice => <option key={`${voice.name}-${voice.lang}`} value={voice.name}>{voice.name} · {voice.lang}</option>)}</select><button onClick={handleTestVoice} className="test-voice-btn" title="Testar voz" aria-label="Testar voz"><Headphones size={14} /></button></div><div className="speed-control"><label htmlFor="round-speed">Ritmo</label><select id="round-speed" value={speed} onChange={e => setSpeed(Number(e.target.value))} className="speed-select"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1">1×</option><option value="1.15">1.15×</option></select></div></div></article>
+                </div>
+              </div>
+            ) : section === "pitches" || section === "qa" ? (
               <>
                 <div className="mb-8 flex flex-col justify-between gap-5 border-b border-[#292827]/10 pb-6 sm:flex-row sm:items-end">
                   <div>
