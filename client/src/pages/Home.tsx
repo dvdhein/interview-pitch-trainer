@@ -32,6 +32,8 @@ import { RoleplayScenarios } from "../components/RoleplayScenarios";
 import { ApiSecurityModule } from "../components/ApiSecurityModule";
 import { CVTrackSelector } from "../components/CVTrackSelector";
 import { SessionReportModal } from "../components/SessionReportModal";
+import { VoiceComparisonStudio } from "../components/VoiceComparisonStudio";
+import { ExecutiveFollowUpModule } from "../components/ExecutiveFollowUpModule";
 
 // Q&A Original Preservado
 const qa: PracticeItem[] = [
@@ -240,7 +242,8 @@ function speak(
   lang: Language,
   speed: number,
   voice?: SpeechSynthesisVoice,
-  onDone?: () => void
+  onDone?: () => void,
+  onBoundary?: (charIndex: number, progressPercent: number) => void
 ) {
   if (!("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
@@ -252,6 +255,12 @@ function speak(
   if (onDone) {
     utterance.onend = onDone;
     utterance.onerror = onDone;
+  }
+  if (onBoundary && text.length > 0) {
+    utterance.onboundary = (e) => {
+      const p = Math.min(100, Math.round((e.charIndex / text.length) * 100));
+      onBoundary(e.charIndex, p);
+    };
   }
   window.speechSynthesis.speak(utterance);
 }
@@ -265,8 +274,9 @@ export default function Home() {
   const [selectedVoiceName, setSelectedVoiceName] = useState(
     () => window.localStorage.getItem("pitch-studio-voice") ?? ""
   );
-  const [activeId, setActiveId] = useState("executive");
+  const [activeId, setActiveId] = useState("first_intro");
   const [playingId, setPlayingId] = useState<string | null>(null);
+  const [playbackProgress, setPlaybackProgress] = useState(0);
   const [practice, setPractice] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -360,12 +370,24 @@ export default function Home() {
     if (playingId === item.id) {
       window.speechSynthesis?.cancel();
       setPlayingId(null);
+      setPlaybackProgress(0);
       return;
     }
     setActiveId(item.id);
     setPlayingId(item.id);
-    speak(item[language], language, speed, activeVoice, () =>
-      setPlayingId(null)
+    setPlaybackProgress(0);
+    speak(
+      item[language],
+      language,
+      speed,
+      activeVoice,
+      () => {
+        setPlayingId(null);
+        setPlaybackProgress(0);
+      },
+      (_charIndex, progressPercent) => {
+        setPlaybackProgress(progressPercent);
+      }
     );
   };
 
@@ -426,6 +448,7 @@ export default function Home() {
               ["apisec", "API & AppSec"],
               ["training", "Laboratório interativo"],
               ["scenarios", "Cenários de roleplay"],
+              ["followups", "Follow-ups (Deep Dive)"],
               ["profile", "My profile"],
               ["skills", "Skill map"],
               ["coach", "Coach notes"],
@@ -497,6 +520,7 @@ export default function Home() {
               ["apisec", "API & AppSec"],
               ["training", "Laboratório interativo"],
               ["scenarios", "Cenários de roleplay"],
+              ["followups", "Follow-ups (Deep Dive)"],
               ["profile", "My profile"],
               ["skills", "Skill map"],
               ["coach", "Coach notes"],
@@ -592,9 +616,10 @@ export default function Home() {
                 ["apisec", "03", "API & AppSec"],
                 ["training", "04", "Laboratório interativo"],
                 ["scenarios", "05", "Cenários de roleplay"],
-                ["profile", "06", "My profile"],
-                ["skills", "07", "Skill map"],
-                ["coach", "08", "Coach notes"],
+                ["followups", "06", "Follow-ups (Deep Dive)"],
+                ["profile", "07", "My profile"],
+                ["skills", "08", "Skill map"],
+                ["coach", "09", "Coach notes"],
               ].map(([id, num, label]) => (
                 <button
                   key={id}
@@ -819,6 +844,33 @@ export default function Home() {
                         </select>
                       </div>
                     </div>
+
+                    {/* Barra de Progresso em Tempo Real (Speech Synthesis) */}
+                    {playingId === active.id && (
+                      <div className="mt-5 rounded border border-[#d96c4f]/25 bg-[#d96c4f]/8 p-3.5 shadow-sm">
+                        <div className="flex items-center justify-between text-xs font-bold text-[#292827]">
+                          <span className="flex items-center gap-1.5 text-[#d96c4f]">
+                            <Volume2 size={14} className="animate-pulse" /> Reproduzindo áudio do modelo em tempo real...
+                          </span>
+                          <span className="font-mono font-extrabold text-[#d96c4f]">{playbackProgress}%</span>
+                        </div>
+                        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#292827]/10">
+                          <div
+                            className="h-full bg-gradient-to-r from-[#d96c4f] via-amber-500 to-emerald-500 transition-all duration-150"
+                            style={{ width: `${playbackProgress}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Estúdio de Gravação e Comparação A/B */}
+                    <VoiceComparisonStudio
+                      scriptText={active[language]}
+                      language={language}
+                      onAiPlay={() => handleSpeak()}
+                      isAiPlaying={playingId === active.id}
+                      aiProgressPercent={playingId === active.id ? playbackProgress : 0}
+                    />
                   </article>
                 </div>
                 {section === "qa" && (
@@ -873,6 +925,15 @@ export default function Home() {
               <RoleplayScenarios
                 language={language}
                 speakFn={(txt, lang, spd) => speak(txt, lang, spd, activeVoice)}
+                onRecordSpeech={handleSpeechRecorded}
+              />
+            ) : section === "followups" ? (
+              <ExecutiveFollowUpModule
+                language={language}
+                speakFn={(txt, lang, spd, onEnd) =>
+                  speak(txt, lang, spd, activeVoice, onEnd)
+                }
+                speed={speed}
                 onRecordSpeech={handleSpeechRecorded}
               />
             ) : section === "profile" ? (
