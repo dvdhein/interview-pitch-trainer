@@ -17,6 +17,7 @@ import {
   Clock,
   Award,
   ShieldAlert,
+  Copy,
 } from "lucide-react";
 
 import {
@@ -875,7 +876,13 @@ export default function Home() {
                 onRecordSpeech={handleSpeechRecorded}
               />
             ) : section === "profile" ? (
-              <Profile />
+              <Profile
+                language={language}
+                speakFn={(txt, lang, spd, onEnd) =>
+                  speak(txt, lang, spd, activeVoice, onEnd)
+                }
+                speed={speed}
+              />
             ) : section === "skills" ? (
               <SkillMap />
             ) : (
@@ -909,7 +916,114 @@ export default function Home() {
   );
 }
 
-function Profile() {
+function Profile({
+  language = "pt",
+  speakFn,
+  speed = 1,
+}: {
+  language?: Language;
+  speakFn?: (text: string, lang: "en" | "pt", speed: number, onEnd?: () => void) => void;
+  speed?: number;
+}) {
+  const [activeTab, setActiveTab] = useState<"story_en" | "story_pt" | "resume" | "intro">("story_en");
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const storyEN = `David is an Information Security Architect who has spent more than 22 years protecting mission-critical systems across highly regulated industries.
+
+Early in his career, he worked deeply in the financial sector, where digital transactions were under the watchful eye of strict regulatory authorities like the Central Bank of Brazil. At Banco BV, David was the lead architect responsible for the security design of the country's national instant payment system — PIX — and Open Banking. In this high-stakes environment, millions of digital transactions moved in milliseconds. A single architectural vulnerability or latency bottleneck could paralyze national commerce. To guarantee absolute resilience, David worked relentlessly to embed non-negotiable cryptographic controls, mutual TLS, and Hardware Security Modules directly into high-throughput microservices — enabling the bank to pass rigorous Central Bank audits with zero disruptions to engineering agility.
+
+Having mastered financial security at national scale, David brought his expertise into the omnichannel retail and pharmaceutical worlds. At Grupo Boticário, he architected data protection baselines across more than 50 brands, classifying sensitive consumer data and translating corporate risks into scalable target architectures.
+
+However, modern healthcare and pharmaceutical manufacturing presented a cutting-edge frontier. At Aché Laboratórios Farmacêuticos, proprietary formulas, sensitive medical research, and strict regulatory standards demanded unprecedented digital vigilance. Yet, traditional security audits were too slow for modern agile engineering. Instead of acting as the proverbial "department of NO," David revolutionized how the enterprise handles governance.
+
+He pioneered the adoption of Policy-as-Code and built custom AI agents designed to operate as 24/7 intelligent copilots. Working closely with enterprise architects and software development teams, David implemented multi-layered guardrails using Azure AI Foundry and prompt sanitization. These AI copilots automatically review Architecture Decision Records, instantly flagging architectural risks and regulatory non-compliance before a single line of insecure code reaches production. Acting as a Platform Technical Product Manager for the internal Architect’s Journey, he transformed complex security mandates into frictionless "Golden Paths" that developers actually love to follow.
+
+Under David’s architectural guidance, security audits that once took weeks became automated in minutes, while regulatory compliance remained uncompromised. He proved that when security architects, engineering teams, and modern artificial intelligence work in true partnership, enterprise software can innovate at breakneck speed without ever leaving the company's vital assets exposed. Today, the resilient frameworks David built continue to serve as the gold standard for secure, modern engineering across highly regulated enterprises.`;
+
+  const storyPT = `David é um Arquiteto de Segurança da Informação que dedicou mais de 22 anos à proteção de sistemas de missão crítica em setores altamente regulados.
+
+Em uma etapa marcante de sua carreira, atuou no setor financeiro, onde transações digitais eram rigorosamente fiscalizadas pelo Banco Central do Brasil. No Banco BV, David foi o arquiteto líder responsável pelo desenho de segurança da infraestrutura do PIX e do Open Banking. Nesse cenário de altíssima exigência, milhões de transações digitais precisavam ser processadas em milissegundos. Qualquer falha arquitetural ou lentidão poderia paralisar serviços financeiros essenciais. Para assegurar resiliência total, David trabalhou na implementação de controles criptográficos avançados, mTLS e módulos de segurança em hardware (HSMs) diretamente em microsserviços de altíssima escala — permitindo que o banco superasse auditorias do BACEN com louvor, sem frear a velocidade da engenharia.
+
+Com a experiência em segurança financeira consolidada, David expandiu sua atuação para os setores de varejo omnichannel e indústria farmacêutica. No Grupo Boticário, desenhou a arquitetura de proteção de dados para mais de 50 marcas, estruturando o mapeamento de informações sensíveis e traduzindo riscos de negócio em arquiteturas de referência escaláveis.
+
+No entanto, o universo farmacêutico e de saúde trouxe desafios ainda mais modernos. Na Aché Laboratórios Farmacêuticos, fórmulas proprietárias, dados de pesquisa médica e exigências regulatórias rigorosas exigiam vigilância contínua. Ao mesmo tempo, auditorias manuais tradicionais eram lentas demais para os ciclos de desenvolvimento modernos. Em vez de posicionar a segurança como o 'departamento do NÃO', David transformou radicalmente a governança da empresa.
+
+Ele liderou a implementação de Policy-as-Code e desenvolveu agentes inteligentes de Inteligência Artificial para atuar como copilotos 24 horas por dia. Trabalhando lado a lado com times de desenvolvimento e arquitetos, David implementou guardrails em camadas com o Azure AI Foundry e sanitização contra injeção de prompts. Esses copilotos de IA analisam registros de decisão de arquitetura (ADRs) em tempo real, alertando sobre riscos técnicos e desvios de conformidade antes mesmo do código ir para produção. Atuando como Platform TPM da Jornada do Arquiteto, ele transformou exigências regulatórias complexas em caminhos simples e atrativos ("Golden Paths") para os desenvolvedores.
+
+Sob a liderança arquitetural de David, revisões de conformidade que antes levavam semanas passaram a ser validadas em poucos minutos, com total garantia de segurança. Ele demonstrou que, quando arquitetos de segurança, desenvolvedores e IA generativa trabalham em verdadeira parceria, a empresa consegue acelerar sua inovação com proteção absoluta de seus ativos. Hoje, as esteiras e soluções desenhadas por David permanecem como padrão de excelência para engenharia moderna em ecossistemas altamente regulados.`;
+
+  const resumeBullets = [
+    {
+      labelEn: "Critical Systems & National Scale",
+      labelPt: "Sistemas Críticos & Escala Nacional",
+      descEn:
+        "Led end-to-end security architecture for Brazil's instant payment ecosystem (PIX), Open Banking, and BaaS at Banco BV, integrating high-throughput microservices with mTLS, HSMs, and OAuth2/FAPI under Central Bank (BACEN) compliance.",
+      descPt:
+        "Liderança técnica na arquitetura de segurança do PIX, Open Banking e BaaS no Banco BV, integrando microsserviços de alta volumetria com mTLS, HSMs e OAuth2/FAPI sob conformidade BACEN.",
+    },
+    {
+      labelEn: "GenAI & Policy-as-Code Innovation",
+      labelPt: "Inovação em GenAI & Policy-as-Code",
+      descEn:
+        "AI Security pioneer at Aché Laboratórios Farmacêuticos. Implemented prompt sanitization via Azure AI Foundry and engineered custom AI Agents to automate Architecture Decision Record (ADR) reviews and security fitness functions.",
+      descPt:
+        "Pioneirismo em segurança de IA Generativa na Aché Laboratórios. Implementou sanitização com Azure AI Foundry e construiu Agentes de IA para automatizar revisões de ADRs e fitness functions de segurança.",
+    },
+    {
+      labelEn: "Platform TPM & Continuous Discovery",
+      labelPt: "Platform TPM & Descoberta Contínua",
+      descEn:
+        "Lead the internal Architect's Journey as Platform TPM, applying Continuous Discovery, RICE roadmap prioritization, and Golden Paths to eliminate developer friction and drive company-wide secure-by-design standards.",
+      descPt:
+        "Atuação como Platform TPM para a Jornada do Arquiteto, aplicando Descoberta Contínua, priorização RICE e Golden Paths para acelerar a adoção de padrões seguros pelos times de engenharia.",
+    },
+    {
+      labelEn: "Leadership Philosophy",
+      labelPt: "Filosofia de Liderança",
+      descEn:
+        "Proven ability to bridge deep technical engineering with executive business strategy, transforming security from a blocking department into an agile business enabler.",
+      descPt:
+        "Habilidade comprovada em conectar engenharia técnica profunda com estratégia executiva de negócios, transformando a segurança de barreira burocrática em viabilizadora de crescimento.",
+    },
+  ];
+
+  const introText = {
+    en: "My name is David. I’m an Information Security Architect, and I have more than 22 years of experience in technology and cybersecurity. I have worked mainly in highly regulated industries, such as finance, healthcare, pharmaceuticals, and retail. In my current role, I work with security architecture, data protection, and AI security. I also work with AI Agents and Policy-as-Code to improve security governance. One of my strengths is solving complex problems and working with different teams. I also enjoy learning new technologies and finding practical solutions. Now, I’m looking for an opportunity where I can use my experience, continue learning, and contribute to the business. That’s a little about me.",
+    pt: "Meu nome é David. Sou Arquiteto de Segurança da Informação e tenho mais de 22 anos de experiência em tecnologia e cibersegurança. Atuei principalmente em setores altamente regulados, como financeiro, saúde, farmacêutico e varejo. No meu papel atual, trabalho com arquitetura de segurança, proteção de dados e segurança de IA. Também atuo com Agentes de IA e Policy-as-Code para aprimorar a governança de segurança. Um dos meus pontos fortes é resolver problemas complexos e trabalhar com diferentes equipes. Também gosto de aprender novas tecnologias e encontrar soluções práticas. Agora, estou buscando uma oportunidade onde eu possa aplicar minha experiência, continuar aprendendo e gerar valor para o negócio. Essa é uma síntese sobre mim.",
+  };
+
+  const currentTextToPlay =
+    activeTab === "story_en"
+      ? storyEN
+      : activeTab === "story_pt"
+      ? storyPT
+      : activeTab === "resume"
+      ? resumeBullets.map(b => `${b.labelEn}: ${b.descEn}`).join(". ")
+      : introText.en;
+
+  const currentLangToPlay = activeTab === "story_pt" ? "pt" : "en";
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard?.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleTogglePlay = () => {
+    if (isPlaying) {
+      window.speechSynthesis?.cancel();
+      setIsPlaying(false);
+      return;
+    }
+    if (speakFn) {
+      setIsPlaying(true);
+      speakFn(currentTextToPlay, currentLangToPlay, speed, () =>
+        setIsPlaying(false)
+      );
+    }
+  };
+
   return (
     <div>
       <div className="eyebrow">05 / MY PROFILE</div>
@@ -922,6 +1036,8 @@ function Profile() {
         varejo. Seu foco combina Enterprise Security Architecture, governança de
         GenAI, Architecture-as-Code e decisões técnicas defensáveis.
       </p>
+
+      {/* Stats Cards */}
       <div className="mt-10 grid gap-4 sm:grid-cols-3">
         <div className="profile-stat">
           <span>22+</span>
@@ -937,8 +1053,221 @@ function Profile() {
         </div>
       </div>
 
+      {/* NOVO: EXECUTIVE SPOTLIGHT & RESUME ABOUT ME */}
+      <div className="mt-12 rounded-[4px] border border-[#292827]/18 bg-white/70 p-6 shadow-sm sm:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#292827]/10 pb-5">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-[#d96c4f]/12 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#d96c4f]">
+              <Sparkles size={13} />
+              Executive Spotlight & Resume "About Me"
+            </div>
+            <h3 className="mt-2 font-serif text-2xl tracking-[-0.02em] text-[#292827] sm:text-3xl">
+              The Story Behind the Architect (22 Anos de Missão Crítica)
+            </h3>
+            <p className="mt-1 text-xs text-[#292827]/65">
+              Narrativa em estilo case study e resumo executivo para entrevistas, CV e apresentações de liderança.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleTogglePlay}
+              className="inline-flex items-center gap-2 rounded-[3px] bg-[#d96c4f] px-3.5 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-[#c25a3f]"
+              title="Ouvir texto com voz sintetizada"
+            >
+              {isPlaying ? <Pause size={14} /> : <Play size={14} fill="currentColor" />}
+              {isPlaying ? "Parar áudio" : "Ouvir narração"}
+            </button>
+            <button
+              onClick={() => handleCopy(currentTextToPlay)}
+              className="inline-flex items-center gap-1.5 rounded-[3px] border border-[#292827]/20 bg-white px-3 py-2 text-xs font-semibold text-[#292827] hover:bg-[#f5f0e7]"
+              title="Copiar texto atual para a área de transferência"
+            >
+              {copied ? <Check size={14} className="text-green-600" /> : <Copy size={14} />}
+              {copied ? "Copiado!" : "Copiar"}
+            </button>
+          </div>
+        </div>
+
+        {/* Abas de Navegação do Profile Spotlight */}
+        <div className="mt-5 flex flex-wrap gap-2">
+          <button
+            onClick={() => {
+              if (isPlaying) window.speechSynthesis?.cancel();
+              setIsPlaying(false);
+              setActiveTab("story_en");
+            }}
+            className={`rounded-[3px] px-3.5 py-1.5 text-xs font-bold transition ${
+              activeTab === "story_en"
+                ? "bg-[#292827] text-[#f5f0e7]"
+                : "border border-[#292827]/15 bg-white/50 text-[#292827]/70 hover:bg-white"
+            }`}
+          >
+            🇬🇧 Executive Story (English)
+          </button>
+          <button
+            onClick={() => {
+              if (isPlaying) window.speechSynthesis?.cancel();
+              setIsPlaying(false);
+              setActiveTab("story_pt");
+            }}
+            className={`rounded-[3px] px-3.5 py-1.5 text-xs font-bold transition ${
+              activeTab === "story_pt"
+                ? "bg-[#292827] text-[#f5f0e7]"
+                : "border border-[#292827]/15 bg-white/50 text-[#292827]/70 hover:bg-white"
+            }`}
+          >
+            🇧🇷 Narrativa Executiva (Português)
+          </button>
+          <button
+            onClick={() => {
+              if (isPlaying) window.speechSynthesis?.cancel();
+              setIsPlaying(false);
+              setActiveTab("resume");
+            }}
+            className={`rounded-[3px] px-3.5 py-1.5 text-xs font-bold transition ${
+              activeTab === "resume"
+                ? "bg-[#292827] text-[#f5f0e7]"
+                : "border border-[#292827]/15 bg-white/50 text-[#292827]/70 hover:bg-white"
+            }`}
+          >
+            📋 Resume "About Me" (Bullets)
+          </button>
+          <button
+            onClick={() => {
+              if (isPlaying) window.speechSynthesis?.cancel();
+              setIsPlaying(false);
+              setActiveTab("intro");
+            }}
+            className={`rounded-[3px] px-3.5 py-1.5 text-xs font-bold transition ${
+              activeTab === "intro"
+                ? "bg-[#292827] text-[#f5f0e7]"
+                : "border border-[#292827]/15 bg-white/50 text-[#292827]/70 hover:bg-white"
+            }`}
+          >
+            ⚡ First Introduction (35–45s)
+          </button>
+        </div>
+
+        {/* Badges de Destaque */}
+        <div className="mt-4 flex flex-wrap gap-1.5 text-[11px] font-bold text-[#292827]/70">
+          <span className="rounded bg-[#292827]/6 px-2 py-0.5">Banco BV: PIX & mTLS/HSM</span>
+          <span className="rounded bg-[#292827]/6 px-2 py-0.5">Boticário: 50+ Brands</span>
+          <span className="rounded bg-[#292827]/6 px-2 py-0.5">Aché: Azure AI Foundry</span>
+          <span className="rounded bg-[#292827]/6 px-2 py-0.5">Policy-as-Code & ADRs</span>
+          <span className="rounded bg-[#292827]/6 px-2 py-0.5">Platform TPM</span>
+        </div>
+
+        {/* Conteúdo da Aba Selecionada */}
+        <div className="mt-6 border-t border-[#292827]/10 pt-6">
+          {activeTab === "story_en" && (
+            <div className="space-y-4 font-sans text-sm leading-7 text-[#292827]/85">
+              <p className="text-base font-bold text-[#292827]">
+                David is an Information Security Architect who has spent more than 22 years protecting mission-critical systems across highly regulated industries.
+              </p>
+              <p>
+                Early in his career, he worked deeply in the financial sector, where digital transactions were under the watchful eye of strict regulatory authorities like the Central Bank of Brazil. At <strong>Banco BV</strong>, David was the lead architect responsible for the security design of the country's national instant payment system—<strong>PIX</strong>—and Open Banking. In this high-stakes environment, millions of digital transactions moved in milliseconds. A single architectural vulnerability or latency bottleneck could paralyze national commerce. To guarantee absolute resilience, David worked relentlessly to embed non-negotiable cryptographic controls, <strong>mutual TLS (mTLS)</strong>, and <strong>Hardware Security Modules (HSMs)</strong> directly into high-throughput microservices—enabling the bank to pass rigorous Central Bank audits with zero disruptions to engineering agility.
+              </p>
+              <p>
+                Having mastered financial security at national scale, David brought his expertise into the omnichannel retail and pharmaceutical worlds. At <strong>Grupo Boticário</strong>, he architected data protection baselines across more than 50 brands, classifying sensitive consumer data and translating corporate risks into scalable target architectures.
+              </p>
+              <p>
+                However, modern healthcare and pharmaceutical manufacturing presented a cutting-edge frontier. At <strong>Aché Laboratórios Farmacêuticos</strong>, proprietary formulas, sensitive medical research, and strict regulatory standards demanded unprecedented digital vigilance. Yet, traditional security audits were too slow for modern agile engineering. Instead of acting as the proverbial "department of NO," David revolutionized how the enterprise handles governance.
+              </p>
+              <p>
+                He pioneered the adoption of <strong>Policy-as-Code</strong> and built custom AI agents designed to operate as 24/7 intelligent copilots. Working closely with enterprise architects and software development teams, David implemented multi-layered guardrails using <strong>Azure AI Foundry</strong> and prompt sanitization. These AI copilots automatically review Architecture Decision Records (ADRs), instantly flagging architectural risks and regulatory non-compliance before a single line of insecure code reaches production. Acting as a <strong>Platform Technical Product Manager</strong> for the internal Architect’s Journey, he transformed complex security mandates into frictionless "Golden Paths" that developers actually love to follow.
+              </p>
+              <p className="rounded border-l-2 border-[#d96c4f] bg-[#d96c4f]/6 p-3 font-medium text-[#292827]">
+                Under David’s architectural guidance, security audits that once took weeks became automated in minutes, while regulatory compliance remained uncompromised. He proved that when security architects, engineering teams, and modern artificial intelligence work in true partnership, enterprise software can innovate at breakneck speed without ever leaving the company's vital assets exposed. Today, the resilient frameworks David built continue to serve as the gold standard for secure, modern engineering across highly regulated enterprises.
+              </p>
+            </div>
+          )}
+
+          {activeTab === "story_pt" && (
+            <div className="space-y-4 font-sans text-sm leading-7 text-[#292827]/85">
+              <p className="text-base font-bold text-[#292827]">
+                David é um Arquiteto de Segurança da Informação que dedicou mais de 22 anos à proteção de sistemas de missão crítica em setores altamente regulados.
+              </p>
+              <p>
+                Em uma etapa marcante de sua carreira, atuou no setor financeiro, onde transações digitais eram rigorosamente fiscalizadas pelo Banco Central do Brasil. No <strong>Banco BV</strong>, David foi o arquiteto líder responsável pelo desenho de segurança da infraestrutura do <strong>PIX</strong> e do Open Banking. Nesse cenário de altíssima exigência, milhões de transações digitais precisavam ser processadas em milissegundos. Qualquer falha arquitetural ou lentidão poderia paralisar serviços financeiros essenciais. Para assegurar resiliência total, David trabalhou na implementação de controles criptográficos avançados, <strong>mTLS</strong> e módulos de segurança em hardware (<strong>HSMs</strong>) diretamente em microsserviços de altíssima escala — permitindo que o banco superasse auditorias do BACEN com louvor, sem frear a velocidade da engenharia.
+              </p>
+              <p>
+                Com a experiência em segurança financeira consolidada, David expandiu sua atuação para os setores de varejo omnichannel e indústria farmacêutica. No <strong>Grupo Boticário</strong>, desenhou a arquitetura de proteção de dados para mais de 50 marcas, estruturando o mapeamento de informações sensíveis e traduzindo riscos de negócio em arquiteturas de referência escaláveis.
+              </p>
+              <p>
+                No entanto, o universo farmacêutico e de saúde trouxe desafios ainda mais modernos. Na <strong>Aché Laboratórios Farmacêuticos</strong>, fórmulas proprietárias, dados de pesquisa médica e exigências regulatórias rigorosas exigiam vigilância contínua. Ao mesmo tempo, auditorias manuais tradicionais eram lentas demais para os ciclos de desenvolvimento modernos. Em vez de posicionar a segurança como o "departamento do NÃO", David transformou radicalmente a governança da empresa.
+              </p>
+              <p>
+                Ele liderou a implementação de <strong>Policy-as-Code</strong> e desenvolveu agentes inteligentes de Inteligência Artificial para atuar como copilotos 24 horas por dia. Trabalhando lado a lado com times de desenvolvimento e arquitetos, David implementou guardrails em camadas com o <strong>Azure AI Foundry</strong> e sanitização contra injeção de prompts. Esses copilotos de IA analisam registros de decisão de arquitetura (ADRs) em tempo real, alertando sobre riscos técnicos e desvios de conformidade antes mesmo do código ir para produção. Atuando como <strong>Platform TPM da Jornada do Arquiteto</strong>, ele transformou exigências regulatórias complexas em caminhos simples e atrativos ("Golden Paths") para os desenvolvedores.
+              </p>
+              <p className="rounded border-l-2 border-[#d96c4f] bg-[#d96c4f]/6 p-3 font-medium text-[#292827]">
+                Sob a liderança arquitetural de David, revisões de conformidade que antes levavam semanas passaram a ser validadas em poucos minutos, com total garantia de segurança. Ele demonstrou que, quando arquitetos de segurança, desenvolvedores e IA generativa trabalham em verdadeira parceria, a empresa consegue acelerar sua inovação com proteção absoluta de seus ativos. Hoje, as esteiras e soluções desenhadas por David permanecem como padrão de excelência para engenharia moderna em ecossistemas altamente regulados.
+              </p>
+            </div>
+          )}
+
+          {activeTab === "resume" && (
+            <div className="space-y-4">
+              <div className="grid gap-3 sm:grid-cols-2">
+                {resumeBullets.map((bullet, idx) => (
+                  <div
+                    key={idx}
+                    className="rounded-[3px] border border-[#292827]/12 bg-white/60 p-4 transition hover:bg-white"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="font-serif text-lg font-bold text-[#d96c4f]">
+                        0{idx + 1}
+                      </span>
+                      <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#292827]">
+                        {bullet.labelEn}
+                      </h4>
+                    </div>
+                    <p className="mt-2 text-xs leading-relaxed text-[#292827]/80">
+                      {bullet.descEn}
+                    </p>
+                    <div className="mt-3 border-t border-[#292827]/8 pt-2 text-[11px] leading-relaxed text-[#292827]/60">
+                      <strong>PT:</strong> {bullet.descPt}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="rounded-[3px] bg-[#292827]/5 p-4 text-xs text-[#292827]/75">
+                💡 <strong>Dica para o CV:</strong> Copie estes 4 tópicos para o início do seu currículo em inglês (Professional Summary) ou na seção "Sobre" do LinkedIn para causar impacto imediato em recrutadores internacionais.
+              </div>
+            </div>
+          )}
+
+          {activeTab === "intro" && (
+            <div className="space-y-4">
+              <div className="rounded-[3px] border border-[#d96c4f]/30 bg-[#d96c4f]/5 p-5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#d96c4f]">
+                    🇬🇧 Spoken English (35–45 seconds)
+                  </span>
+                  <span className="text-[11px] font-semibold text-[#292827]/50">
+                    104 palavras · Ritmo conversacional
+                  </span>
+                </div>
+                <p className="mt-3 font-serif text-lg leading-relaxed text-[#292827]">
+                  "{introText.en}"
+                </p>
+              </div>
+
+              <div className="rounded-[3px] border border-[#292827]/10 bg-white/50 p-4">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#292827]/70">
+                  🇧🇷 Versão Falada em Português
+                </span>
+                <p className="mt-2 text-sm leading-relaxed text-[#292827]/80">
+                  "{introText.pt}"
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Linha do Tempo da Carreira */}
-      <div className="mt-12">
+      <div className="mt-14 border-t border-[#292827]/10 pt-10">
         <div className="eyebrow">CAREER TIMELINE</div>
         <div className="mt-5 space-y-0">
           {career.map(([period, company, role, detail]) => (
