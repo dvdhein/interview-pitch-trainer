@@ -279,6 +279,7 @@ export default function Home() {
   const [playbackProgress, setPlaybackProgress] = useState(0);
   const [practice, setPractice] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
 
   // Métricas de Sessão
   const [sessionSeconds, setSessionSeconds] = useState(0);
@@ -402,9 +403,11 @@ export default function Home() {
   const goSection = (next: string) => {
     window.speechSynthesis?.cancel();
     setPlayingId(null);
+    setPlaybackProgress(0);
     setSection(next);
     setMenuOpen(false);
-    if (next === "pitches") setActiveId("executive");
+    setMoreMenuOpen(false);
+    if (next === "pitches") setActiveId("first_intro");
     if (next === "qa") setActiveId("q1");
   };
 
@@ -419,7 +422,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-4 lg:px-10">
           <button
             onClick={() => goSection("pitches")}
-            className="group flex items-center gap-3 text-left"
+            className="group flex shrink-0 items-center gap-3 text-left"
             aria-label="Ir para início"
           >
             <img
@@ -437,21 +440,16 @@ export default function Home() {
             </span>
           </button>
 
-          {/* Navegação Principal Expandida */}
+          {/* Navegação Principal Concisa (Sem Quebra) */}
           <nav
-            className="hidden items-center gap-6 lg:flex"
+            className="hidden items-center gap-6 lg:flex xl:gap-8"
             aria-label="Navegação principal"
           >
             {[
-              ["pitches", "Master pitches"],
-              ["qa", "Quick Q&A"],
-              ["apisec", "API & AppSec"],
-              ["training", "Laboratório interativo"],
-              ["scenarios", "Cenários de roleplay"],
-              ["followups", "Follow-ups (Deep Dive)"],
-              ["profile", "My profile"],
-              ["skills", "Skill map"],
-              ["coach", "Coach notes"],
+              ["pitches", "Pitches"],
+              ["training", "Laboratório"],
+              ["followups", "Follow-ups"],
+              ["profile", "My Profile"],
             ].map(([id, label]) => (
               <button
                 key={id}
@@ -461,10 +459,53 @@ export default function Home() {
                 {label}
               </button>
             ))}
+
+            {/* Dropdown "Mais..." para tópicos complementares */}
+            <div className="relative">
+              <button
+                onClick={() => setMoreMenuOpen(!moreMenuOpen)}
+                className={`nav-link inline-flex items-center gap-1.5 ${
+                  ["qa", "apisec", "scenarios", "skills", "coach"].includes(section)
+                    ? "nav-link-active text-[#292827]"
+                    : ""
+                }`}
+              >
+                Mais{" "}
+                <ChevronDown
+                  size={13}
+                  className={`transition-transform duration-150 ${
+                    moreMenuOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {moreMenuOpen && (
+                <div className="absolute left-0 top-full mt-3 w-56 rounded-[3px] border border-[#292827]/15 bg-[#f5f0e7] p-2 shadow-xl z-50 animate-in fade-in zoom-in-95">
+                  {[
+                    ["qa", "Quick Q&A"],
+                    ["apisec", "API & AppSec"],
+                    ["scenarios", "Cenários de Roleplay"],
+                    ["skills", "Skill Map"],
+                    ["coach", "Coach Notes"],
+                  ].map(([id, label]) => (
+                    <button
+                      key={id}
+                      onClick={() => goSection(id)}
+                      className={`block w-full rounded px-3 py-2 text-left text-xs font-extrabold uppercase tracking-wider transition ${
+                        section === id
+                          ? "bg-[#292827] text-white"
+                          : "text-[#292827]/70 hover:bg-[#292827]/8 hover:text-[#292827]"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Widgets de Sessão e Idioma */}
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3">
             {/* Chips de Sessão */}
             <div className="hidden items-center gap-2 xl:flex">
               <span className="flex items-center gap-1.5 rounded-full border border-[#292827]/15 bg-white/40 px-3 py-1 text-[11px] font-bold text-[#292827]">
