@@ -40,3 +40,11 @@
 - [x] Integrar o commit remoto `de6bb6f3` com as alterações locais sem descartar funcionalidades.
 - [ ] Validar TypeScript, build e interface após a integração.
 - [ ] Salvar checkpoint sincronizado.
+
+## Nova sincronização e revisão
+
+- [ ] Sincronizar as novas alterações manuais do GitHub.
+- [ ] Verificar TypeScript, build e logs de erros.
+- [ ] Revisar visualmente a interface e os fluxos principais.
+- [ ] Registrar sugestões de ajustes de UX, conteúdo e performance.
+- [ ] Salvar checkpoint sincronizado.
