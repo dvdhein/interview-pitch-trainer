@@ -18,6 +18,7 @@ import {
   Award,
   ShieldAlert,
   Copy,
+  Globe2,
 } from "lucide-react";
 
 import {
@@ -34,6 +35,9 @@ import { CVTrackSelector } from "../components/CVTrackSelector";
 import { SessionReportModal } from "../components/SessionReportModal";
 import { VoiceComparisonStudio } from "../components/VoiceComparisonStudio";
 import { ExecutiveFollowUpModule } from "../components/ExecutiveFollowUpModule";
+import { InternationalMarketSelector } from "../components/InternationalMarketSelector";
+import { GlobalLexiconModal } from "../components/GlobalLexiconModal";
+import { InterviewRoundsModule } from "../components/InterviewRoundsModule";
 
 // Q&A Original Preservado
 const qa: PracticeItem[] = [
@@ -352,6 +356,7 @@ export default function Home() {
   const [totalAnswered, setTotalAnswered] = useState(0);
   const [spokenCount, setSpokenCount] = useState(0);
   const [isReportOpen, setIsReportOpen] = useState(false);
+  const [isLexiconOpen, setIsLexiconOpen] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -591,6 +596,13 @@ export default function Home() {
               >
                 Relatório
               </button>
+              <button
+                onClick={() => setIsLexiconOpen(true)}
+                className="flex items-center gap-1 rounded-full border border-[#d96c4f]/40 bg-[#d96c4f]/10 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-[#d96c4f] hover:bg-[#d96c4f] hover:text-white transition"
+                title="Dicionário de Termos Internacionais (BACEN, PIX, LGPD, etc.)"
+              >
+                <Globe2 size={11} /> Lexicon
+              </button>
             </div>
 
             {/* Alternância EN / PT */}
@@ -764,29 +776,28 @@ export default function Home() {
 
           <section className="min-w-0">
             {section === "rounds" ? (
-              <div className="rounds-shell">
-                <div className="mb-8 flex flex-col justify-between gap-5 border-b border-[#292827]/10 pb-6 lg:flex-row lg:items-end">
-                  <div>
-                    <div className="eyebrow">INTERVIEW MAP / 04 ROUNDS</div>
-                    <h2 className="mt-3 max-w-3xl font-serif text-4xl tracking-[-0.04em] sm:text-5xl">Cada conversa pede uma altitude diferente.</h2>
-                  </div>
-                  <div className="max-w-xs text-xs font-bold leading-5 text-[#292827]/55">Escolha quem está do outro lado da mesa antes de escolher o que dizer.</div>
-                </div>
-                <div className="round-tabs" role="tablist" aria-label="Rounds da entrevista">
-                  {interviewRounds.map(round => <button key={round.id} role="tab" aria-selected={activeRound.id === round.id} onClick={() => { setActiveRoundId(round.id); setActiveId(round.pitchIds[0]); setPractice(false); }} className={`round-tab ${activeRound.id === round.id ? "round-tab-active" : ""}`}><span>{round.number}</span><strong>{round.label}</strong><small>{round.audience}</small></button>)}
-                </div>
-                <div className="round-brief-grid">
-                  <div className="round-brief-card"><div className="eyebrow">QUEM ESTÁ TE OUVINDO</div><h3 className="mt-3 font-serif text-3xl tracking-[-0.03em]">{activeRound.audience}</h3><p className="mt-4 text-sm leading-6 text-[#292827]/70">{activeRound[language === "en" ? "context" : "context"][language]}</p><div className="mt-5 border-t border-[#292827]/10 pt-4"><div className="eyebrow">O QUE ESSA PESSOA PROCURA</div><div className="mt-3 flex flex-wrap gap-2">{activeRound.looksFor.map(signal => <span key={signal} className="round-signal">{signal}</span>)}</div></div></div>
-                  <div className="round-brief-card round-brief-card-accent"><div className="eyebrow">OBJETIVO DO ROUND</div><h3 className="mt-3 font-serif text-3xl tracking-[-0.03em]">{activeRound.purpose}</h3><p className="mt-5 text-sm leading-6 text-[#292827]/70">{activeRound.guidance[language]}</p><div className="mt-5 border-t border-[#292827]/10 pt-4"><div className="eyebrow">PERGUNTAS PROVÁVEIS</div><div className="mt-3 space-y-2">{activeRound.questions.map((question, index) => <div key={question} className="round-question"><span>0{index + 1}</span><strong>{question}</strong></div>)}</div></div></div>
-                </div>
-                <div className="mt-10 flex items-end justify-between border-b border-[#292827]/10 pb-5"><div><div className="eyebrow">PITCHES RECOMENDADOS</div><h3 className="mt-2 font-serif text-3xl tracking-[-0.03em]">Treine a resposta certa para esta conversa.</h3></div><div className="hidden items-center gap-2 text-xs font-bold text-[#292827]/55 sm:flex"><Headphones size={15} /> áudio nativo do navegador</div></div>
-                <div className="mt-6 grid gap-6 xl:grid-cols-[280px_1fr]">
-                  <div className="space-y-2">{roundPitches.map((item, index) => <button key={item.id} onClick={() => { setActiveId(item.id); setPractice(false); }} className={`choice-card ${roundActive.id === item.id ? "choice-active" : ""}`}><span className="choice-number">0{index + 1}</span><span className="min-w-0"><span className="block text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#d96c4f]">{item.tag ?? "PITCH"}</span><span className="mt-1 block text-sm font-bold leading-5">{item.title}</span></span><ChevronDown className="ml-auto shrink-0 opacity-40" size={16} /></button>)}</div>
-                  <article className="answer-card"><div className="flex items-start justify-between gap-4"><div><div className="eyebrow">{language === "en" ? "ENGLISH / SPOKEN VERSION" : "PORTUGUÊS / VERSÃO FALADA"}</div><h3 className="mt-3 max-w-2xl font-serif text-3xl leading-tight tracking-[-0.03em] sm:text-4xl">{roundActive.title}</h3></div><div className="audio-bars" data-playing={playingId === roundActive.id}>{[1,2,3,4,5,6,7].map(n => <i key={n} style={{ height: `${9 + (n % 4) * 4}px` }} />)}</div></div><div className="loop-strip" aria-label="Ciclo de prática"><span className="loop-step loop-current"><b>01</b> escolher</span><span className="loop-rule" /><span className="loop-step"><b>02</b> ouvir</span><span className="loop-rule" /><span className="loop-step"><b>03</b> praticar</span><span className="loop-rule" /><span className="loop-step"><b>04</b> seguir</span></div><p className={`answer-copy ${practice ? "answer-blurred" : ""}`}>{renderSpokenAnswer(roundActive[language], language)}</p>{practice && <div className="practice-overlay"><Mic2 size={22} /><strong>Agora é sua vez.</strong><span>Fale usando o contexto e a altitude deste round.</span></div>}<div className="mt-8 flex flex-wrap items-center gap-3 border-t border-[#292827]/10 pt-5"><button onClick={() => handleSpeak(roundActive)} className="coral-btn">{playingId === roundActive.id ? <Pause size={16} fill="currentColor" /> : <Volume2 size={16} />} {playingId === roundActive.id ? "Pausar áudio" : "Ouvir resposta"}</button><button onClick={() => setPractice(!practice)} className="outline-btn">{practice ? <BookOpen size={16} /> : <Mic2 size={16} />} {practice ? "Mostrar resposta" : "Praticar sem olhar"}</button><div className="voice-controls"><label htmlFor="round-voice">Voz</label><select id="round-voice" value={activeVoice?.name ?? selectedVoiceName} onChange={e => setSelectedVoiceName(e.target.value)} className="voice-select" disabled={!voicesForLanguage.length}><option value="">{voicesForLanguage.length ? "Escolha uma voz" : voices.length ? "Sem voz para este idioma" : "Voz padrão do navegador"}</option>{voicesForLanguage.map(voice => <option key={`${voice.name}-${voice.lang}`} value={voice.name}>{voice.name} · {voice.lang}</option>)}</select><button onClick={handleTestVoice} className="test-voice-btn" title="Testar voz" aria-label="Testar voz"><Headphones size={14} /></button></div><div className="speed-control"><label htmlFor="round-speed">Ritmo</label><select id="round-speed" value={speed} onChange={e => setSpeed(Number(e.target.value))} className="speed-select"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1">1×</option><option value="1.15">1.15×</option></select></div></div></article>
-                </div>
-              </div>
+              <InterviewRoundsModule
+                language={language}
+                onSelectPitch={pitchId => {
+                  setActiveId(pitchId);
+                  setSection("pitches");
+                  setPractice(false);
+                  window.scrollTo({ top: 400, behavior: "smooth" });
+                }}
+                speakFn={(txt, lang, spd) => speak(txt, lang, spd, activeVoice)}
+              />
             ) : section === "pitches" || section === "qa" ? (
               <>
+                {/* Seletor de Mercado Internacional (Target Country Tuning) */}
+                {section === "pitches" && (
+                  <div className="mb-8">
+                    <InternationalMarketSelector
+                      language={language}
+                      onOpenLexicon={() => setIsLexiconOpen(true)}
+                      speakFn={(txt, lang, spd) => speak(txt, lang, spd, activeVoice)}
+                    />
+                  </div>
+                )}
                 <div className="mb-8 flex flex-col justify-between gap-5 border-b border-[#292827]/10 pb-6 sm:flex-row sm:items-end">
                   <div>
                     <div className="eyebrow">
@@ -1107,6 +1118,14 @@ export default function Home() {
         spokenCount={spokenCount}
         sessionSeconds={sessionSeconds}
         onResetAll={handleResetSession}
+      />
+
+      {/* Modal de Dicionário Global de Termos Técnicos */}
+      <GlobalLexiconModal
+        isOpen={isLexiconOpen}
+        onClose={() => setIsLexiconOpen(false)}
+        language={language}
+        speakFn={(txt, lang, spd) => speak(txt, lang, spd, activeVoice)}
       />
     </div>
   );
