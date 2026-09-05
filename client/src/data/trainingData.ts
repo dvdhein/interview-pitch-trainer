@@ -586,10 +586,21 @@ export const trainingModules: TrainingModule[] = [
         a: "I have strong skills and experience in protecting sensitive enterprise assets.",
       },
       {
+        t: "ord",
+        q: "Monte a frase (David's Core Strengths):",
+        a: "One of my strengths is solving complex problems and working with different teams.",
+      },
+      {
         t: "say",
         q: "Q1: What are your biggest strengths and your working style? Answer in 30 seconds.",
         starter:
           "One of my strongest assets is taking full ownership from start to finish. I am good at building trust with engineering teams...",
+      },
+      {
+        t: "say",
+        q: "⚡ Elevator Pitch (30–45s): Fale sua introdução em voz alta com confiança.",
+        starter:
+          "My name is David. I’m an Information Security Architect, and I have more than 22 years of experience in technology and cybersecurity. I have worked mainly in highly regulated industries, such as finance, healthcare, pharmaceuticals, and retail. In my current role, I work with security architecture, data protection, and AI security. I also work with AI Agents and Policy-as-Code to improve security governance. One of my strengths is solving complex problems and working with different teams. I also enjoy learning new technologies and finding practical solutions. Now, I’m looking for an opportunity where I can use my experience, continue learning, and contribute to the business. That’s a little about me.",
       },
     ],
   },

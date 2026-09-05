@@ -33,6 +33,7 @@ export const cvTracks: CVTrack[] = [
     description:
       "Navegue livremente por todos os pitches desenvolvidos para os seus modelos de CV.",
     itemIds: [
+      "first_intro",
       "executive",
       "technical",
       "ai",
@@ -56,7 +57,7 @@ export const cvTracks: CVTrack[] = [
     sourceCvFile: "David_Hein_Crem_CV_GenAI_Governance_EN.md",
     description:
       "Foco nas palavras-chave mais estratégicas: Emergent Architecture, GenAI Guardrails, Azure AI Foundry, Platform TPM e Jornada do Arquiteto.",
-    itemIds: ["executive", "ai", "tpm_platform", "the_ultimate_pitch"],
+    itemIds: ["first_intro", "executive", "ai", "tpm_platform", "the_ultimate_pitch"],
   },
   {
     id: "solutions_architect",
@@ -67,7 +68,7 @@ export const cvTracks: CVTrack[] = [
     sourceCvFile: "David_Hein_Crem_CV_Aplin_Solutions_Architect_EN.md",
     description:
       "Foco em desenho estrutural end-to-end, gestão de parceiros, SABSA/TOGAF, resiliência de sistemas e governança com ADRs.",
-    itemIds: ["technical", "solutions_aplin", "executive"],
+    itemIds: ["first_intro", "technical", "solutions_aplin", "executive"],
   },
   {
     id: "principal_engineer",
@@ -79,7 +80,7 @@ export const cvTracks: CVTrack[] = [
     sourceCvFile: "David_Hein_Crem_CV_Turbi_Principal_Security_Engineer.md",
     description:
       "Foco na trincheira técnica: infraestrutura crítica (PIX/mTLS/HSMs), Kubernetes/GKE hardening, Full Cycle e Shift-left.",
-    itemIds: ["principal_turbi", "pix_scale", "technical"],
+    itemIds: ["first_intro", "principal_turbi", "pix_scale", "technical"],
   },
   {
     id: "brazil_executive",
@@ -91,7 +92,7 @@ export const cvTracks: CVTrack[] = [
     sourceCvFile: "David_Hein_Crem_Curriculo_26_Updated_PT.md",
     description:
       "Trajetória sólida de 22+ anos conectando governança (BACEN, LGPD, PCI) a valor de negócio e liderança por influência.",
-    itemIds: ["brazil_exec_pitch", "the_ultimate_pitch", "video_3min_pitch"],
+    itemIds: ["first_intro", "brazil_exec_pitch", "the_ultimate_pitch", "video_3min_pitch"],
   },
   {
     id: "international_culture",
@@ -103,11 +104,21 @@ export const cvTracks: CVTrack[] = [
     sourceCvFile: "preparacao_entrevista_tech_lead_si.md",
     description:
       "Comunicação não-violenta, como explicar o PIX em termos universais e respostas comportamentais no método STAR.",
-    itemIds: ["pix_foreigners", "the_ultimate_pitch", "technical"],
+    itemIds: ["first_intro", "pix_foreigners", "the_ultimate_pitch", "technical"],
   },
 ];
 
 export const allPitches: PracticeItem[] = [
+  {
+    id: "first_intro",
+    trackId: "all",
+    trackLabel: "My First Introduction",
+    tag: "30–45 SEC ELEVATOR PITCH",
+    title: "My first introduction (Direct & natural)",
+    en: "My name is David. I’m an Information Security Architect, and I have more than 22 years of experience in technology and cybersecurity. I have worked mainly in highly regulated industries, such as finance, healthcare, pharmaceuticals, and retail. In my current role, I work with security architecture, data protection, and AI security. I also work with AI Agents and Policy-as-Code to improve security governance. One of my strengths is solving complex problems and working with different teams. I also enjoy learning new technologies and finding practical solutions. Now, I’m looking for an opportunity where I can use my experience, continue learning, and contribute to the business. That’s a little about me.",
+    pt: "Meu nome é David. Sou Arquiteto de Segurança da Informação e tenho mais de 22 anos de experiência em tecnologia e cibersegurança. Atuei principalmente em setores altamente regulados, como financeiro, saúde, farmacêutico e varejo. No meu papel atual, trabalho com arquitetura de segurança, proteção de dados e segurança de IA. Também atuo com Agentes de IA e Policy-as-Code para aprimorar a governança de segurança. Um dos meus pontos fortes é resolver problemas complexos e trabalhar com diferentes equipes. Também gosto de aprender novas tecnologias e encontrar soluções práticas. Agora, estou buscando uma oportunidade onde eu possa aplicar minha experiência, continuar aprendendo e gerar valor para o negócio. Essa é uma síntese sobre mim.",
+    tips: "Sua apresentação direta, autêntica e conversacional de 30–45s. Perfeita para quebrar o gelo em qualquer entrevista ou triagem com recrutador.",
+  },
   {
     id: "executive",
     trackId: "genai_tpm",
