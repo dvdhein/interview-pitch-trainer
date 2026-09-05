@@ -34,6 +34,7 @@ export const cvTracks: CVTrack[] = [
       "Navegue livremente por todos os pitches desenvolvidos para os seus modelos de CV.",
     itemIds: [
       "first_intro",
+      "resume_about_me",
       "executive",
       "technical",
       "ai",
@@ -57,7 +58,7 @@ export const cvTracks: CVTrack[] = [
     sourceCvFile: "David_Hein_Crem_CV_GenAI_Governance_EN.md",
     description:
       "Foco nas palavras-chave mais estratégicas: Emergent Architecture, GenAI Guardrails, Azure AI Foundry, Platform TPM e Jornada do Arquiteto.",
-    itemIds: ["first_intro", "executive", "ai", "tpm_platform", "the_ultimate_pitch"],
+    itemIds: ["first_intro", "resume_about_me", "executive", "ai", "tpm_platform", "the_ultimate_pitch"],
   },
   {
     id: "solutions_architect",
@@ -118,6 +119,16 @@ export const allPitches: PracticeItem[] = [
     en: "My name is David. I’m an Information Security Architect, and I have more than 22 years of experience in technology and cybersecurity. I have worked mainly in highly regulated industries, such as finance, healthcare, pharmaceuticals, and retail. In my current role, I work with security architecture, data protection, and AI security. I also work with AI Agents and Policy-as-Code to improve security governance. One of my strengths is solving complex problems and working with different teams. I also enjoy learning new technologies and finding practical solutions. Now, I’m looking for an opportunity where I can use my experience, continue learning, and contribute to the business. That’s a little about me.",
     pt: "Meu nome é David. Sou Arquiteto de Segurança da Informação e tenho mais de 22 anos de experiência em tecnologia e cibersegurança. Atuei principalmente em setores altamente regulados, como financeiro, saúde, farmacêutico e varejo. No meu papel atual, trabalho com arquitetura de segurança, proteção de dados e segurança de IA. Também atuo com Agentes de IA e Policy-as-Code para aprimorar a governança de segurança. Um dos meus pontos fortes é resolver problemas complexos e trabalhar com diferentes equipes. Também gosto de aprender novas tecnologias e encontrar soluções práticas. Agora, estou buscando uma oportunidade onde eu possa aplicar minha experiência, continuar aprendendo e gerar valor para o negócio. Essa é uma síntese sobre mim.",
     tips: "Sua apresentação direta, autêntica e conversacional de 30–45s. Perfeita para quebrar o gelo em qualquer entrevista ou triagem com recrutador.",
+  },
+  {
+    id: "resume_about_me",
+    trackId: "genai_tpm",
+    trackLabel: "Executive Spotlight",
+    tag: "STORYTELLING PROFILE",
+    title: "The executive spotlight (David's journey)",
+    en: "David is an Information Security Architect who has spent more than 22 years protecting mission-critical systems across highly regulated industries. Early in his career, he worked deeply in the financial sector, where digital transactions were under the watchful eye of strict regulatory authorities like the Central Bank of Brazil. At Banco BV, David was the lead architect responsible for the security design of the country's national instant payment system — PIX — and Open Banking. In this high-stakes environment, millions of digital transactions moved in milliseconds. To guarantee absolute resilience, David worked relentlessly to embed non-negotiable cryptographic controls, mutual TLS, and Hardware Security Modules directly into high-throughput microservices — enabling the bank to pass rigorous Central Bank audits with zero disruptions to engineering agility. Having mastered financial security at national scale, David brought his expertise into the omnichannel retail and pharmaceutical worlds. At Grupo Boticário, he architected data protection baselines across more than 50 brands. At Aché Laboratórios Farmacêuticos, proprietary formulas and strict regulatory standards demanded unprecedented digital vigilance. Instead of acting as the department of NO, David revolutionized governance. He pioneered Policy-as-Code and built custom AI agents designed to operate as 24/7 intelligent copilots. Working closely with enterprise architects and software development teams, David implemented multi-layered guardrails using Azure AI Foundry and prompt sanitization. These AI copilots automatically review Architecture Decision Records, instantly flagging architectural risks before code reaches production. Acting as a Platform TPM for the internal Architect’s Journey, he transformed complex security mandates into frictionless Golden Paths. Today, the resilient frameworks David built continue to serve as the gold standard for secure, modern engineering across highly regulated enterprises.",
+    pt: "David é um Arquiteto de Segurança da Informação que dedicou mais de 22 anos à proteção de sistemas de missão crítica em setores altamente regulados. Em uma etapa marcante de sua carreira, atuou no setor financeiro, onde transações digitais eram rigorosamente fiscalizadas pelo Banco Central do Brasil. No Banco BV, David foi o arquiteto líder responsável pelo desenho de segurança da infraestrutura do PIX e do Open Banking. Nesse cenário de altíssima exigência, milhões de transações digitais precisavam ser processadas em milissegundos. Para assegurar resiliência total, David trabalhou na implementação de controles criptográficos avançados, mTLS e módulos de segurança em hardware (HSMs) diretamente em microsserviços de altíssima escala — permitindo que o banco superasse auditorias do BACEN sem frear a velocidade da engenharia. Com a experiência em segurança financeira consolidada, expandiu sua atuação para o Grupo Boticário (protegendo dados em mais de 50 marcas) e para a Aché Laboratórios Farmacêuticos. Em vez de posicionar a segurança como o 'departamento do NÃO', David transformou a governança corporativa. Ele liderou a implementação de Policy-as-Code e desenvolveu agentes inteligentes de IA para atuar como copilotos 24 horas por dia. Implementou guardrails com Azure AI Foundry e sanitização contra prompt injection. Esses copilotos de IA analisam registros de decisão de arquitetura (ADRs) em tempo real, alertando sobre riscos antes de irem para produção. Atuando como Platform TPM da Jornada do Arquiteto, transformou exigências complexas em Golden Paths para os desenvolvedores. Hoje, as soluções desenhadas por David permanecem como padrão de excelência para engenharia moderna em ecossistemas altamente regulados.",
+    tips: "Narrativa épica em formato de case study / spotlight. Perfeito para contar sua história de 22 anos com profundidade, impacto e visão de negócio.",
   },
   {
     id: "executive",
