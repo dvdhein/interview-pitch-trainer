@@ -21,12 +21,14 @@ import { allPitches, type Language, type PracticeItem } from "../data/cvTracks";
 interface InterviewRoundsModuleProps {
   language: Language;
   onSelectPitch: (pitchId: string) => void;
+  onNavigateSection?: (sectionId: string) => void;
   speakFn: (text: string, lang: Language, speed: number) => void;
 }
 
 export const InterviewRoundsModule: React.FC<InterviewRoundsModuleProps> = ({
   language,
   onSelectPitch,
+  onNavigateSection,
   speakFn,
 }) => {
   const [selectedRoundId, setSelectedRoundId] =
@@ -278,6 +280,115 @@ export const InterviewRoundsModule: React.FC<InterviewRoundsModuleProps> = ({
             })}
           </div>
         </div>
+
+        {/* Conexão Contextual com Módulos Especializados da Plataforma */}
+        {activeRound.id === "round_3_technical" && onNavigateSection && (
+          <div className="mt-6 rounded-[3px] border border-[#d96c4f]/30 bg-[#d96c4f]/8 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <span className="rounded bg-[#d96c4f] px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-white">
+                Deep Dive Recomendado para o Round 3
+              </span>
+              <h4 className="mt-1.5 font-serif text-base font-bold text-[#292827]">
+                {language === "en"
+                  ? "Architectural Deep Dive: API & AppSec Hardening"
+                  : "Módulo Técnico Especializado: Arquitetura de API & AppSec"}
+              </h4>
+              <p className="mt-1 text-xs text-[#292827]/70">
+                {language === "en"
+                  ? "Rehearse OWASP API Security Top 10, mTLS, PIX Architecture, Zero Trust and real-world trade-offs."
+                  : "Treine o catálogo OWASP API Security Top 10, mTLS, arquitetura do PIX, Zero Trust e trade-offs técnicos reais."}
+              </p>
+            </div>
+            <button
+              onClick={() => onNavigateSection("apisec")}
+              className="coral-btn shrink-0 text-xs py-2 px-4 shadow-sm"
+            >
+              <span>{language === "en" ? "Open API & AppSec Module" : "Acessar Módulo API & AppSec"}</span>
+              <ArrowRight size={14} />
+            </button>
+          </div>
+        )}
+
+        {activeRound.id === "round_4_executive" && onNavigateSection && (
+          <div className="mt-6 rounded-[3px] border border-[#292827]/25 bg-white p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <span className="rounded bg-[#292827] px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-white">
+                Alinhamento Executivo & Defesa de Board
+              </span>
+              <h4 className="mt-1.5 font-serif text-base font-bold text-[#292827]">
+                {language === "en"
+                  ? "Executive Follow-ups: High-Stakes Objections"
+                  : "Follow-ups Executivos: Perguntas de Pressão do C-Level"}
+              </h4>
+              <p className="mt-1 text-xs text-[#292827]/70">
+                {language === "en"
+                  ? "Prepare for aggressive questions on ROI, budget cuts, communicating risk to directors, and safe GenAI innovation."
+                  : "Prepare-se para perguntas afiadas sobre ROI, cortes de orçamento, comunicação de risco para diretores e inovação com GenAI."}
+              </p>
+            </div>
+            <button
+              onClick={() => onNavigateSection("followups")}
+              className="rounded bg-[#292827] text-white hover:bg-[#d96c4f] shrink-0 text-xs font-bold py-2 px-4 flex items-center gap-1.5 transition"
+            >
+              <span>{language === "en" ? "Practice Executive Follow-ups" : "Praticar Follow-ups Executivos"}</span>
+              <ArrowRight size={14} />
+            </button>
+          </div>
+        )}
+
+        {activeRound.id === "round_1_recruiter" && onNavigateSection && (
+          <div className="mt-6 rounded-[3px] border border-[#292827]/15 bg-white/70 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <span className="rounded bg-[#292827]/10 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-[#292827]">
+                Fundamentos do Recruiter Screening
+              </span>
+              <h4 className="mt-1.5 font-serif text-base font-bold text-[#292827]">
+                {language === "en"
+                  ? "Sentence Starters & Quick Q&A for Natural Flow"
+                  : "Sentence Starters & Respostas Rápidas para Fluência"}
+              </h4>
+              <p className="mt-1 text-xs text-[#292827]/70">
+                {language === "en"
+                  ? "Master natural transition phrases to avoid hesitation and answer common screening questions concisely."
+                  : "Domine frases de transição naturais para eliminar hesitação e responder perguntas comuns com concisão."}
+              </p>
+            </div>
+            <button
+              onClick={() => onNavigateSection("qa")}
+              className="rounded border border-[#292827]/20 bg-white text-[#292827] hover:bg-[#292827] hover:text-white shrink-0 text-xs font-bold py-2 px-4 flex items-center gap-1.5 transition"
+            >
+              <span>{language === "en" ? "Open Sentence Starters" : "Ver Sentence Starters"}</span>
+              <ArrowRight size={14} />
+            </button>
+          </div>
+        )}
+
+        {activeRound.id === "round_2_manager" && onNavigateSection && (
+          <div className="mt-6 rounded-[3px] border border-[#292827]/15 bg-white/70 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <span className="rounded bg-[#292827]/10 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-[#292827]">
+                Prática de Liderança por Influência
+              </span>
+              <h4 className="mt-1.5 font-serif text-base font-bold text-[#292827]">
+                {language === "en"
+                  ? "Roleplay Scenarios: Engineering Friction & Trade-offs"
+                  : "Cenários de Roleplay: Conflito com Engenharia & Trade-offs"}
+              </h4>
+              <p className="mt-1 text-xs text-[#292827]/70">
+                {language === "en"
+                  ? "Test your ability to convince developers to adopt security without direct authority."
+                  : "Teste sua habilidade de convencer desenvolvedores a adotar guardrails sem exercer autoridade direta."}
+              </p>
+            </div>
+            <button
+              onClick={() => onNavigateSection("scenarios")}
+              className="rounded border border-[#292827]/20 bg-white text-[#292827] hover:bg-[#292827] hover:text-white shrink-0 text-xs font-bold py-2 px-4 flex items-center gap-1.5 transition"
+            >
+              <span>{language === "en" ? "Open Roleplay Scenarios" : "Ver Cenários de Roleplay"}</span>
+              <ArrowRight size={14} />
+            </button>
+          </div>
+        )}
 
         {/* STAR Checklist Interativo de Preparação */}
         <div className="mt-6 border-t border-[#292827]/10 pt-5">

@@ -38,6 +38,7 @@ import { ExecutiveFollowUpModule } from "../components/ExecutiveFollowUpModule";
 import { InternationalMarketSelector } from "../components/InternationalMarketSelector";
 import { GlobalLexiconModal } from "../components/GlobalLexiconModal";
 import { InterviewRoundsModule } from "../components/InterviewRoundsModule";
+import { EnglishClassModule } from "../components/EnglishClassModule";
 
 // Q&A Original Preservado
 const qa: PracticeItem[] = [
@@ -333,6 +334,50 @@ function speak(
   window.speechSynthesis.speak(utterance);
 }
 
+export const roadmapPhases = [
+  {
+    phase: "Fase 01 · Estratégia",
+    badge: "ESTRATÉGIA",
+    items: [
+      { id: "market", num: "01", label: "Mercado & Equivalências" },
+      { id: "profile", num: "02", label: "Perfil & 6 Pilares" },
+    ],
+  },
+  {
+    phase: "Fase 02 · The Hook",
+    badge: "PITCHES",
+    items: [
+      { id: "pitches", num: "03", label: "Master Pitches" },
+      { id: "qa", num: "04", label: "Sentence Starters & Q&A" },
+    ],
+  },
+  {
+    phase: "Fase 03 · Os 4 Rounds",
+    badge: "ROUNDS",
+    items: [
+      { id: "rounds", num: "05", label: "Pipeline dos 4 Rounds" },
+      { id: "apisec", num: "06", label: "Deep Dive: API & Cloud" },
+      { id: "followups", num: "07", label: "Follow-ups Executivos" },
+    ],
+  },
+  {
+    phase: "Fase 04 · Arena de Simulação",
+    badge: "SIMULAÇÃO",
+    items: [
+      { id: "training", num: "08", label: "Laboratório Interativo" },
+      { id: "scenarios", num: "09", label: "Cenários de Roleplay" },
+      { id: "coach", num: "10", label: "Notas do Coach" },
+    ],
+  },
+  {
+    phase: "Fase 05 · English Class",
+    badge: "INGLÊS",
+    items: [
+      { id: "english", num: "11", label: "Workday: When + And" },
+    ],
+  },
+];
+
 export default function Home() {
   const [section, setSection] = useState("pitches");
   const [activeRoundId, setActiveRoundId] = useState("hr");
@@ -514,38 +559,45 @@ export default function Home() {
             </span>
           </button>
 
-          {/* Navegação Principal Concisa (Sem Quebra) */}
+          {/* Navegação Principal Alinhada às 4 Fases Internacionais */}
           <nav
-            className="hidden items-center gap-6 lg:flex xl:gap-8"
+            className="hidden items-center gap-5 lg:flex xl:gap-7"
             aria-label="Navegação principal"
           >
-            {              [
-              ["pitches", "Pitches"],
-              ["rounds", "Rounds"],
-              ["training", "Laboratório"],
-              ["followups", "Follow-ups"],
-              ["profile", "My Profile"],
+            {[
+              ["market", "01 Estratégia"],
+              ["pitches", "02 Pitches"],
+              ["rounds", "03 Rounds"],
+              ["training", "04 Simulação"],
             ].map(([id, label]) => (
               <button
                 key={id}
                 onClick={() => goSection(id)}
-                className={`nav-link ${section === id ? "nav-link-active" : ""}`}
+                className={`nav-link ${
+                  section === id ||
+                  (id === "market" && section === "profile") ||
+                  (id === "pitches" && section === "qa") ||
+                  (id === "rounds" && ["apisec", "followups"].includes(section)) ||
+                  (id === "training" && ["scenarios", "coach", "skills"].includes(section))
+                    ? "nav-link-active"
+                    : ""
+                }`}
               >
                 {label}
               </button>
             ))}
 
-            {/* Dropdown "Mais..." para tópicos complementares */}
+            {/* Dropdown "Mais Módulos" */}
             <div className="relative">
               <button
                 onClick={() => setMoreMenuOpen(!moreMenuOpen)}
                 className={`nav-link inline-flex items-center gap-1.5 ${
-                  ["qa", "apisec", "scenarios", "skills", "coach"].includes(section)
+                  ["profile", "qa", "apisec", "followups", "scenarios", "skills", "coach", "english"].includes(section)
                     ? "nav-link-active text-[#292827]"
                     : ""
                 }`}
               >
-                Mais{" "}
+                Mais Módulos{" "}
                 <ChevronDown
                   size={13}
                   className={`transition-transform duration-150 ${
@@ -554,13 +606,19 @@ export default function Home() {
                 />
               </button>
               {moreMenuOpen && (
-                <div className="absolute left-0 top-full mt-3 w-56 rounded-[3px] border border-[#292827]/15 bg-[#f5f0e7] p-2 shadow-xl z-50 animate-in fade-in zoom-in-95">
+                <div className="absolute left-0 top-full mt-3 w-64 rounded-[3px] border border-[#292827]/15 bg-[#f5f0e7] p-2 shadow-xl z-50 animate-in fade-in zoom-in-95">
+                  <div className="px-3 py-1.5 text-[9px] font-extrabold uppercase tracking-wider text-[#292827]/50 border-b border-[#292827]/10 mb-1">
+                    Atalhos Especializados
+                  </div>
                   {[
-                    ["qa", "Quick Q&A"],
-                    ["apisec", "API & AppSec"],
-                    ["scenarios", "Cenários de Roleplay"],
-                    ["skills", "Skill Map"],
-                    ["coach", "Coach Notes"],
+                    ["profile", "02 · Perfil & 6 Pilares"],
+                    ["qa", "04 · Sentence Starters & Q&A"],
+                    ["apisec", "06 · Deep Dive: API & Cloud"],
+                    ["followups", "07 · Follow-ups Executivos"],
+                    ["scenarios", "09 · Cenários de Roleplay"],
+                    ["skills", "Skill Map Completo"],
+                    ["coach", "10 · Notas do Coach"],
+                    ["english", "11 · English Class: When + And"],
                   ].map(([id, label]) => (
                     <button
                       key={id}
@@ -634,30 +692,33 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Menu Mobile */}
+        {/* Menu Mobile Categorizado */}
         {menuOpen && (
-          <div className="border-t border-[#292827]/10 bg-[#f5f0e7] px-5 py-3 lg:hidden">
-            {              [
-              ["pitches", "Master pitches"],
-              ["rounds", "Interview rounds"],
-              ["qa", "Quick Q&A"],
-              ["apisec", "API & AppSec"],
-              ["training", "Laboratório interativo"],
-              ["scenarios", "Cenários de roleplay"],
-              ["followups", "Follow-ups (Deep Dive)"],
-              ["profile", "My profile"],
-              ["skills", "Skill map"],
-              ["coach", "Coach notes"],
-            ].map(([id, label]) => (
-              <button
-                key={id}
-                onClick={() => goSection(id)}
-                className="block w-full border-b border-[#292827]/10 py-3 text-left text-sm font-bold"
-              >
-                {label}
-              </button>
-            ))}
-            <div className="mt-3 flex items-center justify-between pt-2">
+          <div className="max-h-[85vh] overflow-y-auto border-t border-[#292827]/10 bg-[#f5f0e7] px-5 py-4 lg:hidden">
+            <div className="space-y-4">
+              {roadmapPhases.map(phaseGroup => (
+                <div key={phaseGroup.phase} className="border-b border-[#292827]/10 pb-3">
+                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#d96c4f]">
+                    {phaseGroup.phase}
+                  </div>
+                  <div className="mt-1 space-y-1">
+                    {phaseGroup.items.map(item => (
+                      <button
+                        key={item.id}
+                        onClick={() => goSection(item.id)}
+                        className={`flex w-full items-center justify-between py-2 text-left text-sm font-bold transition ${
+                          section === item.id ? "text-[#d96c4f]" : "text-[#292827]"
+                        }`}
+                      >
+                        <span>{item.num}. {item.label}</span>
+                        {section === item.id && <span className="text-xs font-extrabold">●</span>}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 flex items-center justify-between pt-2">
               <span className="text-xs font-bold">
                 Sessão: {sessionFormatted} · {correctAnswers}/{totalAnswered}{" "}
                 acertos
@@ -700,20 +761,22 @@ export default function Home() {
             </div>
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <button
-                onClick={() => handleSpeak(allPitches[0])}
+                onClick={() => goSection("market")}
                 className="coral-btn"
               >
-                <Play size={16} fill="currentColor" /> Ouvir o pitch principal
+                <Globe2 size={16} /> 1. Estratégia & Mercado Alvo
               </button>
               <button
-                onClick={() =>
-                  document
-                    .getElementById("practice")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
+                onClick={() => handleSpeak(allPitches[0])}
+                className="rounded border border-[#292827]/20 bg-white/70 px-4 py-2 text-xs font-bold text-[#292827] hover:bg-[#292827] hover:text-white transition flex items-center gap-2"
+              >
+                <Play size={15} fill="currentColor" /> 2. Ouvir Pitch Principal
+              </button>
+              <button
+                onClick={() => goSection("rounds")}
                 className="text-btn"
               >
-                Ir direto para praticar <ArrowRight size={16} />
+                3. Pipeline dos 4 Rounds <ArrowRight size={16} />
               </button>
             </div>
           </div>
@@ -728,34 +791,36 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="grid gap-10 pt-10 lg:grid-cols-[220px_1fr] lg:gap-16">
+        <div className="grid gap-10 pt-10 lg:grid-cols-[240px_1fr] lg:gap-14">
           <aside className="hidden lg:block">
-            <div className="sticky top-28">
-              <div className="mb-8 text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#292827]/45">
-                Seu roteiro
+            <div className="sticky top-28 space-y-6">
+              <div className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#292827]/45">
+                Roteiro de 4 Fases
               </div>
-              {                [
-                ["pitches", "01", "Master pitches"],
-                ["rounds", "02", "Interview rounds"],
-                ["qa", "03", "Quick Q&A"],
-                ["apisec", "04", "API & AppSec"],
-                ["training", "05", "Laboratório interativo"],
-                ["scenarios", "06", "Cenários de roleplay"],
-                ["followups", "07", "Follow-ups (Deep Dive)"],
-                ["profile", "08", "My profile"],
-                ["skills", "09", "Skill map"],
-                ["coach", "10", "Coach notes"],
-              ].map(([id, num, label]) => (
-                <button
-                  key={id}
-                  onClick={() => goSection(id)}
-                  className={`side-item ${section === id ? "side-active" : ""}`}
-                >
-                  <span>{num}</span>
-                  {label}
-                </button>
-              ))}
-              <div className="mt-16 border-t border-[#292827]/10 pt-5">
+
+              <div className="space-y-5">
+                {roadmapPhases.map(phaseGroup => (
+                  <div key={phaseGroup.phase} className="space-y-1.5">
+                    <div className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-[#d96c4f]">
+                      {phaseGroup.phase}
+                    </div>
+                    <div className="space-y-0.5">
+                      {phaseGroup.items.map(item => (
+                        <button
+                          key={item.id}
+                          onClick={() => goSection(item.id)}
+                          className={`side-item ${section === item.id ? "side-active" : ""}`}
+                        >
+                          <span>{item.num}</span>
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-t border-[#292827]/10 pt-4">
                 <div className="flex items-center gap-2 text-xs font-bold">
                   <span className="status-dot" /> Seu progresso
                 </div>
@@ -775,7 +840,60 @@ export default function Home() {
           </aside>
 
           <section className="min-w-0">
-            {section === "rounds" ? (
+            {section === "market" ? (
+              <div className="space-y-8 animate-in fade-in">
+                <div className="border-b border-[#292827]/10 pb-6">
+                  <div className="eyebrow">
+                    <span className="eyebrow-dot" /> FASE 01 · ESTRATÉGIA DE MERCADO & EQUIVALÊNCIAS CULTURAIS
+                  </div>
+                  <h1 className="mt-3 font-serif text-3xl tracking-tight sm:text-5xl text-[#292827]">
+                    {language === "en"
+                      ? "Target Market Tuning & Cultural Bridge"
+                      : "Calibração de Mercado Alvo & Equivalências"}
+                  </h1>
+                  <p className="mt-3 text-base text-[#292827]/70 max-w-3xl">
+                    {language === "en"
+                      ? "Before opening your mouth in an international interview, calibrate your cultural tone, ownership stance ('I led' vs 'we helped'), and translate local Brazilian realities (BACEN, PIX, LGPD) into global equivalents (Fed/NIST, FedNow, GDPR)."
+                      : "Antes de falar em uma entrevista internacional, calibre seu tom cultural, nível de protagonismo ('eu liderei' em vez de 'nós fizemos') e traduza as realidades do Brasil (BACEN, PIX, LGPD) para as referências globais que os recrutadores e diretores conhecem."}
+                  </p>
+                </div>
+
+                <InternationalMarketSelector
+                  language={language}
+                  onOpenLexicon={() => setIsLexiconOpen(true)}
+                  speakFn={(txt, lang, spd) => speak(txt, lang, spd, activeVoice)}
+                />
+
+                <div className="flex flex-wrap items-center justify-between gap-4 rounded-[3px] border border-[#292827]/15 bg-white p-5">
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#d96c4f]">
+                      Dicionário Corporativo Global
+                    </span>
+                    <h4 className="font-serif text-base font-bold text-[#292827]">
+                      Glossário de Termos Brasileiros & Equivalentes Globais
+                    </h4>
+                    <p className="text-xs text-[#292827]/60">
+                      Consulte como pronunciar e explicar BACEN, PIX, CVM, Open Finance e LGPD em inglês.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setIsLexiconOpen(true)}
+                      className="coral-btn text-xs py-2 px-4 shadow-sm"
+                    >
+                      <Globe2 size={14} /> Abrir Dicionário Completo
+                    </button>
+                    <button
+                      onClick={() => goSection("profile")}
+                      className="rounded bg-[#292827] text-white hover:bg-[#d96c4f] text-xs font-bold py-2.5 px-4 flex items-center gap-1.5 transition"
+                    >
+                      <span>Avançar: Perfil & 6 Pilares</span>
+                      <ArrowRight size={14} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : section === "rounds" ? (
               <InterviewRoundsModule
                 language={language}
                 onSelectPitch={pitchId => {
@@ -784,6 +902,7 @@ export default function Home() {
                   setPractice(false);
                   window.scrollTo({ top: 400, behavior: "smooth" });
                 }}
+                onNavigateSection={secId => goSection(secId)}
                 speakFn={(txt, lang, spd) => speak(txt, lang, spd, activeVoice)}
               />
             ) : section === "pitches" || section === "qa" ? (
@@ -1089,6 +1208,14 @@ export default function Home() {
                   speak(txt, lang, spd, activeVoice, onEnd)
                 }
                 speed={speed}
+              />
+            ) : section === "english" ? (
+              <EnglishClassModule
+                speakFn={(txt, lang, spd, onEnd) =>
+                  speak(txt, lang, spd, activeVoice, onEnd)
+                }
+                speed={speed}
+                onScoreUpdate={handleScoreUpdate}
               />
             ) : section === "skills" ? (
               <SkillMap />
