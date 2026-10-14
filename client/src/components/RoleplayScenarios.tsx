@@ -19,11 +19,32 @@ export function RoleplayScenarios({
   speakFn,
   onRecordSpeech,
 }: RoleplayScenariosProps) {
-  const [selectedId, setSelectedId] = useState("conflict-deadlines");
+  const [selectedId, setSelectedId] = useState(roleplayScenarios[0].id);
+  const [categoryFilter, setCategoryFilter] = useState<
+    RoleplayScenario["category"] | "all"
+  >("all");
   const [markedDone, setMarkedDone] = useState<Record<string, boolean>>({});
+
+  const categories = Array.from(
+    new Set(roleplayScenarios.map(s => s.category))
+  );
+  const visibleScenarios =
+    categoryFilter === "all"
+      ? roleplayScenarios
+      : roleplayScenarios.filter(s => s.category === categoryFilter);
 
   const active =
     roleplayScenarios.find(s => s.id === selectedId) || roleplayScenarios[0];
+
+  const handleFilter = (cat: RoleplayScenario["category"] | "all") => {
+    setCategoryFilter(cat);
+    const first =
+      cat === "all"
+        ? roleplayScenarios[0]
+        : roleplayScenarios.find(s => s.category === cat);
+    if (first && cat !== "all" && active.category !== cat)
+      setSelectedId(first.id);
+  };
 
   const handleMarkSpoken = (id: string) => {
     setMarkedDone(prev => ({ ...prev, [id]: true }));
@@ -48,13 +69,30 @@ export function RoleplayScenarios({
       <div className="grid gap-6 xl:grid-cols-[280px_1fr]">
         {/* Seletor de Cenários */}
         <div className="space-y-2">
-          {roleplayScenarios.map((scen, idx) => (
+          <div className="mb-3 flex flex-wrap gap-1.5">
+            {(["all", ...categories] as const).map(cat => (
+              <button
+                key={cat}
+                onClick={() => handleFilter(cat)}
+                className={`rounded-[2px] border px-2 py-1 text-[10px] font-extrabold uppercase tracking-[0.1em] transition-colors ${
+                  categoryFilter === cat
+                    ? "border-[#d96c4f] bg-[#d96c4f] text-white"
+                    : "border-[#292827]/15 text-[#292827]/70 hover:border-[#d96c4f]"
+                }`}
+              >
+                {cat === "all" ? "Todos" : cat}
+              </button>
+            ))}
+          </div>
+          {visibleScenarios.map(scen => (
             <button
               key={scen.id}
               onClick={() => setSelectedId(scen.id)}
               className={`choice-card ${active.id === scen.id ? "choice-active" : ""}`}
             >
-              <span className="choice-number">0{idx + 1}</span>
+              <span className="choice-number">
+                {String(roleplayScenarios.indexOf(scen) + 1).padStart(2, "0")}
+              </span>
               <span className="min-w-0">
                 <span className="block text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#d96c4f]">
                   {scen.category}
