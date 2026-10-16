@@ -163,15 +163,16 @@ export const roleplayScenarios: RoleplayScenario[] = [
     title: "A Weakness You're Working On",
     question: "What is one weakness you're currently working on?",
     context:
-      "Fraqueza real, não disfarçada de força ('sou perfeccionista'). Mostre consciência + plano concreto + progresso. Nunca algo central para a vaga.",
+      "Descreva o efeito (a mensagem perde clareza), não um rótulo ('sou nervoso'). Limite ao contexto de alta pressão, mostre a rotina que você criou e feche com resultado. Evite: 'I get nervous', 'I'm insecure', 'I freeze'.",
     suggestedAnswerEn:
-      "One thing I'm working on is going too deep into technical detail too early. Because I enjoy architecture, my natural instinct is to explain how a control works. But with executives, that can lose the message. So I changed my approach: I start with the business impact and the decision I need, and I keep the technical depth for the follow-up questions. I prepare a one-line summary before every executive meeting. It's working — my presentations are shorter, and decisions come faster.",
+      "One thing I'm actively working on is how I communicate in high-stakes moments. When I'm presenting to a new audience — for example, senior executives I don't know yet — I sometimes feel the pressure, and my natural reaction is to speed up and add too much detail. When that happens, my main message isn't as clear as I want it to be. So I built a simple routine. Before any important meeting, I write down the one sentence I want people to remember, and I start with it. I limit myself to three key points, and I practice them out loud before the meeting. During the meeting, I slow down on purpose and pause before answering hard questions. It's made a real difference. My presentations are shorter and more direct, and I get to decisions faster. And honestly, I'm practicing this right now — preparing for interviews like this one is part of that work.",
     suggestedAnswerPt:
-      "Uma coisa que estou trabalhando é entrar em detalhe técnico cedo demais. Como gosto de arquitetura, meu instinto natural é explicar como o controle funciona. Mas com executivos, isso pode perder a mensagem. Então mudei a abordagem: começo pelo impacto no negócio e pela decisão que preciso, e deixo a profundidade técnica para as perguntas seguintes. Preparo um resumo de uma linha antes de toda reunião executiva. Está funcionando — minhas apresentações ficaram mais curtas e as decisões, mais rápidas.",
+      "Uma coisa que estou trabalhando ativamente é a forma como me comunico em momentos de alta pressão. Quando apresento para um público novo — por exemplo, executivos que ainda não conheço — às vezes sinto a pressão, e minha reação natural é acelerar e colocar detalhe demais. Quando isso acontece, minha mensagem principal não fica tão clara quanto eu gostaria. Então criei uma rotina simples. Antes de toda reunião importante, escrevo a única frase que quero que as pessoas lembrem e começo por ela. Me limito a três pontos-chave e pratico em voz alta antes. Durante a reunião, desacelero de propósito e faço uma pausa antes de responder perguntas difíceis. Isso fez uma diferença real. Minhas apresentações ficaram mais curtas e diretas, e chego às decisões mais rápido. E sinceramente, estou praticando isso agora — me preparar para entrevistas como esta faz parte desse trabalho.",
     goldenKeyPoints: [
-      "Fraqueza real e não central para a vaga",
-      "Ação concreta (resumo de uma linha, impacto primeiro)",
-      "Evidência de progresso",
+      "Contexto limitado: alta pressão, público novo",
+      "Comportamento, não rótulo: acelerar e detalhar demais",
+      "Rotina: uma frase, três pontos, ensaio, pausa",
+      "Fechar com resultado + 'estou praticando agora'",
     ],
   },
   {
