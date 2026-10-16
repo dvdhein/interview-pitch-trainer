@@ -158,6 +158,25 @@ export const roleplayScenarios: RoleplayScenario[] = [
     ],
   },
   {
+    id: "sw-creativity",
+    category: "Strengths & Weaknesses",
+    title: "Creativity & Thinking Differently",
+    question:
+      "Can you give an example of how you use creativity to solve problems?",
+    context:
+      "Evite o clichê 'I think outside the box' — mostre a criatividade pelo contraste: a solução tradicional vs. a sua ideia. Feche com disciplina (PoCs) para não soar arriscado em ambiente regulado.",
+    suggestedAnswerEn:
+      "One of my biggest strengths is creative problem-solving. When I see a problem, I don't just ask how it's usually solved — I ask if there's a completely different way to look at it. A good example is at Aché. Architecture reviews were slow, and the traditional answer would be to hire more reviewers or add more checklists. Instead, I asked: what if the review could happen automatically, and also teach the architect at the same time? That idea became an AI copilot that reviews Architecture Decision Records, flags security risks before production, and explains how to improve the design. Review times dropped drastically. And I combine creativity with discipline: I test new ideas with small PoCs first, so we only scale what really works.",
+    suggestedAnswerPt:
+      "Um dos meus maiores pontos fortes é a criatividade para resolver problemas. Quando vejo um problema, não pergunto só como ele costuma ser resolvido — pergunto se existe uma forma completamente diferente de enxergá-lo. Um bom exemplo é na Aché. As revisões de arquitetura eram lentas, e a resposta tradicional seria contratar mais revisores ou criar mais checklists. Em vez disso, me perguntei: e se a revisão pudesse acontecer automaticamente e, ao mesmo tempo, ensinar o arquiteto? Essa ideia virou um copiloto de IA que revisa ADRs, aponta riscos de segurança antes da produção e explica como melhorar o desenho. O tempo de revisão caiu drasticamente. E eu combino criatividade com disciplina: testo ideias novas primeiro com PoCs pequenas, para só escalar o que realmente funciona.",
+    goldenKeyPoints: [
+      "'Creative problem-solving', não 'outside the box'",
+      "Contraste: solução tradicional vs. sua ideia",
+      "Exemplo: copiloto de IA para ADRs",
+      "Criatividade com disciplina (PoCs antes de escalar)",
+    ],
+  },
+  {
     id: "sw-weakness",
     category: "Strengths & Weaknesses",
     title: "A Weakness You're Working On",
