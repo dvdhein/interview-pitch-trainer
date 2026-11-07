@@ -14,6 +14,14 @@ export type RoleplayScenario = {
   suggestedAnswerEn: string;
   suggestedAnswerPt: string;
   goldenKeyPoints: string[];
+  star?: { en: StarBreakdown; pt: StarBreakdown };
+};
+
+export type StarBreakdown = {
+  situation: string;
+  task: string;
+  action: string;
+  result: string;
 };
 
 export const roleplayScenarios: RoleplayScenario[] = [
@@ -280,6 +288,26 @@ export const roleplayScenarios: RoleplayScenario[] = [
       "Ações técnicas concretas (HSM, namespaces, gateway)",
       "Resultado: auditorias aprovadas sem perder velocidade",
     ],
+    star: {
+      en: {
+        situation:
+          "At Banco BV, we had to connect the bank to PIX, Brazil's national instant payment system, run by the Central Bank. It processes hundreds of millions of transactions a day, 24/7, and the regulation was very strict.",
+        task: "I was the lead architect for the security design. I had to meet every regulatory control — mutual TLS, HSM-based signing, OAuth2 FAPI — without breaking the requirement of sub-second latency and high availability.",
+        action:
+          "First, I mapped every regulatory requirement to a concrete technical control, so nothing depended on interpretation.\n\nThen I worked side by side with the engineering teams. We moved cryptographic signing into dedicated HSMs, isolated the PIX services in their own Kubernetes namespaces to reduce audit scope, and centralized token validation and rate limiting in the API gateway.\n\nWe ran performance tests with the security controls turned on from the start, so latency problems appeared early, not in production.",
+        result:
+          "We passed every Central Bank audit, kept latency within target, and the engineering teams kept their delivery speed. I learned that security and performance are not opposites if you design them together from day one.",
+      },
+      pt: {
+        situation:
+          "No Banco BV, precisávamos conectar o banco ao PIX, o sistema nacional de pagamentos instantâneos operado pelo Banco Central. Ele processa centenas de milhões de transações por dia, 24/7, e a regulação era muito rígida.",
+        task: "Eu era o arquiteto líder do desenho de segurança. Precisava atender todos os controles regulatórios — mTLS, assinatura com HSM, OAuth2 FAPI — sem quebrar a exigência de latência abaixo de um segundo e alta disponibilidade.",
+        action:
+          "Primeiro, mapeei cada requisito regulatório para um controle técnico concreto, para nada depender de interpretação.\n\nDepois trabalhei lado a lado com os times de engenharia. Levamos a assinatura criptográfica para HSMs dedicados, isolamos os serviços PIX em namespaces próprios no Kubernetes para reduzir o escopo de auditoria e centralizamos validação de tokens e rate limiting no API gateway.\n\nRodamos testes de performance com os controles de segurança ligados desde o início, para os problemas de latência aparecerem cedo, e não em produção.",
+        result:
+          "Passamos em todas as auditorias do BACEN, mantivemos a latência dentro da meta e os times de engenharia mantiveram a velocidade de entrega. Aprendi que segurança e performance não são opostas quando são desenhadas juntas desde o primeiro dia.",
+      },
+    },
   },
   {
     id: "exp-mistake",
@@ -297,6 +325,26 @@ export const roleplayScenarios: RoleplayScenario[] = [
       "Correção concreta (co-criação + automação)",
       "Mudança permanente de comportamento",
     ],
+    star: {
+      en: {
+        situation:
+          "Earlier in my career, the company needed a new security standard for how applications handled sensitive data.",
+        task: "I was responsible for defining that standard and getting the development teams to adopt it.",
+        action:
+          "My mistake was the way I did it: I wrote the standard alone, and it was technically correct, but I published it as a rule without talking to the teams. Adoption was very low, and teams found ways around it.\n\nWhen I saw that, I went back to the teams and asked what was making it hard. We simplified the standard together, removed what didn't add real protection, and turned part of it into automated checks in the CI/CD pipeline, so developers didn't have to remember it manually.",
+        result:
+          "Adoption went up, and the standard actually started protecting data. Since then, I never publish a standard without involving the engineers first. That lesson is the root of how I work with Golden Paths today.",
+      },
+      pt: {
+        situation:
+          "No início da minha carreira, a empresa precisava de um novo padrão de segurança para o tratamento de dados sensíveis nas aplicações.",
+        task: "Eu era responsável por definir esse padrão e fazer os times de desenvolvimento adotá-lo.",
+        action:
+          "Meu erro foi a forma: escrevi o padrão sozinho, tecnicamente correto, mas publiquei como regra sem conversar com os times. A adoção foi muito baixa, e os times deram um jeito de contornar.\n\nQuando percebi, voltei aos times e perguntei o que estava dificultando. Simplificamos o padrão juntos, removemos o que não agregava proteção real e transformamos parte em verificações automáticas na esteira de CI/CD, para os desenvolvedores não dependerem da memória.",
+        result:
+          "A adoção subiu, e o padrão passou a proteger os dados de verdade. Desde então, nunca publico um padrão sem envolver os engenheiros antes. Essa lição é a raiz de como trabalho com Golden Paths hoje.",
+      },
+    },
   },
   {
     id: "exp-not-as-planned",
@@ -315,6 +363,26 @@ export const roleplayScenarios: RoleplayScenario[] = [
       "Ajustar: fases por maturidade + PoCs piloto",
       "Lição: fases com feedback > big-bang",
     ],
+    star: {
+      en: {
+        situation:
+          "At Grupo Boticário, we needed a common data protection baseline across more than 50 omnichannel brands, each with its own systems and priorities.",
+        task: "I was responsible for designing the baseline and leading its rollout across the brands.",
+        action:
+          "My original plan was a single rollout to all brands at once. Very quickly it stalled — the brands had very different maturity levels, and one standard did not fit everyone.\n\nInstead of pushing harder, I paused and changed the plan. I grouped the brands by maturity, started with pilot PoCs in a few of them, and used the results to adjust the baseline before scaling. I also kept leadership informed about the new timeline and why it was better.",
+        result:
+          "The start took a bit longer, but final adoption was much higher, and the baseline fit the real needs of each group. I learned that a phased plan with feedback beats a perfect big-bang plan.",
+      },
+      pt: {
+        situation:
+          "No Grupo Boticário, precisávamos de um baseline comum de proteção de dados para mais de 50 marcas omnichannel, cada uma com seus sistemas e prioridades.",
+        task: "Eu era responsável por desenhar o baseline e liderar a implantação nas marcas.",
+        action:
+          "Meu plano original era implantar em todas as marcas de uma vez. Rapidamente travou — as marcas tinham níveis de maturidade muito diferentes, e um único padrão não servia para todos.\n\nEm vez de forçar, pausei e mudei o plano. Agrupei as marcas por maturidade, comecei com PoCs piloto em algumas delas e usei os resultados para ajustar o baseline antes de escalar. Também mantive a liderança informada sobre o novo cronograma e por que ele era melhor.",
+        result:
+          "O início levou um pouco mais, mas a adoção final foi muito maior, e o baseline passou a atender a necessidade real de cada grupo. Aprendi que um plano em fases com feedback vence um plano perfeito 'big-bang'.",
+      },
+    },
   },
   {
     id: "exp-proud-project",
@@ -332,6 +400,26 @@ export const roleplayScenarios: RoleplayScenario[] = [
       "Copiloto de IA para ADRs com guardrails",
       "Orgulho = mudança de comportamento das pessoas",
     ],
+    star: {
+      en: {
+        situation:
+          "At Aché, architecture reviews were slow and inconsistent. Each architect interpreted the security standards differently, and reviews became a bottleneck before production.",
+        task: "As Platform TPM for the Architect's Journey, my goal was to make reviews faster and more consistent, without lowering the security bar.",
+        action:
+          "I built an AI copilot that reviews Architecture Decision Records automatically. It checks each decision against our standards, flags security risks, and explains to the architect how to improve the design — so it teaches, not just blocks.\n\nBecause it was an AI system handling internal architecture data, I also secured it: guardrails and prompt sanitization in Azure AI Foundry to protect against prompt injection and data leakage.\n\nI rolled it out step by step, collecting feedback from architects and adjusting the rules.",
+        result:
+          "Review times dropped drastically, and documentation quality became consistent across teams. What makes me proud is the change in behavior: security became a guide, not a gate.",
+      },
+      pt: {
+        situation:
+          "Na Aché, as revisões de arquitetura eram lentas e inconsistentes. Cada arquiteto interpretava os padrões de segurança de um jeito, e a revisão virava gargalo antes da produção.",
+        task: "Como Platform TPM da Jornada do Arquiteto, meu objetivo era deixar as revisões mais rápidas e consistentes, sem baixar o nível de segurança.",
+        action:
+          "Construí um copiloto de IA que revisa ADRs automaticamente. Ele compara cada decisão com nossos padrões, aponta riscos de segurança e explica ao arquiteto como melhorar o desenho — ou seja, ensina, não só bloqueia.\n\nComo era um sistema de IA lidando com dados internos de arquitetura, também o protegi: guardrails e sanitização de prompt no Azure AI Foundry contra prompt injection e vazamento de dados.\n\nImplantei em etapas, coletando feedback dos arquitetos e ajustando as regras.",
+        result:
+          "O tempo de revisão caiu drasticamente, e a qualidade da documentação ficou consistente entre os times. O que me orgulha é a mudança de comportamento: a segurança virou guia, não barreira.",
+      },
+    },
   },
   {
     id: "exp-self-learned",
@@ -349,6 +437,26 @@ export const roleplayScenarios: RoleplayScenario[] = [
       "Método: conceito → protótipo → quebrar → consertar",
       "Do estudo à produção",
     ],
+    star: {
+      en: {
+        situation:
+          "When large language models became popular, the company started to see real opportunities in AI, but nobody on the team had hands-on experience, and there was no training program.",
+        task: "I wanted to understand both how to use GenAI and how to secure it, so I could guide the company safely.",
+        action:
+          "I taught myself with a simple method: learn the concept, build something small, break it, and fix it.\n\nI read the official documentation, ran local models with Ollama, and built small prototypes with LangChain. I studied the new risks — prompt injection, data leakage, insecure output handling — and tried to attack my own prototypes to see where they failed.\n\nThen I applied what I learned to a real problem at work.",
+        result:
+          "In a few months, I moved from experiments to production: that self-study became the AI copilot that reviews architecture decisions at Aché. It also made me the reference for GenAI security in the team.",
+      },
+      pt: {
+        situation:
+          "Quando os modelos de linguagem se popularizaram, a empresa começou a enxergar oportunidades reais com IA, mas ninguém no time tinha experiência prática, e não havia programa de treinamento.",
+        task: "Eu queria entender tanto como usar GenAI quanto como protegê-la, para guiar a empresa com segurança.",
+        action:
+          "Aprendi sozinho com um método simples: aprender o conceito, construir algo pequeno, quebrar e consertar.\n\nLi a documentação oficial, rodei modelos locais com Ollama e construí pequenos protótipos com LangChain. Estudei os novos riscos — prompt injection, vazamento de dados, tratamento inseguro de saída — e tentei atacar meus próprios protótipos para ver onde falhavam.\n\nDepois apliquei o aprendizado a um problema real do trabalho.",
+        result:
+          "Em poucos meses, saí dos experimentos para a produção: esse autoestudo virou o copiloto de IA que revisa decisões de arquitetura na Aché. Também me tornei referência em segurança de GenAI no time.",
+      },
+    },
   },
   {
     id: "exp-adapt",
@@ -366,6 +474,26 @@ export const roleplayScenarios: RoleplayScenario[] = [
       "Ouvir primeiro, liderar por influência",
       "Manter o rigor, mudar a entrega",
     ],
+    star: {
+      en: {
+        situation:
+          "I moved from banking to omnichannel retail at Grupo Boticário. In the bank, regulation drove everything. In retail, speed to market drove everything, and more than 50 brands had their own way of working.",
+        task: "I had to bring security and data protection to this new environment without slowing the business down.",
+        action:
+          "I changed my approach from mandate to influence. In the first weeks, I mostly listened: I met the teams, learned their business priorities, and understood where security created friction.\n\nThen, instead of imposing controls, I proposed them through quick PoCs that showed value in their own context. I kept the technical rigor I had from banking, but changed how I delivered it — shorter cycles, simpler language, and business outcomes first.",
+        result:
+          "Teams started to see security as a partner, and adoption was much higher than a top-down approach would have achieved. I learned to keep the rigor and adapt the delivery to the culture.",
+      },
+      pt: {
+        situation:
+          "Saí do setor bancário para o varejo omnichannel no Grupo Boticário. No banco, a regulação ditava tudo. No varejo, a velocidade de mercado ditava tudo, e mais de 50 marcas tinham seu próprio jeito de trabalhar.",
+        task: "Eu precisava levar segurança e proteção de dados para esse novo ambiente sem frear o negócio.",
+        action:
+          "Mudei minha abordagem de imposição para influência. Nas primeiras semanas, eu mais ouvi do que falei: conheci os times, entendi as prioridades de negócio e onde a segurança gerava atrito.\n\nDepois, em vez de impor controles, propus através de PoCs rápidas que mostravam valor no contexto deles. Mantive o rigor técnico do banco, mas mudei a forma de entregar — ciclos mais curtos, linguagem mais simples e resultado de negócio primeiro.",
+        result:
+          "Os times passaram a ver a segurança como parceira, e a adoção foi muito maior do que uma abordagem de cima para baixo teria conseguido. Aprendi a manter o rigor e adaptar a entrega à cultura.",
+      },
+    },
   },
   {
     id: "exp-difficult-decision",
@@ -383,6 +511,65 @@ export const roleplayScenarios: RoleplayScenario[] = [
       "Controles compensatórios + ADR com dono e prazo",
       "Aceite formal do risco pelo negócio",
     ],
+    star: {
+      en: {
+        situation:
+          "A product team needed to launch a feature for a fixed business deadline, but a security review found a risk that couldn't be fully fixed in time.",
+        task: "I had to decide whether to block the launch or find a responsible way to release it. Blocking would hurt the business; releasing without controls would be irresponsible.",
+        action:
+          "First, I ran a quick threat model with the team to measure the real exploit risk, instead of reacting to the worst case.\n\nThen I proposed a middle path: launch with compensating controls — extra monitoring and restricted access — and register the remaining risk in an ADR, with an owner and a fix date.\n\nI presented the options, the risk and the plan to the business owner in business language, and they formally accepted the risk.",
+        result:
+          "We launched on time, nothing was exploited, and we closed the security debt in the next sprint. The decision was hard, but it was transparent and shared — not a security decree.",
+      },
+      pt: {
+        situation:
+          "Um time de produto precisava lançar uma funcionalidade num prazo de negócio fixo, mas a revisão de segurança encontrou um risco que não dava para corrigir totalmente a tempo.",
+        task: "Eu precisava decidir entre bloquear o lançamento ou encontrar uma forma responsável de lançar. Bloquear prejudicaria o negócio; lançar sem controles seria irresponsável.",
+        action:
+          "Primeiro, fiz uma modelagem de ameaças rápida com o time para medir o risco real de exploração, em vez de reagir ao pior cenário.\n\nDepois propus um caminho do meio: lançar com controles compensatórios — monitoramento extra e acesso restrito — e registrar o risco restante numa ADR, com responsável e data de correção.\n\nApresentei as opções, o risco e o plano ao dono do negócio em linguagem de negócio, e ele aceitou formalmente o risco.",
+        result:
+          "Lançamos no prazo, nada foi explorado, e fechamos o débito de segurança na sprint seguinte. A decisão foi difícil, mas transparente e compartilhada — não um decreto da segurança.",
+      },
+    },
+  },
+  {
+    id: "exp-tech-evaluation",
+    category: "Experiences & Problems",
+    title: "Evaluating & Recommending a Solution",
+    question:
+      "Tell me about a time you had to evaluate and recommend a technology solution.",
+    context:
+      "Mostra pensamento estruturado e decisão baseada em evidência. O ponto forte é a matriz de critérios objetivos e o envolvimento dos stakeholders — a decisão não é preferência pessoal. Confirme os detalhes (empresa, ferramenta escolhida, números) com o seu caso real.",
+    suggestedAnswerEn:
+      "In my last company, we needed to improve our security monitoring and incident response. I was responsible for evaluating SIEM and SOAR solutions. I started by gathering requirements from security, IT, and management, then created a comparison matrix with criteria such as functionality, integrations, cost, scalability, and support. I researched vendors, requested demos, reviewed documentation, and assessed risks like implementation complexity and licensing costs. After comparing the options, I recommended the best solution based on evidence and stakeholder needs. As a result, we chose a solution that improved visibility, automated part of the incident response process, and reduced manual work.",
+    suggestedAnswerPt:
+      "Na minha última empresa, precisávamos melhorar o monitoramento de segurança e a resposta a incidentes. Fui responsável por avaliar soluções de SIEM e SOAR. Comecei levantando os requisitos com segurança, TI e gestão, e depois criei uma matriz de comparação com critérios como funcionalidades, integrações, custo, escalabilidade e suporte. Pesquisei fornecedores, solicitei demonstrações, revisei documentação e avaliei riscos como complexidade de implantação e custo de licenciamento. Depois de comparar as opções, recomendei a melhor solução com base em evidências e nas necessidades dos stakeholders. Como resultado, escolhemos uma solução que melhorou a visibilidade, automatizou parte da resposta a incidentes e reduziu o trabalho manual.",
+    goldenKeyPoints: [
+      "Requisitos definidos com os stakeholders antes de olhar fornecedores",
+      "Matriz de comparação com critérios objetivos",
+      "Riscos avaliados: integração, licenciamento, curva de aprendizado",
+      "Decisão baseada em evidência, não em preferência",
+    ],
+    star: {
+      en: {
+        situation:
+          "In my previous company, we wanted to improve how we monitored security attacks and responded to incidents. Our existing process was manual and did not give us enough visibility or automation to respond quickly.",
+        task: "My task was to research, evaluate, and recommend the best SIEM/SOAR solution for our needs. I had to compare functionality, integration capabilities, cost, scalability, ease of use, and vendor support, while considering the needs of the security and IT teams.",
+        action:
+          "First, I defined the requirements with stakeholders, including the security team, IT, and management. I identified our main needs: log ingestion, alerting, incident response automation, integration with our existing tools, reporting, and total cost of ownership.\n\nThen, I researched several SIEM/SOAR vendors and created a comparison matrix. I evaluated each option using the same criteria, checked technical documentation, requested demos, and spoke with vendors to understand implementation effort and support. I also considered the risks of each option, such as integration complexity, licensing costs, and the learning curve for the team.\n\nAfter comparing the options, I prepared a recommendation with the pros, cons, costs, and expected impact of each solution. I presented it to the stakeholders so the final decision was based on clear evidence rather than personal preference.",
+        result:
+          "We selected the solution that best balanced functionality, integration, cost, and scalability. It improved our ability to detect and respond to security incidents, reduced manual work through automation, and gave the team better visibility into alerts and incidents. This experience taught me the importance of defining requirements early, using objective criteria, and involving stakeholders before making an important decision.",
+      },
+      pt: {
+        situation:
+          "Na minha empresa anterior, queríamos melhorar a forma como monitorávamos ataques de segurança e respondíamos a incidentes. O processo existente era manual e não nos dava visibilidade nem automação suficientes para responder rápido.",
+        task: "Minha tarefa era pesquisar, avaliar e recomendar a melhor solução de SIEM/SOAR para nossas necessidades. Eu precisava comparar funcionalidades, capacidade de integração, custo, escalabilidade, facilidade de uso e suporte do fornecedor, considerando as necessidades dos times de segurança e de TI.",
+        action:
+          "Primeiro, defini os requisitos com os stakeholders, incluindo o time de segurança, TI e a gestão. Identifiquei nossas principais necessidades: ingestão de logs, alertas, automação de resposta a incidentes, integração com as ferramentas existentes, relatórios e custo total de propriedade.\n\nDepois, pesquisei vários fornecedores de SIEM/SOAR e criei uma matriz de comparação. Avaliei cada opção com os mesmos critérios, analisei a documentação técnica, solicitei demonstrações e conversei com os fornecedores para entender o esforço de implantação e o suporte. Também considerei os riscos de cada opção, como complexidade de integração, custo de licenciamento e curva de aprendizado do time.\n\nApós comparar as opções, preparei uma recomendação com prós, contras, custos e impacto esperado de cada solução. Apresentei aos stakeholders para que a decisão final fosse baseada em evidências claras, e não em preferência pessoal.",
+        result:
+          "Selecionamos a solução que melhor equilibrava funcionalidade, integração, custo e escalabilidade. Ela melhorou nossa capacidade de detectar e responder a incidentes de segurança, reduziu trabalho manual com automação e deu ao time mais visibilidade sobre alertas e incidentes. Essa experiência me ensinou a importância de definir requisitos cedo, usar critérios objetivos e envolver os stakeholders antes de uma decisão importante.",
+      },
+    },
   },
 
   // ── Technical & Leadership ─────────────────────────────────

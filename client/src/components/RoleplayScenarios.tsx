@@ -154,6 +154,64 @@ export function RoleplayScenarios({
             </p>
           </div>
 
+          {/* Método STAR — versão completa */}
+          {active.star && (
+            <div className="mt-6 border-t border-[#292827]/10 pt-5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="eyebrow">
+                  {language === "en"
+                    ? "STAR METHOD — FULL VERSION"
+                    : "MÉTODO STAR — VERSÃO COMPLETA"}
+                </div>
+                <button
+                  onClick={() => {
+                    const st = active.star![language];
+                    speakFn(
+                      [st.situation, st.task, st.action, st.result].join(" "),
+                      language,
+                      0.9
+                    );
+                  }}
+                  className="flex items-center gap-1.5 rounded-[2px] border border-[#292827]/20 px-3 py-1.5 text-xs font-bold text-[#292827] hover:border-[#d96c4f]"
+                >
+                  <Headphones size={15} /> Ouvir STAR completo
+                </button>
+              </div>
+              <p className="mt-2 text-xs leading-5 text-[#292827]/60">
+                Proporção ideal: Situação + Tarefa ≈ 20%, Ação ≈ 60% (o que VOCÊ
+                fez, em primeira pessoa), Resultado ≈ 20% (impacto +
+                aprendizado). A resposta falada acima é a versão curta.
+              </p>
+              <div className="mt-4 space-y-3">
+                {(
+                  [
+                    ["S", "Situation", "Situação", "situation"],
+                    ["T", "Task", "Tarefa", "task"],
+                    ["A", "Action", "Ação", "action"],
+                    ["R", "Result", "Resultado", "result"],
+                  ] as const
+                ).map(([letter, en, pt, key]) => (
+                  <div
+                    key={key}
+                    className="grid grid-cols-[32px_1fr] gap-3 rounded-[3px] border border-[#292827]/10 bg-white/40 p-3"
+                  >
+                    <span className="flex h-8 w-8 items-center justify-center rounded-[2px] bg-[#d96c4f] font-serif text-lg font-bold text-white">
+                      {letter}
+                    </span>
+                    <div className="min-w-0">
+                      <div className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#d96c4f]">
+                        {language === "en" ? en : pt}
+                      </div>
+                      <p className="mt-1 whitespace-pre-line text-sm leading-6 text-[#292827]/85">
+                        {active.star![language][key]}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Pontos de Ouro (Golden Points) */}
           <div className="mt-6 border-t border-[#292827]/10 pt-5">
             <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-[0.14em] text-[#292827]/60">
