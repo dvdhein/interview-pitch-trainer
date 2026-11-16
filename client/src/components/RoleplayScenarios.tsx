@@ -227,6 +227,47 @@ export function RoleplayScenarios({
             </div>
           )}
 
+          {/* Deep dive técnico por camadas */}
+          {active.deepDive && (
+            <div className="mt-6 border-t border-[#292827]/10 pt-5">
+              <div className="eyebrow">
+                {language === "en"
+                  ? "TECHNICAL DEEP DIVE"
+                  : "DEEP DIVE TÉCNICO"}{" "}
+                — {active.deepDive.title}
+              </div>
+              <p className="mt-2 text-xs leading-5 text-[#292827]/60">
+                Use como roteiro para desenhar no quadro: percorra camada por
+                camada e cite o controle de segurança de cada uma.
+              </p>
+              <div className="mt-4 space-y-3">
+                {active.deepDive.layers.map((layer, i) => (
+                  <div
+                    key={layer.name}
+                    className="rounded-[3px] border border-[#292827]/10 bg-white/40 p-3"
+                  >
+                    <div className="flex flex-wrap items-baseline gap-x-2">
+                      <span className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#d96c4f]">
+                        {String(i + 1).padStart(2, "0")} · {layer.name}
+                      </span>
+                    </div>
+                    <div className="mt-1 font-mono text-xs text-[#292827]/70">
+                      {layer.components}
+                    </div>
+                    <ul className="mt-2 list-disc space-y-1 pl-4 text-sm leading-6 text-[#292827]/85">
+                      {(language === "en"
+                        ? layer.controlsEn
+                        : layer.controlsPt
+                      ).map(c => (
+                        <li key={c}>{c}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Perguntas de follow-up */}
           {active.followUps && (
             <div className="mt-6 border-t border-[#292827]/10 pt-5">

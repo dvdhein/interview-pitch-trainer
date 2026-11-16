@@ -16,6 +16,14 @@ export type RoleplayScenario = {
   goldenKeyPoints: string[];
   star?: { en: StarBreakdown; pt: StarBreakdown };
   followUps?: { question: string; answerEn: string; answerPt: string }[];
+  deepDive?: { title: string; layers: DeepDiveLayer[] };
+};
+
+export type DeepDiveLayer = {
+  name: string;
+  components: string;
+  controlsEn: string[];
+  controlsPt: string[];
 };
 
 export type StarBreakdown = {
@@ -752,6 +760,175 @@ export const roleplayScenarios: RoleplayScenario[] = [
     ],
   },
   {
+    id: "pix-hsm",
+    category: "Fintech & Payments",
+    title: "HSM & Key Custody in the PIX Project",
+    question:
+      "How did you use HSMs to protect the cryptographic keys in the PIX project?",
+    context:
+      "Pergunta técnica de profundidade: querem ver que você entende o ciclo de vida da chave, não só 'usamos HSM'. Estruture em: por que HSM (requisito regulatório + chave nunca sai do hardware) → arquitetura (cluster on-prem em HA + serviço de assinatura dedicado) → performance (sem virar gargalo) → governança (cerimônia de chaves, rotação, auditoria). REVISE: fornecedor do HSM, quantidade de appliances/data centers e os requisitos exatos do Manual de Segurança do PIX que você seguiu.",
+    suggestedAnswerEn:
+      "In PIX, every message we exchanged with the Central Bank's SPI — ISO 20022 messages over the RSFN network — had to be digitally signed with ICP-Brasil certificates, and the connections used mutual TLS. So the private keys were the most critical asset in the whole architecture. I designed the custody around on-premises HSMs in a high-availability cluster across two data centers. Keys were generated inside the HSM and marked as non-exportable, so they never existed outside the hardware. Only one dedicated signing service could talk to the HSMs, through PKCS#11, with connection pooling and persistent sessions, and we load-tested the signing capacity at peak volume so cryptography never became the bottleneck. On the governance side, we ran formal key ceremonies with dual control and segregation of duties, had a certificate rotation runbook with overlap to avoid downtime, and sent every HSM operation to the SIEM. We passed the Central Bank certification and audits, and no private key ever left the HSM.",
+    suggestedAnswerPt:
+      "No PIX, toda mensagem trocada com o SPI do Banco Central — mensagens ISO 20022 pela RSFN — precisava ser assinada digitalmente com certificados ICP-Brasil, e as conexões usavam mTLS. Então as chaves privadas eram o ativo mais crítico de toda a arquitetura. Desenhei a custódia em HSMs on-premises, num cluster de alta disponibilidade entre dois data centers. As chaves eram geradas dentro do HSM e marcadas como não exportáveis, então nunca existiam fora do hardware. Só um serviço de assinatura dedicado podia falar com os HSMs, via PKCS#11, com pool de conexões e sessões persistentes, e fizemos testes de carga da capacidade de assinatura no pico, para a criptografia nunca virar gargalo. Na governança, fazíamos cerimônias formais de chaves com controle dual e segregação de funções, tínhamos um runbook de rotação de certificados com sobreposição para evitar indisponibilidade, e toda operação do HSM ia para o SIEM. Passamos na homologação e nas auditorias do Banco Central, e nenhuma chave privada saiu do HSM.",
+    goldenKeyPoints: [
+      "Assinatura ISO 20022 com certificados ICP-Brasil + mTLS na RSFN",
+      "Chave gerada no HSM e não exportável",
+      "Cluster on-prem em HA entre dois data centers",
+      "Serviço de assinatura dedicado (PKCS#11, pool, sessões persistentes)",
+      "Cerimônia de chaves com controle dual e segregação de funções",
+      "Rotação de certificados com sobreposição + logs no SIEM",
+    ],
+    star: {
+      en: {
+        situation:
+          "At Banco BV, we were connecting the bank to PIX. Every message exchanged with the Central Bank's SPI — ISO 20022 messages over the RSFN network — had to be digitally signed with ICP-Brasil certificates, and the connections required mutual TLS. PIX runs 24/7 with strict response-time requirements, so the signing step was on the critical path of every transaction.",
+        task: "As the lead security architect, I had to design how those private keys would be protected and used: meeting the Central Bank's security requirements, without the HSM becoming a latency bottleneck or a single point of failure.",
+        action:
+          "First, I defined the custody model: on-premises HSMs in a high-availability cluster across two data centers, with keys generated inside the HSM and marked as non-exportable.\n\nThen I designed a dedicated signing service as the only component allowed to talk to the HSMs, through PKCS#11. It used connection pooling and persistent sessions, so we didn't pay the cost of opening a session for each transaction. We load-tested the signing capacity at peak volume and sized the cluster with headroom.\n\nOn governance, I set up formal key ceremonies with dual control and segregation of duties, a certificate rotation runbook with an overlap window to avoid downtime, and integration of all HSM logs with the SIEM. We also tested failover between data centers before go-live.",
+        result:
+          "We passed the Central Bank certification and audits, signing never became the bottleneck in production, and no private key ever left the HSM. The design became the reference for other critical integrations in the bank.",
+      },
+      pt: {
+        situation:
+          "No Banco BV, estávamos conectando o banco ao PIX. Toda mensagem trocada com o SPI do Banco Central — mensagens ISO 20022 pela RSFN — precisava ser assinada digitalmente com certificados ICP-Brasil, e as conexões exigiam mTLS. O PIX funciona 24/7 com requisitos rígidos de tempo de resposta, então a assinatura estava no caminho crítico de toda transação.",
+        task: "Como arquiteto de segurança líder, eu precisava desenhar como essas chaves privadas seriam protegidas e usadas: atendendo os requisitos de segurança do Banco Central, sem o HSM virar gargalo de latência nem ponto único de falha.",
+        action:
+          "Primeiro, defini o modelo de custódia: HSMs on-premises num cluster de alta disponibilidade entre dois data centers, com as chaves geradas dentro do HSM e marcadas como não exportáveis.\n\nDepois desenhei um serviço de assinatura dedicado como único componente autorizado a falar com os HSMs, via PKCS#11. Ele usava pool de conexões e sessões persistentes, para não pagarmos o custo de abrir uma sessão por transação. Fizemos testes de carga da capacidade de assinatura no pico e dimensionamos o cluster com folga.\n\nNa governança, estruturei cerimônias formais de chaves com controle dual e segregação de funções, um runbook de rotação de certificados com janela de sobreposição para evitar indisponibilidade e a integração de todos os logs do HSM com o SIEM. Também testamos o failover entre data centers antes do go-live.",
+        result:
+          "Passamos na homologação e nas auditorias do Banco Central, a assinatura nunca virou gargalo em produção e nenhuma chave privada saiu do HSM. O desenho virou referência para outras integrações críticas do banco.",
+      },
+    },
+    followUps: [
+      {
+        question: "Why on-premises HSMs instead of a cloud HSM?",
+        answerEn:
+          "The connection to the SPI goes through the RSFN, the financial system's private network, which terminated in our data centers. Keeping the HSMs close to that connectivity reduced latency and kept full physical and administrative control of the keys, which simplified the audit evidence for the Central Bank.",
+        answerPt:
+          "A conexão com o SPI passa pela RSFN, a rede privada do sistema financeiro, que chegava nos nossos data centers. Manter os HSMs perto dessa conectividade reduzia a latência e garantia controle físico e administrativo total das chaves, o que simplificava as evidências de auditoria para o Banco Central.",
+      },
+      {
+        question: "What happens if an HSM fails?",
+        answerEn:
+          "The cluster was active-active across two data centers, with the keys replicated securely between HSMs of the same cluster. The signing service detected the failure and routed to the healthy nodes. We tested that failover before go-live and in periodic DR exercises.",
+        answerPt:
+          "O cluster era ativo-ativo entre dois data centers, com as chaves replicadas de forma segura entre os HSMs do mesmo cluster. O serviço de assinatura detectava a falha e direcionava para os nós saudáveis. Testamos esse failover antes do go-live e em exercícios periódicos de DR.",
+      },
+      {
+        question: "How did you make sure the HSM didn't add latency?",
+        answerEn:
+          "Three things: persistent sessions and connection pooling in the signing service, capacity planning based on load tests at peak volume, and signing only what the protocol requires. We monitored signing latency as a business metric, with alerts before it could affect the PIX response time.",
+        answerPt:
+          "Três coisas: sessões persistentes e pool de conexões no serviço de assinatura, planejamento de capacidade com base em testes de carga no pico, e assinar só o que o protocolo exige. Monitorávamos a latência de assinatura como métrica de negócio, com alertas antes que ela afetasse o tempo de resposta do PIX.",
+      },
+      {
+        question: "How do you rotate certificates without downtime?",
+        answerEn:
+          "We generated the new key pair inside the HSM, issued the new ICP-Brasil certificate, and registered it with the Central Bank before the old one expired. During an overlap window both were valid, and we switched the signing service to the new key in a planned change, with rollback ready.",
+        answerPt:
+          "Gerávamos o novo par de chaves dentro do HSM, emitíamos o novo certificado ICP-Brasil e o registrávamos no Banco Central antes do vencimento do antigo. Numa janela de sobreposição os dois eram válidos, e trocávamos o serviço de assinatura para a nova chave numa mudança planejada, com rollback pronto.",
+      },
+      {
+        question: "What is a key ceremony and why does it matter?",
+        answerEn:
+          "It's a formal, documented procedure to generate or manage critical keys, with multiple custodians present — dual control, M-of-N quorum — and segregation of duties, so no single person can create, use or export a key alone. It produces the audit evidence regulators expect.",
+        answerPt:
+          "É um procedimento formal e documentado para gerar ou administrar chaves críticas, com vários custodiantes presentes — controle dual, quórum M-de-N — e segregação de funções, para que nenhuma pessoa sozinha consiga criar, usar ou exportar uma chave. Ele gera a evidência de auditoria que o regulador espera.",
+      },
+    ],
+    deepDive: {
+      title: "HSM no PIX",
+      layers: [
+        {
+          name: "Conectividade com o SPI",
+          components: "RSFN · mTLS · certificados ICP-Brasil",
+          controlsEn: [
+            "Mutual TLS on every connection to the SPI and DICT, authenticating both sides with ICP-Brasil certificates",
+            "TLS private keys protected with the same custody and lifecycle as the signing keys",
+            "Network segmentation: only the PIX integration zone reaches the RSFN",
+          ],
+          controlsPt: [
+            "mTLS em toda conexão com o SPI e o DICT, autenticando os dois lados com certificados ICP-Brasil",
+            "Chaves privadas do TLS com a mesma custódia e ciclo de vida das chaves de assinatura",
+            "Segmentação de rede: só a zona de integração PIX alcança a RSFN",
+          ],
+        },
+        {
+          name: "Assinatura das mensagens",
+          components:
+            "ISO 20022 (pacs.008, pacs.002…) · assinatura digital XML",
+          controlsEn: [
+            "Every outbound message is signed; every inbound message has its signature validated before processing",
+            "Signature guarantees integrity and non-repudiation of each payment instruction",
+            "Validation failures are rejected and logged as security events",
+          ],
+          controlsPt: [
+            "Toda mensagem enviada é assinada; toda mensagem recebida tem a assinatura validada antes do processamento",
+            "A assinatura garante integridade e não repúdio de cada ordem de pagamento",
+            "Falhas de validação são rejeitadas e registradas como evento de segurança",
+          ],
+        },
+        {
+          name: "Serviço de assinatura dedicado",
+          components: "PKCS#11 · pool de conexões · sessões persistentes",
+          controlsEn: [
+            "Single component allowed to call the HSM — reduces attack surface and centralizes audit",
+            "Connection pooling and persistent sessions to avoid per-transaction overhead",
+            "Signing latency monitored as a business metric, with alerts",
+          ],
+          controlsPt: [
+            "Único componente autorizado a chamar o HSM — reduz a superfície de ataque e centraliza a auditoria",
+            "Pool de conexões e sessões persistentes para evitar custo por transação",
+            "Latência de assinatura monitorada como métrica de negócio, com alertas",
+          ],
+        },
+        {
+          name: "Cluster de HSMs on-premises",
+          components:
+            "HSMs certificados (ex.: FIPS 140-2 nível 3) · ativo-ativo · dois data centers",
+          controlsEn: [
+            "Keys generated inside the HSM and non-exportable",
+            "Active-active cluster across two data centers, no single point of failure",
+            "Capacity sized from load tests at peak volume, with headroom",
+          ],
+          controlsPt: [
+            "Chaves geradas dentro do HSM e não exportáveis",
+            "Cluster ativo-ativo entre dois data centers, sem ponto único de falha",
+            "Capacidade dimensionada por testes de carga no pico, com folga",
+          ],
+        },
+        {
+          name: "Ciclo de vida de chaves e certificados",
+          components: "Cerimônia de chaves · controle dual · M-de-N · rotação",
+          controlsEn: [
+            "Formal key ceremonies with multiple custodians and documented evidence",
+            "Segregation of duties: HSM administrators cannot use the keys, and vice versa",
+            "Certificate rotation with an overlap window and registration with the Central Bank before expiry",
+          ],
+          controlsPt: [
+            "Cerimônias formais de chaves com vários custodiantes e evidência documentada",
+            "Segregação de funções: quem administra o HSM não usa as chaves, e vice-versa",
+            "Rotação de certificados com janela de sobreposição e registro no Banco Central antes do vencimento",
+          ],
+        },
+        {
+          name: "Monitoramento, auditoria e DR",
+          components: "SIEM · logs do HSM · exercícios de failover",
+          controlsEn: [
+            "Every HSM operation logged and sent to the SIEM, with alerts for unusual use",
+            "Periodic failover and DR exercises between data centers",
+            "Evidence package ready for Central Bank audits",
+          ],
+          controlsPt: [
+            "Toda operação do HSM registrada e enviada ao SIEM, com alertas para uso incomum",
+            "Exercícios periódicos de failover e DR entre data centers",
+            "Pacote de evidências pronto para as auditorias do Banco Central",
+          ],
+        },
+      ],
+    },
+  },
+  {
     id: "cloud-zero-trust",
     category: "Cloud & Zero Trust",
     title: "Zero Trust Architecture & Workload Identity",
@@ -769,6 +946,171 @@ export const roleplayScenarios: RoleplayScenario[] = [
       "Policy-as-Code (Terraform/OPA) bloqueando antes do apply",
       "Shift-left de segurança na IDE e na esteira de CI/CD",
     ],
+  },
+  {
+    id: "gcp-data-reference",
+    category: "Cloud & Zero Trust",
+    title: "GCP Data Reference Architecture (Security View)",
+    question:
+      "Walk me through a reference architecture for a data platform on GCP. How would you secure it?",
+    context:
+      "Pergunta de quadro branco. Desenhe o fluxo da esquerda para a direita (ingestão → processamento → armazenamento → analytics → consumo) e, em cada camada, cite o controle de segurança. Os quatro pilares que mais impressionam: perímetro contra exfiltração (VPC Service Controls), identidade sem chaves, criptografia com chaves gerenciadas (CMEK) e proteção do dado em nível de coluna e linha. Mencione LGPD e residência de dados (região southamerica-east1, São Paulo). Versão genérica de mercado.",
+    suggestedAnswerEn:
+      "I usually draw it from left to right. Data comes in through Pub/Sub, Datastream or file transfers into a Cloud Storage landing zone; it's processed by Dataflow or Dataproc, orchestrated by Cloud Composer; it's stored in raw and curated zones in Cloud Storage and BigQuery; and it's consumed by Looker and Vertex AI. Then I secure it with four pillars. First, a perimeter: VPC Service Controls around all data projects, so even valid credentials can't copy data out. Second, identity without keys: one service account per pipeline, least privilege, and an organization policy that blocks service account key creation. Third, encryption with customer-managed keys in Cloud KMS — or Cloud HSM for regulated data. And fourth, protection of the data itself: Sensitive Data Protection to discover PII, policy tags for column-level security, dynamic masking and row-level security in BigQuery. Everything is governed by Dataplex, logged with Data Access audit logs, monitored in Security Command Center, and deployed through Terraform with policy checks in the pipeline.",
+    suggestedAnswerPt:
+      "Costumo desenhar da esquerda para a direita. O dado entra por Pub/Sub, Datastream ou transferência de arquivos numa landing zone no Cloud Storage; é processado pelo Dataflow ou Dataproc, orquestrado pelo Cloud Composer; é armazenado em zonas raw e curated no Cloud Storage e no BigQuery; e é consumido pelo Looker e pela Vertex AI. Depois protejo com quatro pilares. Primeiro, perímetro: VPC Service Controls em volta de todos os projetos de dados, para que nem credenciais válidas consigam copiar dados para fora. Segundo, identidade sem chaves: uma service account por pipeline, privilégio mínimo e uma organization policy que bloqueia a criação de chaves de service account. Terceiro, criptografia com chaves gerenciadas pelo cliente no Cloud KMS — ou Cloud HSM para dados regulados. E quarto, proteção do próprio dado: Sensitive Data Protection para descobrir dados pessoais, policy tags para segurança em nível de coluna, mascaramento dinâmico e segurança em nível de linha no BigQuery. Tudo governado pelo Dataplex, registrado com os Data Access audit logs, monitorado no Security Command Center e implantado via Terraform com verificação de políticas na esteira.",
+    goldenKeyPoints: [
+      "Fluxo: ingestão → processamento → armazenamento → analytics → consumo",
+      "VPC Service Controls contra exfiltração",
+      "Identidade sem chaves: service account por pipeline + bloqueio de chaves",
+      "CMEK no Cloud KMS / Cloud HSM",
+      "Sensitive Data Protection + policy tags + mascaramento + row-level security",
+      "Dataplex, audit logs, Security Command Center, Terraform com policy checks",
+    ],
+    followUps: [
+      {
+        question: "How do you prevent data exfiltration?",
+        answerEn:
+          "With VPC Service Controls: a service perimeter around the data projects, so BigQuery and Cloud Storage can only be accessed from inside it, even with valid credentials. Access from outside goes through Access Context Manager levels. I add organization policies, Private Google Access or Private Service Connect for private connectivity, and restricted egress.",
+        answerPt:
+          "Com VPC Service Controls: um perímetro em volta dos projetos de dados, para que BigQuery e Cloud Storage só sejam acessados de dentro dele, mesmo com credenciais válidas. Acesso de fora passa por níveis do Access Context Manager. Somo organization policies, Private Google Access ou Private Service Connect para conectividade privada, e egress restrito.",
+      },
+      {
+        question: "How do you protect personal data (PII) in BigQuery?",
+        answerEn:
+          "First I find it: Sensitive Data Protection runs discovery and classifies the columns. Then I tag them with policy tags in Dataplex, which enforce column-level access, and apply dynamic data masking so most users see masked values. For multi-tenant or regional data, I add row-level security. When possible, I tokenize or de-identify the data before it lands.",
+        answerPt:
+          "Primeiro eu encontro: o Sensitive Data Protection faz a descoberta e classifica as colunas. Depois marco com policy tags no Dataplex, que aplicam controle de acesso por coluna, e uso mascaramento dinâmico para que a maioria dos usuários veja o valor mascarado. Para dados multi-tenant ou regionais, adiciono row-level security. Quando possível, tokenizo ou desidentifico o dado antes de ele chegar.",
+      },
+      {
+        question: "How do you manage the encryption keys?",
+        answerEn:
+          "Google encrypts everything by default, but for regulated data I use CMEK in Cloud KMS, so we control rotation, access and revocation. For the most sensitive keys, Cloud HSM, with FIPS 140-2 Level 3 hardware. If the regulator requires keys outside Google, Cloud EKM with an external key manager. An organization policy can require CMEK for specific services.",
+        answerPt:
+          "O Google criptografa tudo por padrão, mas para dados regulados uso CMEK no Cloud KMS, para controlarmos rotação, acesso e revogação. Para as chaves mais sensíveis, Cloud HSM, com hardware FIPS 140-2 nível 3. Se o regulador exigir chaves fora do Google, Cloud EKM com um gerenciador externo. Uma organization policy pode exigir CMEK para serviços específicos.",
+      },
+      {
+        question: "How do pipelines access data without static keys?",
+        answerEn:
+          "Each pipeline runs with its own service account with least privilege — Dataflow workers, Composer and Dataproc each have a dedicated identity. Workloads on GKE use Workload Identity. Service account key creation is blocked by organization policy, and people access through groups, never individual grants.",
+        answerPt:
+          "Cada pipeline roda com sua própria service account com privilégio mínimo — workers do Dataflow, Composer e Dataproc têm identidades dedicadas. Workloads no GKE usam Workload Identity. A criação de chaves de service account é bloqueada por organization policy, e pessoas acessam por grupos, nunca por permissão individual.",
+      },
+      {
+        question: "How do you know who accessed which data?",
+        answerEn:
+          "I enable Data Access audit logs for BigQuery and Cloud Storage, export them to a protected logging project and to the SIEM, and use Security Command Center for misconfigurations and threats. Dataplex lineage shows where the data came from and where it went, which also helps with LGPD requests.",
+        answerPt:
+          "Habilito os Data Access audit logs de BigQuery e Cloud Storage, exporto para um projeto de logging protegido e para o SIEM, e uso o Security Command Center para configurações incorretas e ameaças. A linhagem do Dataplex mostra de onde o dado veio e para onde foi, o que também ajuda nos pedidos da LGPD.",
+      },
+    ],
+    deepDive: {
+      title: "Dados na GCP",
+      layers: [
+        {
+          name: "Ingestão",
+          components:
+            "Pub/Sub · Datastream · Storage Transfer Service · Cloud Storage (landing)",
+          controlsEn: [
+            "Ingestion through private connectivity (Private Service Connect / Interconnect), no public endpoints",
+            "Dedicated service account per source, with write-only access to the landing zone",
+            "Sensitive Data Protection scan on the landing zone; tokenize PII as early as possible",
+          ],
+          controlsPt: [
+            "Ingestão por conectividade privada (Private Service Connect / Interconnect), sem endpoints públicos",
+            "Service account dedicada por origem, só com escrita na landing zone",
+            "Varredura com Sensitive Data Protection na landing zone; tokenizar dado pessoal o quanto antes",
+          ],
+        },
+        {
+          name: "Processamento",
+          components: "Dataflow · Dataproc · Cloud Composer",
+          controlsEn: [
+            "Workers with private IPs only, in a controlled VPC",
+            "One least-privilege service account per pipeline; no service account keys",
+            "CMEK on staging and temporary buckets; Shielded or Confidential VMs where required",
+          ],
+          controlsPt: [
+            "Workers só com IP privado, numa VPC controlada",
+            "Uma service account de privilégio mínimo por pipeline; sem chaves de service account",
+            "CMEK nos buckets de staging e temporários; Shielded ou Confidential VMs quando exigido",
+          ],
+        },
+        {
+          name: "Armazenamento (data lake)",
+          components: "Cloud Storage (raw / curated) · BigLake",
+          controlsEn: [
+            "Uniform bucket-level access and public access prevention enforced by organization policy",
+            "CMEK with Cloud KMS or Cloud HSM; retention policies and Bucket Lock for regulated data",
+            "Data residency with the resource locations policy (e.g., southamerica-east1)",
+          ],
+          controlsPt: [
+            "Uniform bucket-level access e bloqueio de acesso público por organization policy",
+            "CMEK com Cloud KMS ou Cloud HSM; políticas de retenção e Bucket Lock para dados regulados",
+            "Residência de dados com a policy de localização de recursos (ex.: southamerica-east1)",
+          ],
+        },
+        {
+          name: "Data warehouse e analytics",
+          components: "BigQuery",
+          controlsEn: [
+            "Dataset-level IAM through groups, plus authorized views for controlled sharing",
+            "Column-level security with policy tags and dynamic data masking",
+            "Row-level security for multi-tenant or regional data",
+          ],
+          controlsPt: [
+            "IAM por dataset via grupos, mais authorized views para compartilhamento controlado",
+            "Segurança por coluna com policy tags e mascaramento dinâmico",
+            "Row-level security para dados multi-tenant ou regionais",
+          ],
+        },
+        {
+          name: "Governança",
+          components: "Dataplex · Data Catalog · Sensitive Data Protection",
+          controlsEn: [
+            "Automatic discovery and classification of sensitive data",
+            "Business glossary, data owners and lineage across the pipeline",
+            "Data quality rules and LGPD support (purpose, retention, data subject requests)",
+          ],
+          controlsPt: [
+            "Descoberta e classificação automática de dados sensíveis",
+            "Glossário de negócio, donos dos dados e linhagem ao longo do pipeline",
+            "Regras de qualidade de dados e apoio à LGPD (finalidade, retenção, pedidos dos titulares)",
+          ],
+        },
+        {
+          name: "Consumo",
+          components: "Looker · Vertex AI · APIs",
+          controlsEn: [
+            "Looker connected to BigQuery with user identity (OAuth), so column and row controls still apply",
+            "Vertex AI inside the VPC Service Controls perimeter, with CMEK",
+            "Data products exposed through protected APIs, never direct table access",
+          ],
+          controlsPt: [
+            "Looker conectado ao BigQuery com a identidade do usuário (OAuth), para os controles de coluna e linha continuarem valendo",
+            "Vertex AI dentro do perímetro do VPC Service Controls, com CMEK",
+            "Produtos de dados expostos por APIs protegidas, nunca acesso direto às tabelas",
+          ],
+        },
+        {
+          name: "Controles transversais",
+          components:
+            "VPC Service Controls · Organization Policy · Cloud KMS/HSM/EKM · Audit Logs · Security Command Center · Terraform",
+          controlsEn: [
+            "VPC Service Controls perimeter around all data projects against exfiltration",
+            "Organization policies: block service account keys, enforce CMEK, restrict locations",
+            "Data Access audit logs to a protected project and the SIEM; Security Command Center for posture",
+            "Infrastructure as Code with Terraform and policy-as-code checks before apply",
+          ],
+          controlsPt: [
+            "Perímetro do VPC Service Controls em volta de todos os projetos de dados contra exfiltração",
+            "Organization policies: bloquear chaves de service account, exigir CMEK, restringir localização",
+            "Data Access audit logs para um projeto protegido e para o SIEM; Security Command Center para postura",
+            "Infraestrutura como código com Terraform e verificação de policy-as-code antes do apply",
+          ],
+        },
+      ],
+    },
   },
   {
     id: "questions-for-interviewer",
