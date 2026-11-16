@@ -182,6 +182,21 @@ export function RoleplayScenarios({
                 fez, em primeira pessoa), Resultado ≈ 20% (impacto +
                 aprendizado). A resposta falada acima é a versão curta.
               </p>
+              <ul className="mt-2 list-disc space-y-0.5 pl-4 text-xs leading-5 text-[#292827]/60">
+                <li>
+                  Use frases com “I”: “I prepared”, “I proposed”, “I asked”, “I
+                  aligned”.
+                </li>
+                <li>
+                  Termine sempre com resultado positivo — mensurável, se
+                  possível.
+                </li>
+                <li>
+                  Sem número exato? Use um resultado qualitativo claro: “reduced
+                  manual work”, “improved visibility”, “standardized controls”,
+                  “delivered within the deadline”.
+                </li>
+              </ul>
               <div className="mt-4 space-y-3">
                 {(
                   [
@@ -206,6 +221,32 @@ export function RoleplayScenarios({
                         {active.star![language][key]}
                       </p>
                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Perguntas de follow-up */}
+          {active.followUps && (
+            <div className="mt-6 border-t border-[#292827]/10 pt-5">
+              <div className="eyebrow">
+                {language === "en"
+                  ? "IF THEY ASK FOLLOW-UPS"
+                  : "SE PERGUNTAREM MAIS (FOLLOW-UPS)"}
+              </div>
+              <div className="mt-3 space-y-3">
+                {active.followUps.map(f => (
+                  <div
+                    key={f.question}
+                    className="rounded-[3px] border border-[#292827]/10 bg-white/40 p-3"
+                  >
+                    <div className="text-sm font-bold text-[#292827]">
+                      “{f.question}”
+                    </div>
+                    <p className="mt-1 text-sm leading-6 text-[#292827]/85">
+                      {language === "en" ? f.answerEn : f.answerPt}
+                    </p>
                   </div>
                 ))}
               </div>

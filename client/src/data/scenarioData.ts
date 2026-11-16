@@ -15,6 +15,7 @@ export type RoleplayScenario = {
   suggestedAnswerPt: string;
   goldenKeyPoints: string[];
   star?: { en: StarBreakdown; pt: StarBreakdown };
+  followUps?: { question: string; answerEn: string; answerPt: string }[];
 };
 
 export type StarBreakdown = {
@@ -269,6 +270,44 @@ export const roleplayScenarios: RoleplayScenario[] = [
       "Comunicar cedo, com opções",
       "Exemplo: prazo regulatório do PIX",
     ],
+  },
+  {
+    id: "sw-pressure-yesno",
+    category: "Strengths & Weaknesses",
+    title: "Do You Work Well Under Pressure?",
+    question: "Do you think you work well under pressure?",
+    context:
+      "Pergunta de sim/não: comece com 'Yes' e explique o PORQUÊ (método), depois prove com um STAR curto. Use a mesma história do SIEM/SOAR, mantendo os detalhes coerentes com o cenário 'Evaluating & Recommending a Solution'.",
+    suggestedAnswerEn:
+      "Yes. I work well under pressure because I stay calm, prioritize based on impact and urgency, communicate clearly, and focus on delivering the most important outcomes first. For example, in my previous company we urgently needed better visibility into potential attacks and a faster way to respond. I had to recommend a SIEM/SOAR solution on a tight timeline. I broke the work into clear priorities, focused only on the criteria that mattered most, and kept stakeholders updated regularly. We selected a solution that improved incident visibility and enabled more automated response.",
+    suggestedAnswerPt:
+      "Sim. Trabalho bem sob pressão porque mantenho a calma, priorizo por impacto e urgência, comunico com clareza e foco em entregar primeiro os resultados mais importantes. Por exemplo, na minha empresa anterior precisávamos com urgência de mais visibilidade sobre possíveis ataques e de uma forma mais rápida de responder. Eu tinha que recomendar uma solução de SIEM/SOAR num prazo curto. Dividi o trabalho em prioridades claras, foquei só nos critérios que mais importavam e mantive os stakeholders atualizados com frequência. Selecionamos uma solução que melhorou a visibilidade de incidentes e permitiu uma resposta mais automatizada.",
+    goldenKeyPoints: [
+      "Começar com 'Yes' + o porquê",
+      "Priorizar por impacto e urgência",
+      "Comunicação regular; escalar só o que precisa de decisão",
+      "Pressão é gerenciável com plano claro",
+    ],
+    star: {
+      en: {
+        situation:
+          "In my previous company, we had an urgent security incident where we needed to improve monitoring and response capabilities quickly. There was pressure because the team needed visibility into potential attacks and a faster way to respond.",
+        task: "My task was to evaluate SIEM/SOAR solutions and recommend one that met our security, integration, and budget needs within a tight timeline.",
+        action:
+          "I stayed focused by breaking the work into priorities: defining requirements, researching vendors, building a comparison matrix, requesting demos, and validating integration requirements.\n\nI communicated progress regularly with stakeholders and escalated only the decisions that needed their input.\n\nInstead of trying to analyze every possible option, I focused on the criteria that mattered most: functionality, integrations, cost, scalability, and implementation effort.",
+        result:
+          "We selected a solution that improved incident visibility and enabled more automated response. The experience showed me that pressure is manageable when I have a clear plan, prioritize effectively, and maintain open communication.",
+      },
+      pt: {
+        situation:
+          "Na minha empresa anterior, tivemos um incidente de segurança urgente e precisávamos melhorar rapidamente a capacidade de monitoramento e resposta. Havia pressão porque o time precisava de visibilidade sobre possíveis ataques e de uma forma mais rápida de responder.",
+        task: "Minha tarefa era avaliar soluções de SIEM/SOAR e recomendar uma que atendesse às necessidades de segurança, integração e orçamento dentro de um prazo curto.",
+        action:
+          "Mantive o foco dividindo o trabalho em prioridades: definir requisitos, pesquisar fornecedores, montar uma matriz de comparação, solicitar demonstrações e validar os requisitos de integração.\n\nComuniquei o progresso com frequência aos stakeholders e escalei só as decisões que precisavam da participação deles.\n\nEm vez de tentar analisar todas as opções possíveis, foquei nos critérios que mais importavam: funcionalidades, integrações, custo, escalabilidade e esforço de implantação.",
+        result:
+          "Selecionamos uma solução que melhorou a visibilidade de incidentes e permitiu uma resposta mais automatizada. A experiência me mostrou que a pressão é gerenciável quando tenho um plano claro, priorizo bem e mantenho a comunicação aberta.",
+      },
+    },
   },
 
   // ── Experiences & Problems ─────────────────────────────────
@@ -568,6 +607,107 @@ export const roleplayScenarios: RoleplayScenario[] = [
           "Primeiro, defini os requisitos com os stakeholders, incluindo o time de segurança, TI e a gestão. Identifiquei nossas principais necessidades: ingestão de logs, alertas, automação de resposta a incidentes, integração com as ferramentas existentes, relatórios e custo total de propriedade.\n\nDepois, pesquisei vários fornecedores de SIEM/SOAR e criei uma matriz de comparação. Avaliei cada opção com os mesmos critérios, analisei a documentação técnica, solicitei demonstrações e conversei com os fornecedores para entender o esforço de implantação e o suporte. Também considerei os riscos de cada opção, como complexidade de integração, custo de licenciamento e curva de aprendizado do time.\n\nApós comparar as opções, preparei uma recomendação com prós, contras, custos e impacto esperado de cada solução. Apresentei aos stakeholders para que a decisão final fosse baseada em evidências claras, e não em preferência pessoal.",
         result:
           "Selecionamos a solução que melhor equilibrava funcionalidade, integração, custo e escalabilidade. Ela melhorou nossa capacidade de detectar e responder a incidentes de segurança, reduziu trabalho manual com automação e deu ao time mais visibilidade sobre alertas e incidentes. Essa experiência me ensinou a importância de definir requisitos cedo, usar critérios objetivos e envolver os stakeholders antes de uma decisão importante.",
+      },
+    },
+  },
+  {
+    id: "exp-api-evaluation",
+    category: "Experiences & Problems",
+    title: "Evaluating Options: API Protection",
+    question:
+      "Describe a time you evaluated options to make an informed decision.",
+    context:
+      "Mostre critérios objetivos, trade-offs e envolvimento das pessoas certas. É o mesmo projeto do cenário 'Disagreeing With Your Boss', contado pelo ângulo da análise técnica — mantenha os detalhes coerentes. Controles para citar: autenticação (OAuth 2.0/JWT), autorização (RBAC, object-level), rate limiting em login e reset de senha (brute force, credential stuffing), validação de requisições (schema, tamanho de payload), API gateway, WAF e monitoramento.",
+    suggestedAnswerEn:
+      "In my previous company, we needed to improve the protection of our APIs because they handled sensitive data and were exposed to external clients. I was responsible for evaluating the best security approach. I reviewed the current architecture, identified risks such as inconsistent authentication, limited rate limiting, and lack of centralized controls, and mapped the most sensitive endpoints. Then, I compared implementing security in each service versus using a centralized API gateway or security layer, also considering a WAF. I evaluated each option based on security coverage, scalability, integration, cost, operational complexity, and latency. After building a comparison matrix and discussing the trade-offs with security and development teams, I recommended a centralized approach with strong authentication, authorization, rate limiting, request validation, and monitoring. As a result, we improved API security, reduced manual work, and gained better visibility into suspicious activity.",
+    suggestedAnswerPt:
+      "Na minha empresa anterior, precisávamos melhorar a proteção das nossas APIs, porque elas tratavam dados sensíveis e eram expostas a clientes externos. Fui responsável por avaliar a melhor abordagem de segurança. Revisei a arquitetura atual, identifiquei riscos como autenticação inconsistente, rate limiting limitado e falta de controles centralizados, e mapeei os endpoints mais sensíveis. Depois, comparei implementar a segurança em cada serviço versus usar um API gateway ou camada de segurança centralizada, considerando também um WAF. Avaliei cada opção por cobertura de segurança, escalabilidade, integração, custo, complexidade operacional e latência. Depois de montar uma matriz de comparação e discutir os trade-offs com os times de segurança e desenvolvimento, recomendei uma abordagem centralizada com autenticação forte, autorização, rate limiting, validação de requisições e monitoramento. Como resultado, melhoramos a segurança das APIs, reduzimos trabalho manual e ganhamos mais visibilidade sobre atividades suspeitas.",
+    goldenKeyPoints: [
+      "Riscos mapeados antes de escolher a solução",
+      "Opções: controles por serviço × API gateway centralizado × WAF",
+      "Critérios: cobertura, escalabilidade, integração, custo, complexidade, latência",
+      "Rate limiting em login e reset de senha (brute force, credential stuffing)",
+      "Decisão com matriz de comparação e times envolvidos",
+    ],
+    star: {
+      en: {
+        situation:
+          "In my previous company, we identified that our APIs needed stronger protection because they were exposed to external clients and handled sensitive business data. We needed to reduce risks such as unauthorized access, abuse, brute-force attacks, and excessive resource consumption.",
+        task: "My task was to evaluate the available options and recommend the best approach to protect our APIs. I needed to balance security, performance, user experience, implementation effort, and cost.",
+        action:
+          "First, I reviewed the current API architecture and identified the main risks: inconsistent authentication, lack of centralized security controls, limited rate limiting, and insufficient monitoring. I also mapped the most sensitive endpoints, such as authentication, user data, and administrative functions.\n\nThen, I evaluated different options. One option was to implement security controls directly in each microservice. Another option was to use an API gateway or security layer to centralize authentication, authorization, rate limiting, request validation, and logging. I also considered a WAF as an additional layer for protection against common web attacks.\n\nI compared the options using criteria such as security coverage, integration with our existing infrastructure, scalability, operational complexity, cost, and impact on latency. I created a comparison matrix, reviewed technical documentation, consulted with the security and development teams, and considered the trade-offs of each solution.\n\nBased on this analysis, I recommended a centralized API security approach, with authentication and authorization enforced consistently, rate limiting for sensitive endpoints, request validation, and monitoring and alerting. I presented the recommendation with the risks, benefits, costs, and implementation plan.",
+        result:
+          "The solution improved the security posture of our APIs by standardizing authentication and authorization, reducing exposure to abuse and brute-force attempts, and improving visibility through logs and alerts. It also reduced the operational effort of applying security controls individually in every service. This experience reinforced the importance of evaluating options using clear criteria and involving the right stakeholders before making a security decision.",
+      },
+      pt: {
+        situation:
+          "Na minha empresa anterior, identificamos que nossas APIs precisavam de proteção mais forte, porque eram expostas a clientes externos e tratavam dados sensíveis do negócio. Precisávamos reduzir riscos como acesso não autorizado, abuso, ataques de força bruta e consumo excessivo de recursos.",
+        task: "Minha tarefa era avaliar as opções disponíveis e recomendar a melhor abordagem para proteger nossas APIs. Eu precisava equilibrar segurança, performance, experiência do usuário, esforço de implementação e custo.",
+        action:
+          "Primeiro, revisei a arquitetura atual das APIs e identifiquei os principais riscos: autenticação inconsistente, falta de controles de segurança centralizados, rate limiting limitado e monitoramento insuficiente. Também mapeei os endpoints mais sensíveis, como autenticação, dados de usuários e funções administrativas.\n\nDepois, avaliei diferentes opções. Uma era implementar os controles diretamente em cada microsserviço. Outra era usar um API gateway ou camada de segurança para centralizar autenticação, autorização, rate limiting, validação de requisições e logging. Também considerei um WAF como camada adicional contra ataques web comuns.\n\nComparei as opções com critérios como cobertura de segurança, integração com a infraestrutura existente, escalabilidade, complexidade operacional, custo e impacto na latência. Montei uma matriz de comparação, revisei documentação técnica, consultei os times de segurança e desenvolvimento e considerei os trade-offs de cada solução.\n\nCom base nessa análise, recomendei uma abordagem centralizada de segurança de APIs, com autenticação e autorização aplicadas de forma consistente, rate limiting nos endpoints sensíveis, validação de requisições e monitoramento com alertas. Apresentei a recomendação com riscos, benefícios, custos e plano de implementação.",
+        result:
+          "A solução melhorou a postura de segurança das APIs ao padronizar autenticação e autorização, reduzir a exposição a abuso e força bruta e aumentar a visibilidade com logs e alertas. Também reduziu o esforço operacional de aplicar controles individualmente em cada serviço. A experiência reforçou a importância de avaliar opções com critérios claros e envolver os stakeholders certos antes de uma decisão de segurança.",
+      },
+    },
+    followUps: [
+      {
+        question: "Why did you choose a centralized solution?",
+        answerEn:
+          "Because it created consistent security controls across APIs, reduced duplicated work in each service, and made it easier to manage policies, monitoring, and incident response.",
+        answerPt:
+          "Porque criou controles de segurança consistentes em todas as APIs, reduziu trabalho duplicado em cada serviço e facilitou a gestão de políticas, monitoramento e resposta a incidentes.",
+      },
+      {
+        question: "What trade-offs did you consider?",
+        answerEn:
+          "The centralized solution added a potential latency point and required initial configuration, but it provided better consistency, scalability, and operational control than implementing everything separately in each service.",
+        answerPt:
+          "A solução centralizada adicionava um possível ponto de latência e exigia configuração inicial, mas oferecia mais consistência, escalabilidade e controle operacional do que implementar tudo separadamente em cada serviço.",
+      },
+      {
+        question: "How did you measure success?",
+        answerEn:
+          "I would measure reduced unauthorized access attempts, fewer abuse-related incidents, improved alert visibility, consistent authentication coverage, and the impact on API latency.",
+        answerPt:
+          "Eu mediria a redução de tentativas de acesso não autorizado, menos incidentes de abuso, mais visibilidade de alertas, cobertura consistente de autenticação e o impacto na latência das APIs.",
+      },
+    ],
+  },
+  {
+    id: "exp-disagree-boss",
+    category: "Experiences & Problems",
+    title: "Disagreeing With Your Boss",
+    question: "Tell me about a time you disagreed with your boss.",
+    context:
+      "Apresente como diferença profissional de opinião, nunca conflito pessoal. Diga 'we had different perspectives' ou 'I had a different recommendation' — nunca culpe o gestor. Ouça as restrições dele, traga dados e uma alternativa, e mostre abertura à decisão final.",
+    suggestedAnswerEn:
+      "Yes, I have disagreed with my manager before, but I see disagreement as an opportunity to align on the best decision for the business. On an API protection project, my manager initially preferred applying security controls separately in each service, to move faster. I understood the urgency, but I was concerned it would create inconsistent controls and more maintenance over time. So I asked for time to discuss it, and I prepared a comparison of both approaches — security coverage, effort, scalability and long-term maintenance. I proposed a centralized API gateway, and I also asked about his main constraints, like timeline and budget. We agreed on the centralized approach with a phased plan to meet the business timeline. My manager appreciated that I brought data and a solution, not just a concern.",
+    suggestedAnswerPt:
+      "Sim, já discordei do meu gestor, mas vejo a discordância como uma oportunidade de alinhar a melhor decisão para o negócio. Num projeto de proteção de APIs, meu gestor inicialmente preferia aplicar os controles de segurança separadamente em cada serviço, para andar mais rápido. Eu entendia a urgência, mas me preocupava que isso gerasse controles inconsistentes e mais manutenção ao longo do tempo. Então pedi um tempo para conversarmos e preparei uma comparação das duas abordagens — cobertura de segurança, esforço, escalabilidade e manutenção de longo prazo. Propus um API gateway centralizado e também perguntei quais eram as principais restrições dele, como prazo e orçamento. Concordamos com a abordagem centralizada, com um plano em fases para cumprir o prazo do negócio. Meu gestor valorizou que eu trouxe dados e uma solução, e não só uma preocupação.",
+    goldenKeyPoints: [
+      "Diferença profissional de opinião, não conflito pessoal",
+      "Ouvir as restrições do gestor (prazo, orçamento)",
+      "Comparação com dados + alternativa concreta",
+      "Acordo: centralizado em fases — sem culpar ninguém",
+    ],
+    star: {
+      en: {
+        situation:
+          "In my previous company, while working on the API protection project, my manager initially preferred a faster approach that involved applying security controls separately in each service. I understood the desire to move quickly, but I was concerned that it could create inconsistent controls and more maintenance work over time.",
+        task: "My task was to ensure we made a secure and scalable decision without delaying the project unnecessarily.",
+        action:
+          "I asked for time to discuss my concerns professionally. I prepared a comparison of the two approaches, including security coverage, implementation effort, scalability, operational complexity, and long-term maintenance.\n\nI explained that a centralized API gateway or security layer could standardize authentication, authorization, rate limiting, and monitoring across the APIs. I also acknowledged the benefits of the faster approach and asked about the main constraints, such as timeline and budget.\n\nAfter reviewing the analysis, we agreed to move forward with a centralized approach, but with a phased implementation plan to reduce immediate impact and meet the business timeline.",
+        result:
+          "The decision improved consistency and scalability of our API security controls while still addressing the need to deliver quickly. My manager appreciated that I brought a solution and data rather than only raising a concern. I learned that disagreeing respectfully, listening to constraints, and proposing alternatives is more effective than simply opposing an idea.",
+      },
+      pt: {
+        situation:
+          "Na minha empresa anterior, durante o projeto de proteção de APIs, meu gestor inicialmente preferia uma abordagem mais rápida, aplicando os controles de segurança separadamente em cada serviço. Eu entendia o desejo de andar rápido, mas me preocupava que isso gerasse controles inconsistentes e mais trabalho de manutenção ao longo do tempo.",
+        task: "Minha tarefa era garantir que tomássemos uma decisão segura e escalável, sem atrasar o projeto desnecessariamente.",
+        action:
+          "Pedi um tempo para discutir minhas preocupações de forma profissional. Preparei uma comparação das duas abordagens, incluindo cobertura de segurança, esforço de implementação, escalabilidade, complexidade operacional e manutenção de longo prazo.\n\nExpliquei que um API gateway ou camada de segurança centralizada poderia padronizar autenticação, autorização, rate limiting e monitoramento em todas as APIs. Também reconheci os benefícios da abordagem mais rápida e perguntei quais eram as principais restrições, como prazo e orçamento.\n\nDepois de revisarmos a análise, concordamos em seguir com a abordagem centralizada, mas com um plano de implementação em fases para reduzir o impacto imediato e cumprir o prazo do negócio.",
+        result:
+          "A decisão melhorou a consistência e a escalabilidade dos controles de segurança das APIs, atendendo ao mesmo tempo à necessidade de entregar rápido. Meu gestor valorizou que eu trouxe uma solução e dados, e não apenas uma preocupação. Aprendi que discordar com respeito, ouvir as restrições e propor alternativas é mais eficaz do que simplesmente se opor a uma ideia.",
       },
     },
   },
