@@ -1271,7 +1271,7 @@ function Profile({
   const [isPlaying, setIsPlaying] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const storyEN = `David is an Information Security Architect who has spent more than 22 years protecting mission-critical systems across highly regulated industries.
+  const storyEN = `David is an Information Security Architect who has spent more than 22 years in technology — the last 15 protecting mission-critical systems across highly regulated industries.
 
 In a defining chapter of his career, he worked deeply in the financial sector, where digital transactions were under the watchful eye of strict regulatory authorities like the Central Bank of Brazil. At Banco BV, David was the lead architect responsible for the security design of the country's national instant payment system — PIX — and Open Banking. In this high-stakes environment, millions of digital transactions moved in milliseconds. A single architectural vulnerability or latency bottleneck could paralyze national commerce. To guarantee absolute resilience, David worked relentlessly to embed non-negotiable cryptographic controls, mutual TLS, and Hardware Security Modules directly into high-throughput microservices — enabling the bank to pass rigorous Central Bank audits with zero disruptions to engineering agility.
 
@@ -1283,7 +1283,7 @@ He pioneered the adoption of Policy-as-Code and built custom AI agents designed 
 
 Under David’s architectural guidance, security audits that once took weeks became automated in minutes, while regulatory compliance remained uncompromised. He proved that when security architects, engineering teams, and modern artificial intelligence work in true partnership, enterprise software can innovate at breakneck speed without ever leaving the company's vital assets exposed. Today, the resilient frameworks David built continue to serve as a reference for secure, modern engineering in the companies where he worked.`;
 
-  const storyPT = `David é um Arquiteto de Segurança da Informação que dedicou mais de 22 anos à proteção de sistemas de missão crítica em setores altamente regulados.
+  const storyPT = `David é um Arquiteto de Segurança da Informação que dedicou mais de 22 anos à tecnologia — os últimos 15 protegendo sistemas de missão crítica em setores altamente regulados.
 
 Em uma etapa marcante de sua carreira, atuou no setor financeiro, onde transações digitais eram rigorosamente fiscalizadas pelo Banco Central do Brasil. No Banco BV, David foi o arquiteto líder responsável pelo desenho de segurança da infraestrutura do PIX e do Open Banking. Nesse cenário de altíssima exigência, milhões de transações digitais precisavam ser processadas em milissegundos. Qualquer falha arquitetural ou lentidão poderia paralisar serviços financeiros essenciais. Para assegurar resiliência total, David trabalhou na implementação de controles criptográficos avançados, mTLS e módulos de segurança em hardware (HSMs) diretamente em microsserviços de altíssima escala — permitindo que o banco superasse auditorias do BACEN com louvor, sem frear a velocidade da engenharia.
 
@@ -1373,9 +1373,9 @@ Sob a liderança arquitetural de David, revisões de conformidade que antes leva
         Experiência que conecta risco, arquitetura e inovação.
       </h2>
       <p className="mt-6 max-w-3xl text-base leading-7 text-[#292827]/65">
-        David é um Information Security Architect com mais de 22 anos de
-        carreira em ambientes regulados de finanças, saúde, farmacêutico e
-        varejo. Seu foco combina Enterprise Security Architecture, governança de
+        David é um Information Security Architect com mais de 22 anos em
+        tecnologia — 15 deles em segurança, em ambientes regulados de finanças,
+        saúde, farmacêutico e varejo. Seu foco combina Enterprise Security Architecture, governança de
         GenAI, Architecture-as-Code e decisões técnicas defensáveis.
       </p>
 
@@ -1505,7 +1505,7 @@ Sob a liderança arquitetural de David, revisões de conformidade que antes leva
           {activeTab === "story_en" && (
             <div className="space-y-4 font-sans text-sm leading-7 text-[#292827]/85">
               <p className="text-base font-bold text-[#292827]">
-                David is an Information Security Architect who has spent more than 22 years protecting mission-critical systems across highly regulated industries.
+                David is an Information Security Architect who has spent more than 22 years in technology — the last 15 protecting mission-critical systems across highly regulated industries.
               </p>
               <p>
                 In a defining chapter of his career, he worked deeply in the financial sector, where digital transactions were under the watchful eye of strict regulatory authorities like the Central Bank of Brazil. At <strong>Banco BV</strong>, David was the lead architect responsible for the security design of the country's national instant payment system—<strong>PIX</strong>—and Open Banking. In this high-stakes environment, millions of digital transactions moved in milliseconds. A single architectural vulnerability or latency bottleneck could paralyze national commerce. To guarantee absolute resilience, David worked relentlessly to embed non-negotiable cryptographic controls, <strong>mutual TLS (mTLS)</strong>, and <strong>Hardware Security Modules (HSMs)</strong> directly into high-throughput microservices—enabling the bank to pass rigorous Central Bank audits with zero disruptions to engineering agility.
@@ -1528,7 +1528,7 @@ Sob a liderança arquitetural de David, revisões de conformidade que antes leva
           {activeTab === "story_pt" && (
             <div className="space-y-4 font-sans text-sm leading-7 text-[#292827]/85">
               <p className="text-base font-bold text-[#292827]">
-                David é um Arquiteto de Segurança da Informação que dedicou mais de 22 anos à proteção de sistemas de missão crítica em setores altamente regulados.
+                David é um Arquiteto de Segurança da Informação que dedicou mais de 22 anos à tecnologia — os últimos 15 protegendo sistemas de missão crítica em setores altamente regulados.
               </p>
               <p>
                 Em uma etapa marcante de sua carreira, atuou no setor financeiro, onde transações digitais eram rigorosamente fiscalizadas pelo Banco Central do Brasil. No <strong>Banco BV</strong>, David foi o arquiteto líder responsável pelo desenho de segurança da infraestrutura do <strong>PIX</strong> e do Open Banking. Nesse cenário de altíssima exigência, milhões de transações digitais precisavam ser processadas em milissegundos. Qualquer falha arquitetural ou lentidão poderia paralisar serviços financeiros essenciais. Para assegurar resiliência total, David trabalhou na implementação de controles criptográficos avançados, <strong>mTLS</strong> e módulos de segurança em hardware (<strong>HSMs</strong>) diretamente em microsserviços de altíssima escala — permitindo que o banco superasse auditorias do BACEN com louvor, sem frear a velocidade da engenharia.

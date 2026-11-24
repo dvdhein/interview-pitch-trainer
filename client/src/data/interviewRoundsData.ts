@@ -42,13 +42,13 @@ export const interviewRounds: InterviewRound[] = [
       "Filtrar candidatos com comunicação prolixa, inglês travado ou desalinhamento de senioridade. O recrutador precisa de um elevator pitch direto de 35–45s para avançar.",
     greenLightsEn: [
       "Natural and calm spoken English without corporate robotic jargon",
-      "Immediate authority positioning: 'Information Security Architect with 22+ years'",
+      "Immediate authority positioning: 'Information Security Architect with 22+ years in technology, 15 in security'",
       "Highlights modern AI security and Policy-as-Code right in the opening",
       "Positive, collaborative attitude and clear business motivation",
     ],
     greenLightsPt: [
       "Inglês natural, pausado e sem jargões corporativos robóticos",
-      "Posicionamento imediato de autoridade: 'Information Security Architect com 22+ anos'",
+      "Posicionamento imediato de autoridade: 'Information Security Architect com 22+ anos em tecnologia, 15 em segurança'",
       "Destaque para IA Generativa e Policy-as-Code logo na introdução",
       "Atitude positiva, colaborativa e motivação de negócio transparente",
     ],

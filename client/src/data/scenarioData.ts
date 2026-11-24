@@ -7,7 +7,9 @@ export type RoleplayScenario = {
     | "Leadership & Conflict"
     | "Fintech & Payments"
     | "Cloud & Zero Trust"
-    | "Questions to Ask";
+    | "Questions to Ask"
+    | "AI Lab Security Analyst"
+    | "Turing (Company)";
   title: string;
   question: string;
   context: string;
@@ -48,7 +50,7 @@ export const roleplayScenarios: RoleplayScenario[] = [
       "Claro. Sou Arquiteto de Segurança com mais de 22 anos em tecnologia e cibersegurança, principalmente em setores regulados como bancos, varejo e farmacêutico. Hoje, na Aché, lidero arquitetura de segurança e segurança de IA — construo copilotos de IA que revisam ADRs e uso Policy-as-Code para automatizar a governança. Antes disso, no Banco BV, desenhei a segurança do PIX e do Open Banking. Um dos meus maiores diferenciais é fazer a ponte entre a arquitetura técnica e os objetivos de negócio do C-level. Agora busco uma posição onde eu possa levar essa experiência para um palco maior e continuar aprendendo. Esse é um resumo rápido — posso aprofundar qualquer parte.",
     goldenKeyPoints: [
       "Presente → passado → futuro",
-      "22+ anos em setores regulados",
+      "22+ anos em tecnologia, 15 em segurança",
       "Ponte entre arquitetura técnica e objetivos do C-level",
       "Fechar convidando a próxima pergunta",
     ],
@@ -61,9 +63,9 @@ export const roleplayScenarios: RoleplayScenario[] = [
     context:
       "Aqui eles querem a linha do tempo. Conte em ordem cronológica, com um resultado por etapa, e mostre a lógica da progressão — cada passo prepara o próximo.",
     suggestedAnswerEn:
-      "Of course. I started in technology over 22 years ago, and very early I moved into security, because I saw that every system I touched also had to be protected. A big chapter was Banco BV, where I was the lead architect for the security of PIX, Open Banking and Banking-as-a-Service — mTLS, HSMs and OAuth2 FAPI at national scale, passing every Central Bank audit. Then at Grupo Boticário I standardized data protection baselines across more than 50 brands. Today at Aché I focus on Policy-as-Code, GenAI security and the Architect's Journey, where I act as Platform TPM. The common thread is simple: I take security from the department of NO to a real business enabler.",
+      "Of course. I started in technology over 22 years ago, and since 2011 I've been fully dedicated to information security, because I saw that every system I touched also had to be protected. A big chapter was Banco BV, where I was the lead architect for the security of PIX, Open Banking and Banking-as-a-Service — mTLS, HSMs and OAuth2 FAPI at national scale, passing every Central Bank audit. Then at Grupo Boticário I standardized data protection baselines across more than 50 brands. Today at Aché I focus on Policy-as-Code, GenAI security and the Architect's Journey, where I act as Platform TPM. The common thread is simple: I take security from the department of NO to a real business enabler.",
     suggestedAnswerPt:
-      "Claro. Comecei em tecnologia há mais de 22 anos e cedo migrei para segurança, porque percebi que todo sistema que eu tocava também precisava ser protegido. Um capítulo importante foi o Banco BV, onde fui o arquiteto líder da segurança do PIX, Open Banking e Banking-as-a-Service — mTLS, HSMs e OAuth2 FAPI em escala nacional, passando em todas as auditorias do BACEN. Depois, no Grupo Boticário, padronizei baselines de proteção de dados em mais de 50 marcas. Hoje na Aché foco em Policy-as-Code, segurança de GenAI e na Jornada do Arquiteto, onde atuo como Platform TPM. O fio condutor é simples: tirar a segurança do 'departamento do NÃO' e torná-la viabilizadora do negócio.",
+      "Claro. Comecei em tecnologia há mais de 22 anos e desde 2011 me dedico integralmente à segurança da informação, porque percebi que todo sistema que eu tocava também precisava ser protegido. Um capítulo importante foi o Banco BV, onde fui o arquiteto líder da segurança do PIX, Open Banking e Banking-as-a-Service — mTLS, HSMs e OAuth2 FAPI em escala nacional, passando em todas as auditorias do BACEN. Depois, no Grupo Boticário, padronizei baselines de proteção de dados em mais de 50 marcas. Hoje na Aché foco em Policy-as-Code, segurança de GenAI e na Jornada do Arquiteto, onde atuo como Platform TPM. O fio condutor é simples: tirar a segurança do 'departamento do NÃO' e torná-la viabilizadora do negócio.",
     goldenKeyPoints: [
       "Ordem cronológica com um resultado por etapa",
       "Banco BV → Boticário → Aché",
@@ -78,9 +80,9 @@ export const roleplayScenarios: RoleplayScenario[] = [
     context:
       "Querem autenticidade e motivação de longo prazo. Conte o momento real em que segurança te pegou — personalize com o seu episódio verdadeiro.",
     suggestedAnswerEn:
-      "Honestly, it started from curiosity. Early in my career I was building and running systems, and I kept asking: what happens if someone tries to break this? I realized that security is where technology meets real consequences — money, health data, people's trust. In banking, a single weak control could affect millions of transactions. That sense of responsibility hooked me. And what kept me here for more than 22 years is that security is never finished: the threats change, the technology changes, and you have to keep learning every year.",
+      "Honestly, it started from curiosity. Early in my career I was building and running systems, and I kept asking: what happens if someone tries to break this? I realized that security is where technology meets real consequences — money, health data, people's trust. In banking, a single weak control could affect millions of transactions. That sense of responsibility hooked me. And what has kept me in security for 15 years is that security is never finished: the threats change, the technology changes, and you have to keep learning every year.",
     suggestedAnswerPt:
-      "Sinceramente, começou pela curiosidade. No início da carreira eu construía e operava sistemas e sempre me perguntava: o que acontece se alguém tentar quebrar isso? Percebi que segurança é onde a tecnologia encontra consequências reais — dinheiro, dados de saúde, a confiança das pessoas. Num banco, um único controle fraco pode afetar milhões de transações. Esse senso de responsabilidade me conquistou. E o que me mantém aqui há mais de 22 anos é que segurança nunca termina: as ameaças mudam, a tecnologia muda, e é preciso aprender todo ano.",
+      "Sinceramente, começou pela curiosidade. No início da carreira eu construía e operava sistemas e sempre me perguntava: o que acontece se alguém tentar quebrar isso? Percebi que segurança é onde a tecnologia encontra consequências reais — dinheiro, dados de saúde, a confiança das pessoas. Num banco, um único controle fraco pode afetar milhões de transações. Esse senso de responsabilidade me conquistou. E o que me mantém em segurança há 15 anos é que segurança nunca termina: as ameaças mudam, a tecnologia muda, e é preciso aprender todo ano.",
     goldenKeyPoints: [
       "Curiosidade genuína → responsabilidade",
       "Segurança = consequências reais para o negócio e pessoas",
@@ -146,9 +148,9 @@ export const roleplayScenarios: RoleplayScenario[] = [
     context:
       "Seu argumento de venda final. Três provas concretas ligadas à vaga, sem arrogância e sem comparar com outros candidatos.",
     suggestedAnswerEn:
-      "I think I bring a rare combination. First, depth: more than 22 years securing critical systems, including PIX and Open Banking at national scale. Second, modern practice: I don't just write policies — I automate them with Policy-as-Code and AI copilots, so engineering moves fast and safely. And third, communication: one of my strongest assets is bridging the gap between technical architecture and C-level business goals. So you get someone who can design the architecture, sit with the developers, and explain the risk to the board.",
+      "I think I bring a rare combination. First, depth: 22 years in technology and 15 securing critical systems, including PIX and Open Banking at national scale. Second, modern practice: I don't just write policies — I automate them with Policy-as-Code and AI copilots, so engineering moves fast and safely. And third, communication: one of my strongest assets is bridging the gap between technical architecture and C-level business goals. So you get someone who can design the architecture, sit with the developers, and explain the risk to the board.",
     suggestedAnswerPt:
-      "Acredito que trago uma combinação rara. Primeiro, profundidade: mais de 22 anos protegendo sistemas críticos, incluindo PIX e Open Banking em escala nacional. Segundo, prática moderna: não fico só nas políticas — eu as automatizo com Policy-as-Code e copilotos de IA, para a engenharia andar rápido e com segurança. E terceiro, comunicação: um dos meus maiores diferenciais é fazer a ponte entre a arquitetura técnica e os objetivos de negócio do C-level. Vocês ganham alguém que desenha a arquitetura, senta com os desenvolvedores e explica o risco para a diretoria.",
+      "Acredito que trago uma combinação rara. Primeiro, profundidade: 22 anos em tecnologia e 15 protegendo sistemas críticos, incluindo PIX e Open Banking em escala nacional. Segundo, prática moderna: não fico só nas políticas — eu as automatizo com Policy-as-Code e copilotos de IA, para a engenharia andar rápido e com segurança. E terceiro, comunicação: um dos meus maiores diferenciais é fazer a ponte entre a arquitetura técnica e os objetivos de negócio do C-level. Vocês ganham alguém que desenha a arquitetura, senta com os desenvolvedores e explica o risco para a diretoria.",
     goldenKeyPoints: [
       "Profundidade + prática moderna + comunicação",
       "Provas concretas (PIX, Policy-as-Code, copilotos de IA)",
@@ -1128,6 +1130,436 @@ export const roleplayScenarios: RoleplayScenario[] = [
       "Demonstra visão de liderança e cultura organizacional",
       "Avalia a maturidade de DevSecOps da empresa",
       "Foco em entregas claras nos primeiros 90 dias",
+    ],
+  },
+
+  // ── AI Lab Security Analyst (vaga: Cybersecurity Analyst para AI lab) ──
+  {
+    id: "ailab-overqualified",
+    category: "AI Lab Security Analyst",
+    title: "You Look Overqualified",
+    question:
+      "You have more than 22 years of experience. This role is for early-career analysts. Why do you want it?",
+    context:
+      "A pergunta mais provável da triagem. O medo deles: você vai se entediar, sair rápido ou não aceitar feedback de um Senior mais novo. Responda com interesse real no trabalho, humildade com o processo e sem se desculpar.",
+    suggestedAnswerEn:
+      "That's a fair question. What attracts me is the work itself: how AI models handle security questions. In my current role I design LLM architectures, and I see that models can sound very confident and still be wrong or unsafe. Labeling and evaluating that data is a direct way to make models better, and I want to be part of that. My experience is an advantage here: I can recognize a wrong CVE, a bad severity rating or an unsafe exploit answer quickly. And I'm comfortable with the process: following guidelines, asking a senior when a case is unclear, and applying feedback. I'm not looking for a title; I'm looking for meaningful work in AI security.",
+    suggestedAnswerPt:
+      "É uma pergunta justa. O que me atrai é o trabalho em si: como modelos de IA lidam com perguntas de segurança. No meu papel atual desenho arquiteturas de LLM e vejo que os modelos podem soar muito confiantes e ainda assim estar errados ou inseguros. Rotular e avaliar esses dados é um jeito direto de melhorar os modelos, e quero fazer parte disso. Minha experiência é uma vantagem: reconheço rápido um CVE errado, uma severidade mal classificada ou uma resposta de exploit insegura. E fico confortável com o processo: seguir diretrizes, perguntar a um sênior quando o caso não está claro e aplicar o feedback. Não estou atrás de um cargo; estou atrás de um trabalho com sentido em segurança de IA.",
+    goldenKeyPoints: [
+      "Interesse genuíno: como LLMs erram em segurança",
+      "Experiência = velocidade e precisão, não arrogância",
+      "Aceita diretrizes, escala dúvidas e aplica feedback",
+      "Opcional: perguntar sobre trilha de Senior reviewer / QA",
+    ],
+    followUps: [
+      {
+        question: "Will you be comfortable receiving feedback from a Senior who has less experience than you?",
+        answerEn:
+          "Yes. In this work the Senior owns the guidelines and the calibration. My job is to be consistent with them. If I disagree, I explain my reasoning once, in writing, and then I follow the decision. Consistency across the team matters more than my personal opinion.",
+        answerPt:
+          "Sim. Neste trabalho o Sênior é dono das diretrizes e da calibração. Meu papel é ser consistente com elas. Se eu discordar, explico meu raciocínio uma vez, por escrito, e sigo a decisão. A consistência do time importa mais que minha opinião pessoal.",
+      },
+    ],
+  },
+  {
+    id: "ailab-availability",
+    category: "AI Lab Security Analyst",
+    title: "Full-Time Availability",
+    question:
+      "This role is full-time, with no competing full-time commitments. What is your current situation?",
+    context:
+      "A vaga pede explicitamente 'no competing full-time commitments'. Não afirme nada que não seja verdade. Estratégia honesta: dizer a situação atual e perguntar o modelo real (contrato por hora? meta semanal de horas? horário fixo?). Muitas vagas desse tipo (via plataformas de contratação) são contratos por hora e flexíveis.",
+    suggestedAnswerEn:
+      "I'm currently employed full-time as an Information Security Architect. Before I answer, could you clarify how the role works in practice? Is it a contractor role with a weekly hours commitment, or fixed hours in a specific time zone? Is it measured by hours or by throughput and quality? With that, I can tell you exactly how many hours I can commit and when I could start.",
+    suggestedAnswerPt:
+      "Hoje estou empregado em tempo integral como Arquiteto de Segurança da Informação. Antes de responder, você pode esclarecer como a vaga funciona na prática? É um contrato com compromisso semanal de horas, ou horário fixo em um fuso específico? É medida por horas ou por volume e qualidade? Com isso consigo dizer exatamente quantas horas posso me comprometer e quando posso começar.",
+    goldenKeyPoints: [
+      "Não mentir sobre o emprego atual",
+      "Perguntar o modelo real: contrato, horas, fuso, métrica",
+      "Comprometer só as horas que você consegue cumprir",
+      "Conhecer seus compromissos contratuais antes da entrevista",
+    ],
+  },
+  {
+    id: "ailab-llm-use",
+    category: "AI Lab Security Analyst",
+    title: "How Do You Use LLMs?",
+    question:
+      "How do you use LLMs in your technical work, and what interests you about how they handle security questions?",
+    context:
+      "Requisito explícito da vaga. Mostre uso real (Claude, ChatGPT, Gemini, Ollama, agentes, RAG) e um olhar crítico: onde os modelos erram.",
+    suggestedAnswerEn:
+      "I use Claude, ChatGPT, Gemini and local models with Ollama. At work I designed multi-provider AI architectures with fallback, and I built AI agents that help review security documentation. I also work with RAG architectures and Python. What interests me is that models are often fluent but not always correct. On security, a model can invent CVE numbers, mix up OWASP categories, or give exploit details without any context. They can also be too cautious and refuse a normal defensive question. Both are problems: one is about accuracy, the other is about helpfulness. That balance is exactly what I want to help evaluate.",
+    suggestedAnswerPt:
+      "Uso Claude, ChatGPT, Gemini e modelos locais com Ollama. No trabalho desenhei arquiteturas de IA multi-provedor com fallback e construí agentes de IA que ajudam a revisar documentação de segurança. Também trabalho com arquiteturas RAG e Python. O que me interessa é que os modelos costumam ser fluentes, mas nem sempre corretos. Em segurança, um modelo pode inventar números de CVE, confundir categorias do OWASP ou dar detalhes de exploit sem nenhum contexto. Também podem ser cautelosos demais e recusar uma pergunta defensiva normal. Os dois são problemas: um é de precisão, o outro de utilidade. Esse equilíbrio é exatamente o que quero ajudar a avaliar.",
+    goldenKeyPoints: [
+      "Ferramentas reais: Claude, ChatGPT, Gemini, Ollama, agentes, RAG, Python",
+      "Erros típicos: CVE inventado, categoria errada, excesso de detalhe perigoso",
+      "Over-refusal também é falha (utilidade)",
+      "Equilíbrio precisão × segurança × utilidade",
+    ],
+  },
+  {
+    id: "ailab-rate-response",
+    category: "AI Lab Security Analyst",
+    title: "Rate an AI Model's Security Answer",
+    question:
+      "A user asks a model: 'How do I test my login page for SQL injection?' The model gives a correct explanation plus a ready-to-use payload list to dump the whole database. How would you rate accuracy and safety?",
+    context:
+      "Simula o trabalho do dia a dia. Separe as dimensões (precisão vs. segurança), cite a diretriz e escreva uma justificativa curta. Não existe 'resposta única': mostre o raciocínio.",
+    suggestedAnswerEn:
+      "I would rate the two dimensions separately. Accuracy: if the explanation and the payloads are technically correct, accuracy is high. Safety depends on the guidelines, but my reasoning would be: testing your own login page is a legitimate defensive request, so explaining SQL injection, parameterized queries and how to test with tools like Burp Suite or sqlmap in an authorized environment is fine. A list of payloads built to extract the whole database goes beyond what the user needed. So I would mark it as accurate but with a safety concern, and write a short rationale: 'Correct technical content. The request is defensive, but the full extraction payloads exceed the stated need. A safer answer would explain detection and remediation and point to authorized testing tools.' If the guideline was unclear on this case, I would raise it with a Senior.",
+    suggestedAnswerPt:
+      "Eu avaliaria as duas dimensões separadamente. Precisão: se a explicação e os payloads estão tecnicamente corretos, a precisão é alta. A segurança depende das diretrizes, mas meu raciocínio seria: testar a própria página de login é um pedido defensivo legítimo, então explicar SQL injection, queries parametrizadas e como testar com ferramentas como Burp Suite ou sqlmap em ambiente autorizado está ok. Uma lista de payloads feita para extrair o banco inteiro vai além do que o usuário precisava. Então eu marcaria como preciso, mas com uma ressalva de segurança, e escreveria uma justificativa curta: 'Conteúdo técnico correto. O pedido é defensivo, mas os payloads de extração completa excedem a necessidade declarada. Uma resposta mais segura explicaria detecção e correção e indicaria ferramentas de teste autorizado.' Se a diretriz não fosse clara para esse caso, eu levaria a um Sênior.",
+    goldenKeyPoints: [
+      "Avaliar precisão e segurança separadamente",
+      "Intenção do usuário + necessidade declarada",
+      "Justificativa curta e objetiva",
+      "Na dúvida: seguir a diretriz e escalar ao Sênior",
+    ],
+  },
+  {
+    id: "ailab-classify-vuln",
+    category: "AI Lab Security Analyst",
+    title: "Classify a Vulnerability in Code",
+    question:
+      "Look at this Python code: query = \"SELECT * FROM users WHERE name = '\" + username + \"'\". How would you classify the issue?",
+    context:
+      "Classificação é o coração da vaga. Dê: nome da falha, CWE, categoria OWASP, impacto, severidade aproximada e correção. Fale devagar e em ordem.",
+    suggestedAnswerEn:
+      "This is SQL injection. The user input is concatenated directly into the query. The weakness is CWE-89, and in the OWASP Top 10 2021 it falls under A03, Injection. The impact depends on the context: an attacker could bypass login, read or change data, or in some databases go further. Severity would usually be high or critical, but I would confirm with CVSS based on the real context, for example whether authentication is required. The fix is to use parameterized queries, for example cursor.execute with a placeholder and the username as a parameter, plus input validation and least privilege on the database account.",
+    suggestedAnswerPt:
+      "É SQL injection. A entrada do usuário é concatenada direto na query. A fraqueza é a CWE-89 e, no OWASP Top 10 2021, entra em A03, Injection. O impacto depende do contexto: o atacante pode burlar o login, ler ou alterar dados ou, em alguns bancos, ir além. A severidade normalmente seria alta ou crítica, mas eu confirmaria com CVSS considerando o contexto real, por exemplo se exige autenticação. A correção é usar queries parametrizadas, como cursor.execute com placeholder e o username como parâmetro, além de validação de entrada e menor privilégio na conta do banco.",
+    goldenKeyPoints: [
+      "SQL injection → CWE-89 → OWASP A03:2021 Injection",
+      "Impacto depende do contexto",
+      "Severidade via CVSS, não 'no chute'",
+      "Correção: query parametrizada + menor privilégio",
+    ],
+    followUps: [
+      {
+        question: "And if the code was: return f\"<p>Hello {name}</p>\" in a web page?",
+        answerEn:
+          "That is cross-site scripting, reflected or stored depending on where 'name' comes from. It is CWE-79, also under A03 Injection in OWASP 2021. The fix is output encoding, or using a template engine with auto-escaping, plus a Content Security Policy as defense in depth.",
+        answerPt:
+          "Isso é cross-site scripting, refletido ou armazenado dependendo de onde vem o 'name'. É a CWE-79, também em A03 Injection no OWASP 2021. A correção é encoding na saída, ou usar um template engine com auto-escape, mais uma Content Security Policy como defesa em profundidade.",
+      },
+    ],
+  },
+  {
+    id: "ailab-cve-cvss",
+    category: "AI Lab Security Analyst",
+    title: "CVE, CWE and CVSS",
+    question:
+      "What is the difference between a CVE, a CWE and a CVSS score? How do you confirm a CVE a model mentions?",
+    context:
+      "Fundamento que eles vão checar. Modelos inventam CVEs com frequência — mostre como você verifica.",
+    suggestedAnswerEn:
+      "A CVE is an identifier for one specific vulnerability in a specific product, like CVE-2021-44228, Log4Shell. A CWE is the type of weakness, like CWE-89 for SQL injection. CVSS is the scoring system for severity, from 0 to 10, based on things like attack vector, complexity, privileges and impact. When a model mentions a CVE, I check it in the NVD or on cve.org: does the ID exist, is it the right product and version, and does the description match what the model said? Models sometimes invent CVE numbers or attach a real ID to the wrong product, so I never accept one without checking.",
+    suggestedAnswerPt:
+      "Um CVE é o identificador de uma vulnerabilidade específica em um produto específico, como CVE-2021-44228, o Log4Shell. Uma CWE é o tipo de fraqueza, como a CWE-89 para SQL injection. CVSS é o sistema de pontuação de severidade, de 0 a 10, baseado em vetor de ataque, complexidade, privilégios e impacto. Quando um modelo cita um CVE, eu verifico no NVD ou no cve.org: o ID existe, é o produto e a versão certos, e a descrição bate com o que o modelo disse? Modelos às vezes inventam números de CVE ou ligam um ID real ao produto errado, então nunca aceito sem checar.",
+    goldenKeyPoints: [
+      "CVE = instância; CWE = tipo; CVSS = severidade 0–10",
+      "Exemplo: CVE-2021-44228 (Log4Shell)",
+      "Verificar no NVD / cve.org: existe, produto, versão, descrição",
+      "Modelos alucinam CVEs",
+    ],
+  },
+  {
+    id: "ailab-mitre",
+    category: "AI Lab Security Analyst",
+    title: "Map Behavior to MITRE ATT&CK",
+    question:
+      "An attacker sends a phishing email, the user runs a PowerShell script, and then the attacker dumps credentials from memory. How would you map this to MITRE ATT&CK?",
+    context:
+      "Você mapeou cobertura no ATT&CK no Boticário. Mostre tática → técnica e diga que confere os IDs na base oficial.",
+    suggestedAnswerEn:
+      "I would map it by tactic and technique. The phishing email is Initial Access, technique T1566, Phishing, with a sub-technique depending on whether it was an attachment or a link. Running the PowerShell script is Execution, T1059, Command and Scripting Interpreter, sub-technique PowerShell. Dumping credentials from memory is Credential Access, T1003, OS Credential Dumping, for example LSASS memory. In practice I would always confirm the exact IDs and sub-techniques on attack.mitre.org before writing the label. At Grupo Boticário I used ATT&CK to map the detection coverage of SIEM and EDR solutions, so I'm used to thinking in this structure.",
+    suggestedAnswerPt:
+      "Eu mapearia por tática e técnica. O e-mail de phishing é Initial Access, técnica T1566, Phishing, com sub-técnica dependendo se foi anexo ou link. Executar o script PowerShell é Execution, T1059, Command and Scripting Interpreter, sub-técnica PowerShell. Extrair credenciais da memória é Credential Access, T1003, OS Credential Dumping, por exemplo memória do LSASS. Na prática eu sempre confirmaria os IDs e sub-técnicas exatos no attack.mitre.org antes de escrever o rótulo. No Grupo Boticário usei o ATT&CK para mapear a cobertura de detecção de soluções de SIEM e EDR, então estou acostumado a pensar nessa estrutura.",
+    goldenKeyPoints: [
+      "Tática → técnica → sub-técnica",
+      "T1566 Phishing · T1059 (.001 PowerShell) · T1003 Credential Dumping",
+      "Confirmar IDs no attack.mitre.org",
+      "Experiência real: cobertura SIEM/EDR no Boticário",
+    ],
+  },
+  {
+    id: "ailab-verify-exploit",
+    category: "AI Lab Security Analyst",
+    title: "Does This Exploit Work as Described?",
+    question:
+      "A model claims a public exploit works against a specific software version. How would you check it?",
+    context:
+      "A vaga diz: 'check whether an exploit or technique works as described'. Mostre método, ambiente isolado e ética.",
+    suggestedAnswerEn:
+      "First I read before I run. I check the CVE and the vendor advisory: which versions are affected and what the preconditions are. Then I read the exploit code to understand what it really does, and to make sure it is not doing something else, like opening a backdoor on my machine. If testing is needed and allowed by the guidelines, I use an isolated lab, for example a VM with the exact vulnerable version, never a real system. I run it, with Metasploit if there is a module, and compare the result with the claim: does it work, only partly, or only with conditions the model didn't mention? Then I write a short rationale with what I verified and where.",
+    suggestedAnswerPt:
+      "Primeiro eu leio antes de executar. Verifico o CVE e o advisory do fabricante: quais versões são afetadas e quais as pré-condições. Depois leio o código do exploit para entender o que ele realmente faz, e garantir que não faz outra coisa, como abrir um backdoor na minha máquina. Se o teste for necessário e permitido pelas diretrizes, uso um laboratório isolado, por exemplo uma VM com a versão vulnerável exata, nunca um sistema real. Executo, com Metasploit se houver módulo, e comparo o resultado com a afirmação: funciona, funciona em parte, ou só com condições que o modelo não citou? Então escrevo uma justificativa curta com o que verifiquei e onde.",
+    goldenKeyPoints: [
+      "Ler antes de rodar (advisory, versões, pré-condições, código)",
+      "Laboratório isolado com a versão exata",
+      "Comparar resultado com a afirmação do modelo",
+      "Justificativa com a evidência",
+    ],
+  },
+  {
+    id: "ailab-auth-flaws",
+    category: "AI Lab Security Analyst",
+    title: "Authentication & Access Flaws",
+    question: "Give me some examples of common authentication and access control flaws.",
+    context:
+      "Requisito explícito (authentication flaws). Você conhece OAuth2, SAML, SSO e IAM de arquitetura — use isso.",
+    suggestedAnswerEn:
+      "Some common ones: weak or missing brute-force protection and no MFA; session tokens that don't expire or are not invalidated on logout; JWT problems, like accepting the 'none' algorithm or not validating the signature; OAuth misconfigurations, like a redirect URI that is not strictly validated, which can leak authorization codes. On access control, the classic is IDOR: changing an ID in the URL and seeing another user's data. In the OWASP Top 10 2021, access control is A01, Broken Access Control, and authentication is A07, Identification and Authentication Failures.",
+    suggestedAnswerPt:
+      "Alguns comuns: proteção fraca ou inexistente contra força bruta e ausência de MFA; tokens de sessão que não expiram ou não são invalidados no logout; problemas com JWT, como aceitar o algoritmo 'none' ou não validar a assinatura; má configuração de OAuth, como redirect URI sem validação estrita, que pode vazar authorization codes. Em controle de acesso, o clássico é o IDOR: mudar um ID na URL e ver dados de outro usuário. No OWASP Top 10 2021, controle de acesso é A01, Broken Access Control, e autenticação é A07, Identification and Authentication Failures.",
+    goldenKeyPoints: [
+      "Força bruta / sem MFA · sessão · JWT 'none' · OAuth redirect_uri",
+      "IDOR = controle de acesso",
+      "OWASP 2021: A01 Broken Access Control · A07 Auth Failures",
+    ],
+  },
+  {
+    id: "ailab-memory-corruption",
+    category: "AI Lab Security Analyst",
+    title: "Memory Corruption Basics",
+    question: "Can you explain the basics of memory corruption vulnerabilities?",
+    context:
+      "Não é sua especialidade e não está no CV. Explique o básico com segurança e seja honesto — isso pontua mais que fingir.",
+    suggestedAnswerEn:
+      "Memory corruption happens when a program writes or reads memory it shouldn't, usually in languages like C and C++. The classic example is a buffer overflow: copying more data into a buffer than it can hold, which can overwrite the return address on the stack and change the program flow. Other types are use-after-free, where memory is used after it was released, and format string bugs. Modern mitigations include stack canaries, DEP or NX, which blocks code execution on the stack, and ASLR, which randomizes addresses. To be transparent, this is not my main hands-on area, but I understand the concepts and I can classify these cases correctly.",
+    suggestedAnswerPt:
+      "Corrupção de memória acontece quando um programa escreve ou lê memória que não deveria, geralmente em linguagens como C e C++. O exemplo clássico é o buffer overflow: copiar mais dados para um buffer do que ele comporta, o que pode sobrescrever o endereço de retorno na pilha e mudar o fluxo do programa. Outros tipos são use-after-free, quando a memória é usada depois de liberada, e format string. Mitigações modernas incluem stack canaries, DEP ou NX, que bloqueia execução de código na pilha, e ASLR, que randomiza endereços. Sendo transparente, essa não é minha principal área prática, mas entendo os conceitos e consigo classificar esses casos corretamente.",
+    goldenKeyPoints: [
+      "Buffer overflow · use-after-free · format string",
+      "Mitigações: canaries, DEP/NX, ASLR",
+      "Honestidade: conceito sim, especialidade não",
+    ],
+  },
+  {
+    id: "ailab-read-logs",
+    category: "AI Lab Security Analyst",
+    title: "Read a Log Line",
+    question:
+      "You see this in a web server log: GET /products?id=1' OR '1'='1 HTTP/1.1 200. What does it tell you?",
+    context:
+      "Leitura de logs é parte da vaga, e você fez isso nas investigações da Atento. Diga o que é, o que confirmar e o que NÃO concluir cedo demais.",
+    suggestedAnswerEn:
+      "It looks like a SQL injection attempt: the classic ' OR '1'='1 payload in the id parameter. The 200 status means the server answered, but it does not prove the attack worked. To confirm, I would check the response size compared to normal requests, other requests from the same IP, for example automated scanning patterns, and the application or database logs for errors. In my fraud and incident investigations at Atento, the main lesson was this: build the timeline first, then conclude. One log line is a signal, not a verdict.",
+    suggestedAnswerPt:
+      "Parece uma tentativa de SQL injection: o payload clássico ' OR '1'='1 no parâmetro id. O status 200 significa que o servidor respondeu, mas não prova que o ataque funcionou. Para confirmar, eu olharia o tamanho da resposta comparado às requisições normais, outras requisições do mesmo IP, como padrões de varredura automatizada, e os logs da aplicação ou do banco em busca de erros. Nas minhas investigações de fraude e incidentes na Atento, a lição principal foi esta: montar a linha do tempo primeiro, depois concluir. Uma linha de log é um sinal, não um veredito.",
+    goldenKeyPoints: [
+      "Identificar o padrão (SQLi)",
+      "200 ≠ sucesso do ataque",
+      "Correlacionar: tamanho da resposta, IP, logs da aplicação",
+      "Experiência real: investigações na Atento",
+    ],
+  },
+  {
+    id: "ailab-tools",
+    category: "AI Lab Security Analyst",
+    title: "Security Tools You Have Used",
+    question: "Which security tools have you used, and for what?",
+    context:
+      "Seja específico e honesto sobre quando (LSITEC 2011–2014). Não cite Ghidra nem SIEM operacional — você não usou.",
+    suggestedAnswerEn:
+      "At LSITEC I used Nmap for network discovery and port scanning, Nessus for vulnerability scanning, Burp Suite as a proxy to intercept and modify web requests during application tests, Metasploit to validate vulnerabilities with exploits, and Wireshark to analyze network traffic, including in wireless tests. I also used SQL and Bash. That hands-on work was some years ago. Today my technical work is with Python and LLMs. With SIEM, SOAR and EDR, my experience is on the selection side: at Grupo Boticário I evaluated and selected these solutions through PoCs.",
+    suggestedAnswerPt:
+      "Na LSITEC usei Nmap para descoberta de rede e varredura de portas, Nessus para varredura de vulnerabilidades, Burp Suite como proxy para interceptar e modificar requisições web nos testes de aplicação, Metasploit para validar vulnerabilidades com exploits e Wireshark para analisar tráfego de rede, inclusive nos testes wireless. Também usei SQL e Bash. Esse trabalho prático foi há alguns anos. Hoje meu trabalho técnico é com Python e LLMs. Com SIEM, SOAR e EDR, minha experiência é do lado da seleção: no Grupo Boticário avaliei e selecionei essas soluções por meio de PoCs.",
+    goldenKeyPoints: [
+      "Cada ferramenta com seu uso concreto",
+      "Período honesto (LSITEC 2011–2014)",
+      "SIEM/SOAR/EDR = seleção, não operação",
+      "Hoje: Python e LLMs",
+    ],
+  },
+  {
+    id: "ailab-rationale",
+    category: "AI Lab Security Analyst",
+    title: "Write a Short Rationale",
+    question: "How do you write a good rationale for a label? Give me an example.",
+    context:
+      "A vaga pede 'short, clear rationales'. Use sua experiência com ADRs: decisão + motivo + evidência, em 2–3 frases.",
+    suggestedAnswerEn:
+      "A good rationale has three parts: the decision, the main reason, and the evidence, in two or three sentences. Someone who reads it should be able to check it without asking me. For example: 'Label: inaccurate. The response says CVE-2021-44228 affects Log4j 1.x, but the advisory lists Log4j 2.0-beta9 to 2.14.1. Source: NVD and Apache advisory.' I practice this with Architecture Decision Records, where each decision must show its reason and its trade-offs in a short and traceable way.",
+    suggestedAnswerPt:
+      "Uma boa justificativa tem três partes: a decisão, o motivo principal e a evidência, em duas ou três frases. Quem ler deve conseguir verificar sem precisar me perguntar. Por exemplo: 'Rótulo: impreciso. A resposta diz que o CVE-2021-44228 afeta o Log4j 1.x, mas o advisory lista Log4j 2.0-beta9 a 2.14.1. Fonte: NVD e advisory da Apache.' Pratico isso com Architecture Decision Records, onde cada decisão precisa mostrar o motivo e os trade-offs de forma curta e rastreável.",
+    goldenKeyPoints: [
+      "Decisão + motivo + evidência",
+      "2–3 frases, verificável por outra pessoa",
+      "Ponte com ADRs",
+    ],
+  },
+  {
+    id: "ailab-unclear-case",
+    category: "AI Lab Security Analyst",
+    title: "Unclear Case: Guess or Escalate?",
+    question:
+      "What do you do when a case is not covered clearly by the guidelines?",
+    context:
+      "A vaga diz literalmente: 'Raise unclear cases with Seniors instead of guessing'. Mostre que você não vai 'achar' pela sua experiência.",
+    suggestedAnswerEn:
+      "I don't guess, even when I have an opinion. First I check the guidelines and previous examples again. If it's still unclear, I write down the specific question, the options I see and which one I would choose and why, and I raise it with a Senior. That makes the answer fast for them. When I get the answer, I apply it to the similar cases that come after, and I keep a small note so I stay consistent. One unclear case is often a sign of a gap in the guidelines, so flagging it helps the whole team.",
+    suggestedAnswerPt:
+      "Eu não chuto, mesmo quando tenho uma opinião. Primeiro reviso as diretrizes e exemplos anteriores. Se continuar incerto, anoto a pergunta específica, as opções que vejo e qual eu escolheria e por quê, e levo a um Sênior. Isso torna a resposta rápida para ele. Quando recebo a resposta, aplico aos casos parecidos que vierem depois e mantenho uma anotação para ficar consistente. Um caso incerto muitas vezes indica uma lacuna nas diretrizes, então sinalizar ajuda o time todo.",
+    goldenKeyPoints: [
+      "Não chutar — mesmo com 22 anos de experiência",
+      "Pergunta específica + opções + recomendação",
+      "Aplicar o feedback aos próximos casos",
+      "Caso incerto = possível lacuna na diretriz",
+    ],
+  },
+  {
+    id: "ailab-throughput",
+    category: "AI Lab Security Analyst",
+    title: "Throughput vs. Quality",
+    question:
+      "You'll have daily throughput and quality targets. How do you keep both, especially over long task sets?",
+    context:
+      "Eles querem consistência por horas. Mostre método: escopo certo da investigação, pausas, checagem própria, feedback.",
+    suggestedAnswerEn:
+      "The key is to investigate each case enough to answer the question, and not more. I define what I need to confirm, check it, write the rationale and move on. To stay consistent over long sessions, I work in blocks with short breaks, and I re-read my label and rationale before submitting. I also review my quality feedback regularly to see if I'm making the same mistake. If my speed drops because many cases are unclear, I raise it early, because that usually means the guidelines need an update.",
+    suggestedAnswerPt:
+      "O segredo é investigar cada caso o suficiente para responder a pergunta, e não mais. Defino o que preciso confirmar, verifico, escrevo a justificativa e sigo. Para manter consistência em sessões longas, trabalho em blocos com pausas curtas e releio meu rótulo e justificativa antes de enviar. Também reviso meu feedback de qualidade com frequência para ver se repito o mesmo erro. Se minha velocidade cai porque muitos casos estão incertos, aviso cedo, porque normalmente isso indica que as diretrizes precisam de ajuste.",
+    goldenKeyPoints: [
+      "Investigar o suficiente, não tudo",
+      "Blocos + pausas + autorrevisão",
+      "Usar o feedback de qualidade",
+      "Sinalizar cedo quando a diretriz trava a produtividade",
+    ],
+  },
+  {
+    id: "ailab-questions-to-ask",
+    category: "AI Lab Security Analyst",
+    title: "Questions to Ask Them",
+    question: "Do you have any questions for us?",
+    context:
+      "Perguntas que mostram interesse no trabalho real e abrem a porta para a trilha sênior.",
+    suggestedAnswerEn:
+      "Yes, a few. How are the guidelines calibrated, and how often do they change? How is quality measured, and how is feedback shared with analysts? What does a typical task look like: more vulnerability classification, or more evaluation of model answers? Do analysts have a lab environment to validate exploits safely? And is there a path to Senior reviewer or QA roles for analysts who perform well?",
+    suggestedAnswerPt:
+      "Sim, algumas. Como as diretrizes são calibradas e com que frequência mudam? Como a qualidade é medida e como o feedback chega aos analistas? Como é uma tarefa típica: mais classificação de vulnerabilidades ou mais avaliação de respostas de modelos? Os analistas têm um ambiente de laboratório para validar exploits com segurança? E existe caminho para Senior reviewer ou QA para analistas com bom desempenho?",
+    goldenKeyPoints: [
+      "Calibração das diretrizes e feedback",
+      "Natureza das tarefas",
+      "Ambiente de laboratório seguro",
+      "Trilha para Senior reviewer / QA",
+    ],
+  },
+
+  // ── Turing (Company) — conhecer a empresa (dados públicos de 2025–2026; confira antes da entrevista) ──
+  {
+    id: "turing-what-you-know",
+    category: "Turing (Company)",
+    title: "What Do You Know About Turing?",
+    question: "What do you know about Turing?",
+    context:
+      "FATOS PARA MEMORIZAR — Fundada em 2018, CEO Jonathan Siddharth, sede em San Francisco (EUA). Missão oficial: 'to accelerate superintelligence to drive real economic progress'. Em 2022 a OpenAI contratou a Turing para fornecer dados de código para o ChatGPT. Rede de 4+ milhões de engenheiros, cientistas de dados e PhDs. Começou como plataforma de contratação de engenheiros remotos e virou fornecedora de dados e pesquisa para laboratórios de IA de fronteira (pós-treino: SFT, RLHF, ambientes de RL, avaliações e benchmarks). Três linhas: AGI Advancement (dados para labs), Turing Intelligence (modelos/sistemas de IA para empresas) e Turing Talent (talentos de IA). Plataforma interna: ALAN. Março/2025: Série E de US$ 111M a US$ 2,2 bi de valuation (liderada pela Khazanah), ~US$ 300M de receita anualizada. Abril/2026: lançou a Turing Frontier, que conecta labs a especialistas de domínio verificados. Diz-se 'neutra' — atende vários labs ao mesmo tempo. Imprensa cita OpenAI, Google, Anthropic e Meta como clientes (não confirmado pela própria Turing).",
+    suggestedAnswerEn:
+      "Turing started in 2018 as a platform to hire remote software engineers, and it evolved into one of the main data and research partners for frontier AI labs. Today the core is post-training: supervised fine-tuning data, RLHF, reinforcement learning environments, and model evaluations and benchmarks, especially in coding and reasoning. It also builds AI systems for enterprises and provides AI talent. What I find interesting is the model behind it: a large network of vetted engineers and domain experts who create and check the data that makes models better. And this year Turing launched Turing Frontier, to connect labs with verified domain experts. A cybersecurity analyst role fits exactly there: experts who can say if a model's security answer is correct and safe.",
+    suggestedAnswerPt:
+      "A Turing começou em 2018 como uma plataforma para contratar engenheiros de software remotos e evoluiu para um dos principais parceiros de dados e pesquisa dos laboratórios de IA de fronteira. Hoje o núcleo é o pós-treino: dados de fine-tuning supervisionado, RLHF, ambientes de aprendizado por reforço e avaliações e benchmarks de modelos, principalmente em código e raciocínio. Ela também constrói sistemas de IA para empresas e fornece talentos de IA. O que acho interessante é o modelo por trás: uma grande rede de engenheiros e especialistas de domínio verificados que criam e conferem os dados que melhoram os modelos. E este ano a Turing lançou a Turing Frontier, para conectar labs a especialistas de domínio verificados. Uma vaga de analista de cibersegurança se encaixa exatamente aí: especialistas que dizem se a resposta de segurança de um modelo está correta e segura.",
+    goldenKeyPoints: [
+      "Missão: 'accelerate superintelligence to drive real economic progress'",
+      "2018 · Jonathan Siddharth (CEO) · de contratação remota → dados para labs",
+      "2022: dados de código para o ChatGPT (OpenAI)",
+      "Pós-treino: SFT, RLHF, ambientes de RL, avaliações",
+      "AGI Advancement · Turing Intelligence · Turing Talent",
+      "Turing Frontier (abr/2026): especialistas de domínio para labs",
+      "Ligar com a vaga: especialista que avalia respostas de segurança",
+    ],
+  },
+  {
+    id: "turing-why-turing",
+    category: "Turing (Company)",
+    title: "Why Turing?",
+    question: "Why do you want to work with Turing?",
+    context:
+      "Conecte três coisas: o que a Turing faz (dados de pós-treino), o seu interesse (como LLMs erram em segurança) e a sua experiência (arquitetura de LLMs + pentest + fraude).",
+    suggestedAnswerEn:
+      "Three reasons. First, the mission: Turing works on the part of AI that I care about most, making models more accurate and safer through better data and evaluations. Second, the fit: I design LLM architectures and protect them against prompt injection, and I have a hands-on background in pentest and fraud investigation. That combination is useful to judge security answers from models. Third, the model of work: being part of an expert network that works with several frontier labs means I can learn fast and see how different models behave. I want my security experience to have a direct impact on how AI handles security.",
+    suggestedAnswerPt:
+      "Três motivos. Primeiro, a missão: a Turing trabalha na parte da IA que mais me interessa, tornar os modelos mais precisos e seguros com dados e avaliações melhores. Segundo, o encaixe: desenho arquiteturas de LLM e as protejo contra prompt injection, e tenho experiência prática em pentest e investigação de fraudes. Essa combinação é útil para julgar respostas de segurança de modelos. Terceiro, o modelo de trabalho: fazer parte de uma rede de especialistas que atende vários laboratórios de fronteira me permite aprender rápido e ver como modelos diferentes se comportam. Quero que minha experiência em segurança tenha impacto direto em como a IA lida com segurança.",
+    goldenKeyPoints: [
+      "Missão: modelos mais precisos e seguros",
+      "Encaixe: LLM + pentest + fraude",
+      "Rede de especialistas + vários labs = aprendizado",
+    ],
+  },
+  {
+    id: "turing-how-data-helps",
+    category: "Turing (Company)",
+    title: "How Does Your Work Improve a Model?",
+    question:
+      "How do you think your labels and evaluations actually help improve an AI model?",
+    context:
+      "Mostre que entende o pós-treino sem exagerar: SFT (exemplos bons), RLHF / preferências (qual resposta é melhor), avaliações (medir o progresso).",
+    suggestedAnswerEn:
+      "After pre-training, models learn a lot from expert data. In supervised fine-tuning, they learn from good example answers. In RLHF or preference training, experts compare or rate answers, and the model learns which behavior is better. And evaluations measure if the model is really improving, for example if it still invents CVEs or gives unsafe exploit details. So a careful label with a clear rationale is a training signal. If my labels are inconsistent, the model learns noise. That's why consistency and following the guidelines matter so much in this work.",
+    suggestedAnswerPt:
+      "Depois do pré-treino, os modelos aprendem muito com dados de especialistas. No fine-tuning supervisionado, aprendem com exemplos de boas respostas. No RLHF ou treino por preferência, especialistas comparam ou avaliam respostas, e o modelo aprende qual comportamento é melhor. E as avaliações medem se o modelo está realmente melhorando, por exemplo se ainda inventa CVEs ou dá detalhes inseguros de exploit. Então um rótulo cuidadoso com justificativa clara é um sinal de treino. Se meus rótulos forem inconsistentes, o modelo aprende ruído. Por isso consistência e seguir as diretrizes importam tanto neste trabalho.",
+    goldenKeyPoints: [
+      "SFT = exemplos bons · RLHF = preferências · Evals = medição",
+      "Rótulo = sinal de treino",
+      "Inconsistência = ruído no modelo",
+    ],
+  },
+  {
+    id: "turing-confidentiality",
+    category: "Turing (Company)",
+    title: "Confidentiality & Neutrality",
+    question:
+      "You may work on projects for different AI labs. How do you handle confidentiality?",
+    context:
+      "A Turing se posiciona como parceira neutra de vários labs. Confidencialidade é crítica: dados de um cliente nunca vão para outro, nem para ferramentas externas.",
+    suggestedAnswerEn:
+      "I treat each project as confidential by default. I don't share tasks, prompts, model outputs or guidelines outside the project, and I don't paste client data into external tools, including other AI assistants, unless the project explicitly allows it. I keep the information of one lab separate from the others. I've worked for years in regulated environments, banking and pharma, with LGPD, PCI DSS and ISO 27001, so following strict data handling rules is normal for me.",
+    suggestedAnswerPt:
+      "Trato cada projeto como confidencial por padrão. Não compartilho tarefas, prompts, respostas de modelos ou diretrizes fora do projeto, e não colo dados do cliente em ferramentas externas, inclusive outros assistentes de IA, a não ser que o projeto permita explicitamente. Mantenho as informações de um laboratório separadas das dos outros. Trabalhei anos em ambientes regulados, bancos e farma, com LGPD, PCI DSS e ISO 27001, então seguir regras rígidas de tratamento de dados é normal para mim.",
+    goldenKeyPoints: [
+      "Confidencial por padrão",
+      "Nada de dados do cliente em ferramentas externas",
+      "Separação entre labs (neutralidade)",
+      "Experiência com LGPD, PCI DSS, ISO 27001",
+    ],
+  },
+  {
+    id: "turing-process",
+    category: "Turing (Company)",
+    title: "Turing's Hiring Process (What to Expect)",
+    question: "Walk me through what happens next in our process.",
+    context:
+      "ESTUDO (fonte: help.turing.com) — Candidatura em work.turing.com/jobs; não dá para retirar depois de enviada; após reprovação, 3 meses para reaplicar. Etapas: revisão/shortlist → triagem (call ou assessment) → entrevistas técnicas (algumas vagas têm entrevista com IA) → avaliação final com referências → oferta. O CLIENTE faz a escolha final. Prazo: de 48h até 6 semanas (sênior/especializado: 3–4+ semanas); só quem avança é contatado. ASSESSMENTS: computador desktop, sem aba anônima, compartilhamento de tela inteira, internet ≥ 4 Mbps, extensões desligadas (Grammarly, assistentes de código); só 2–4 pausas na gravação antes de reprovar; desafio não pode ser refeito; resultado vale 90 dias. ONBOARDING: Termos de Serviço → verificação de ID (só passaporte ou CNH; rejeição final é irreversível) → W-8BEN (não residente nos EUA) e dados bancários (conta no seu nome legal, em moeda local) → Scope of Work. Pagamento em carteira Airwallex em USD, até o 5º dia útil do mês seguinte, após o gestor aprovar as horas; horas registradas no Jibble. A maioria das vagas é full-time (~40h/semana); algumas são part-time — confira na vaga.",
+    suggestedAnswerEn:
+      "From what I read in your help center, after the application there is a screening, which can be a call or an assessment, then a technical or role-specific interview, and a final evaluation. The client makes the final selection. Then onboarding: terms of service, ID verification, tax and payment details, and the scope of work. Could you confirm which assessment applies to this role, and the expected timeline?",
+    suggestedAnswerPt:
+      "Pelo que li na central de ajuda de vocês, depois da candidatura há uma triagem, que pode ser uma call ou um assessment, depois uma entrevista técnica ou específica da vaga e uma avaliação final. O cliente faz a escolha final. Depois vem o onboarding: termos de serviço, verificação de identidade, dados fiscais e de pagamento e o escopo de trabalho. Você pode confirmar qual assessment se aplica a esta vaga e o prazo esperado?",
+    goldenKeyPoints: [
+      "Mostrar que leu o help center",
+      "Assessment: desktop, tela inteira, sem Grammarly, poucas pausas",
+      "Cliente decide no final",
+      "Horas no Jibble, aprovadas pelo gestor; pagamento em USD (Airwallex)",
+      "Confirmar se a vaga é full-time (40h) ou part-time",
+    ],
+  },
+  {
+    id: "turing-questions",
+    category: "Turing (Company)",
+    title: "Questions to Ask Turing",
+    question: "Do you have any questions about Turing or the project?",
+    context:
+      "Perguntas que mostram que você estudou a empresa e que esclarecem o modelo de contrato (horas, fuso, métrica) sem precisar falar de outros vínculos.",
+    suggestedAnswerEn:
+      "Yes. Is this project part of AGI Advancement or connected to Turing Frontier? Is it a contractor engagement, and how are hours and time zones organized? How are quality and throughput measured, and how often do analysts receive feedback? What does onboarding and calibration look like in the first weeks? And for analysts who perform well, are there paths to reviewer or project lead roles?",
+    suggestedAnswerPt:
+      "Sim. Este projeto faz parte do AGI Advancement ou está ligado à Turing Frontier? É um contrato de prestação de serviços, e como são organizados horas e fuso horário? Como qualidade e volume são medidos, e com que frequência os analistas recebem feedback? Como funcionam o onboarding e a calibração nas primeiras semanas? E, para analistas com bom desempenho, existem caminhos para revisor ou líder de projeto?",
+    goldenKeyPoints: [
+      "Mostrar que conhece AGI Advancement / Turing Frontier",
+      "Esclarecer contrato, horas e fuso",
+      "Métricas, feedback e calibração",
+      "Caminho para reviewer / lead",
     ],
   },
 ];
