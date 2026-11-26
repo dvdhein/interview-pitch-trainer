@@ -38,6 +38,7 @@ import { ExecutiveFollowUpModule } from "../components/ExecutiveFollowUpModule";
 import { InternationalMarketSelector } from "../components/InternationalMarketSelector";
 import { GlobalLexiconModal } from "../components/GlobalLexiconModal";
 import { InterviewRoundsModule } from "../components/InterviewRoundsModule";
+import { TuringScreeningModule } from "../components/TuringScreeningModule";
 import { EnglishClassModule } from "../components/EnglishClassModule";
 
 // Q&A Original Preservado
@@ -376,6 +377,13 @@ export const roadmapPhases = [
       { id: "english", num: "11", label: "Workday: When + And" },
     ],
   },
+  {
+    phase: "Fase 06 · Entrevista Turing",
+    badge: "TURING",
+    items: [
+      { id: "turing", num: "12", label: "Turing · AI Screening (20 min)" },
+    ],
+  },
 ];
 
 export default function Home() {
@@ -569,6 +577,7 @@ export default function Home() {
               ["pitches", "02 Pitches"],
               ["rounds", "03 Rounds"],
               ["training", "04 Simulação"],
+              ["turing", "05 Turing"],
             ].map(([id, label]) => (
               <button
                 key={id}
@@ -1219,6 +1228,13 @@ export default function Home() {
               />
             ) : section === "skills" ? (
               <SkillMap />
+            ) : section === "turing" ? (
+              <TuringScreeningModule
+                speakFn={(txt, lang, spd, onEnd) =>
+                  speak(txt, lang, spd, activeVoice, onEnd)
+                }
+                speed={speed}
+              />
             ) : (
               <CoachNotes />
             )}
