@@ -321,7 +321,15 @@ function speak(
   utterance.lang = lang === "en" ? "en-US" : "pt-BR";
   utterance.rate = speed;
   utterance.pitch = 1;
-  if (voice) utterance.voice = voice;
+  // A voz escolhida pertence ao idioma global; se o texto é de outro idioma, usa uma voz desse idioma.
+  const prefix = lang === "en" ? "en" : "pt";
+  const matchingVoice =
+    voice && voice.lang.toLowerCase().startsWith(prefix)
+      ? voice
+      : window.speechSynthesis
+          .getVoices()
+          .find(v => v.lang.toLowerCase().startsWith(prefix));
+  if (matchingVoice) utterance.voice = matchingVoice;
   if (onDone) {
     utterance.onend = onDone;
     utterance.onerror = onDone;
@@ -669,6 +677,42 @@ export default function Home() {
                 title="Dicionário de Termos Internacionais (BACEN, PIX, LGPD, etc.)"
               >
                 <Globe2 size={11} /> Lexicon
+              </button>
+            </div>
+
+            {/* Seletor de voz global */}
+            <div className="header-voice">
+              <label htmlFor="voice">Voz</label>
+              <select
+                id="voice"
+                value={activeVoice?.name ?? selectedVoiceName}
+                onChange={e => setSelectedVoiceName(e.target.value)}
+                className="voice-select"
+                disabled={!voicesForLanguage.length}
+              >
+                <option value="">
+                  {voicesForLanguage.length
+                    ? "Escolha uma voz"
+                    : voices.length
+                      ? "Sem voz para este idioma"
+                      : "Voz padrão do navegador"}
+                </option>
+                {voicesForLanguage.map(voice => (
+                  <option
+                    key={`${voice.name}-${voice.lang}`}
+                    value={voice.name}
+                  >
+                    {voice.name} · {voice.lang}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={handleTestVoice}
+                className="test-voice-btn"
+                title="Testar voz"
+                aria-label="Testar voz"
+              >
+                <Headphones size={14} />
               </button>
             </div>
 
@@ -1069,40 +1113,6 @@ export default function Home() {
                         {practice ? <BookOpen size={16} /> : <Mic2 size={16} />}{" "}
                         {practice ? "Mostrar resposta" : "Praticar sem olhar"}
                       </button>
-                      <div className="voice-controls">
-                        <label htmlFor="voice">Voz</label>
-                        <select
-                          id="voice"
-                          value={activeVoice?.name ?? selectedVoiceName}
-                          onChange={e => setSelectedVoiceName(e.target.value)}
-                          className="voice-select"
-                          disabled={!voicesForLanguage.length}
-                        >
-                          <option value="">
-                            {voicesForLanguage.length
-                              ? "Escolha uma voz"
-                              : voices.length
-                                ? "Sem voz para este idioma"
-                                : "Voz padrão do navegador"}
-                          </option>
-                          {voicesForLanguage.map(voice => (
-                            <option
-                              key={`${voice.name}-${voice.lang}`}
-                              value={voice.name}
-                            >
-                              {voice.name} · {voice.lang}
-                            </option>
-                          ))}
-                        </select>
-                        <button
-                          onClick={handleTestVoice}
-                          className="test-voice-btn"
-                          title="Testar voz"
-                          aria-label="Testar voz"
-                        >
-                          <Headphones size={14} />
-                        </button>
-                      </div>
                       <div className="speed-control">
                         <label htmlFor="speed">Ritmo</label>
                         <select
