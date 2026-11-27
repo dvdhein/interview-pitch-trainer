@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Play, Pause, RotateCcw, Timer, Volume2, Wind, AlertTriangle, CheckCircle2, NotebookPen } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Play, Pause, RotateCcw, Timer, Volume2, VolumeX, Wind, AlertTriangle, CheckCircle2, NotebookPen, SkipBack, SkipForward } from "lucide-react";
 import { roleplayScenarios } from "../data/scenarioData";
 import {
   screeningSteps,
@@ -7,6 +7,7 @@ import {
   generalTips,
   SPEAKING_WPM,
   QUESTION_BUFFER_SEC,
+  bridges,
   type ScreeningAnswer,
 } from "../data/turingScreeningData";
 
@@ -44,7 +45,7 @@ function loadNotes(): Record<string, string> {
 function BreathingText({ text }: { text: string }) {
   const parts = text.split(/(\/\/|\/)/);
   return (
-    <p className="text-[15px] leading-8 text-[#292827]">
+    <p className="text-[17px] leading-9 text-[#292827]">
       {parts.map((p, i) =>
         p === "//" ? (
           <span key={i} className="mx-1 inline-flex items-center rounded-full bg-sky-100 px-1.5 text-[11px] font-bold text-sky-700" title="Respiração completa">
@@ -106,20 +107,29 @@ function BoxBreathing() {
   );
 }
 
-function stepPlan(step: (typeof screeningSteps)[number]) {
-  const studio: ScreeningAnswer[] = (step.fromStudio ?? []).flatMap(ref => {
+type Item = ScreeningAnswer & { title?: string };
+
+/** Respostas da etapa, na ordem em que você vai falar: as da etapa e depois as do Pitch Studio. */
+function stepItems(step: (typeof screeningSteps)[number]): Item[] {
+  const studio: Item[] = (step.fromStudio ?? []).flatMap(ref => {
     const s = roleplayScenarios.find(x => x.id === ref.id);
     return s
-      ? [{ id: s.id, question: s.question, breathing: s.suggestedAnswerEn, keywords: s.goldenKeyPoints, why: ref.why, source: "já está no Pitch Studio (Roleplay)" as const, title: s.title }]
+      ? [{ id: s.id, question: s.question, breathing: ref.breathing ?? s.suggestedAnswerEn, keywords: s.goldenKeyPoints, why: ref.why, source: "já está no Pitch Studio (Roleplay)" as const, title: s.title }]
       : [];
   });
-  const core = [...step.answers.filter(x => x.core !== false), ...studio];
-  const talk = core.reduce((a, x) => a + estimateSeconds(x.breathing), 0);
-  const asking = core.length * QUESTION_BUFFER_SEC;
-  return { studio, core, talk, asking, plan: talk + asking, budget: step.minutes * 60 };
+  return [...step.answers, ...studio];
 }
 
-const shortLabel = (q: string) => q.replace(/\s*\(.*?\)\s*$/, "").replace(/^Tell me about /, "").replace(/\?$/, "");
+function stepPlan(items: Item[], minutes: number) {
+  const talk = items.reduce((a, x) => a + estimateSeconds(x.breathing), 0);
+  const asking = items.length * QUESTION_BUFFER_SEC;
+  return { talk, asking, plan: talk + asking, budget: minutes * 60 };
+}
+
+const shortLabel = (a: Item) => a.title ?? a.question.replace(/^Tell me about /, "").replace(/\?$/, "");
+
+const isTyping = (el: EventTarget | null) =>
+  el instanceof HTMLElement && (el.tagName === "TEXTAREA" || el.tagName === "INPUT" || el.tagName === "SELECT" || el.isContentEditable);
 
 export function TuringScreeningModule({ speakFn, speed = 0.9 }: Props) {
   const totalMin = screeningSteps.reduce((a, s) => a + s.minutes, 0);
@@ -131,29 +141,95 @@ export function TuringScreeningModule({ speakFn, speed = 0.9 }: Props) {
       return { start, end: acc };
     });
   }, []);
+  const itemsByStep = useMemo(() => screeningSteps.map(stepItems), []);
+  const seq = useMemo(() => itemsByStep.flatMap((items, stepIdx) => items.map(a => ({ a, stepIdx }))), [itemsByStep]);
 
-  // Cronômetro geral da simulação
-  const [elapsed, setElapsed] = useState(0);
+  // Roteiro corrido: posição atual + relógio da entrevista
+  const [cur, setCur] = useState(0);
   const [running, setRunning] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  const [itemStart, setItemStart] = useState(0);
+  const [times, setTimes] = useState<Record<string, number>>({});
+  const [autoRead, setAutoRead] = useState(false);
+  const [plain, setPlain] = useState(false);
+  const [finished, setFinished] = useState(false);
+
   useEffect(() => {
     if (!running) return;
     const id = window.setInterval(() => setElapsed(e => e + 1), 1000);
     return () => window.clearInterval(id);
   }, [running]);
-  const currentStepIdx = boundaries.findIndex(b => elapsed < b.end);
 
-  // Cronômetro de prática por resposta
-  const [practice, setPractice] = useState<{ id: string; start: number } | null>(null);
-  const [lastTimes, setLastTimes] = useState<Record<string, number>>({});
-  const [, force] = useState(0);
+  const goTo = (next: number) => {
+    if (elapsed > itemStart) setTimes(t => ({ ...t, [seq[cur].a.id]: elapsed - itemStart }));
+    if (next >= seq.length) {
+      setRunning(false);
+      setFinished(true);
+      return;
+    }
+    setCur(Math.max(0, next));
+    setItemStart(elapsed);
+  };
+
+  const reset = () => {
+    window.speechSynthesis?.cancel();
+    setRunning(false);
+    setElapsed(0);
+    setItemStart(0);
+    setCur(0);
+    setTimes({});
+    setFinished(false);
+  };
+
+  // Teclado: espaço / → avança, ← volta
+  const goToRef = useRef(goTo);
+  goToRef.current = goTo;
+  const curRef = useRef(cur);
+  curRef.current = cur;
   useEffect(() => {
-    if (!practice) return;
-    const id = window.setInterval(() => force(x => x + 1), 250);
-    return () => window.clearInterval(id);
-  }, [practice]);
+    const onKey = (e: KeyboardEvent) => {
+      if (isTyping(e.target)) return;
+      if (e.key === " " || e.key === "ArrowRight") {
+        e.preventDefault();
+        goToRef.current(curRef.current + 1);
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        goToRef.current(curRef.current - 1);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
-  const [showPlain, setShowPlain] = useState<Record<string, boolean>>({});
-  const [playing, setPlaying] = useState<string | null>(null);
+  // Rola a timeline até a pergunta atual
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    document.getElementById(`turing-item-${cur}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [cur]);
+
+  // Leitura automática: lê a resposta e passa para a próxima sozinho
+  const readToken = useRef(0);
+  const speakRef = useRef(speakFn);
+  speakRef.current = speakFn;
+  useEffect(() => {
+    if (!running || !autoRead) return;
+    const token = ++readToken.current;
+    speakRef.current(plainText(seq[cur].a.breathing), "en", speed, () => {
+      if (token !== readToken.current) return;
+      window.setTimeout(() => {
+        if (token === readToken.current) goToRef.current(curRef.current + 1);
+      }, 1200);
+    });
+    return () => {
+      readToken.current++;
+      window.speechSynthesis?.cancel();
+    };
+  }, [cur, running, autoRead, seq, speed]);
+
   const [notes, setNotes] = useState<Record<string, string>>(loadNotes);
   const saveNote = (key: string, value: string) => {
     const next = { ...notes, [key]: value };
@@ -165,78 +241,21 @@ export function TuringScreeningModule({ speakFn, speed = 0.9 }: Props) {
     }
   };
 
-  const togglePractice = (a: ScreeningAnswer) => {
-    if (practice?.id === a.id) {
-      setLastTimes(t => ({ ...t, [a.id]: (Date.now() - practice.start) / 1000 }));
-      setPractice(null);
-    } else {
-      setPractice({ id: a.id, start: Date.now() });
-    }
-  };
+  const curItem = seq[cur];
+  const curStep = screeningSteps[curItem.stepIdx];
+  const clockStepIdx = boundaries.findIndex(b => elapsed < b.end);
+  const itemElapsed = elapsed - itemStart;
+  const curTarget = estimateSeconds(curItem.a.breathing);
+  const pace =
+    elapsed === 0
+      ? null
+      : clockStepIdx === -1 || clockStepIdx > curItem.stepIdx
+        ? { ok: false, text: `atrasado: pelo relógio você já deveria estar em ${clockStepIdx === -1 ? "fim" : screeningSteps[clockStepIdx].title}` }
+        : clockStepIdx < curItem.stepIdx
+          ? { ok: true, text: `adiantado: a IA deve aprofundar, desenvolva mais` }
+          : { ok: true, text: `no tempo · faltam ${fmt(boundaries[clockStepIdx].end - elapsed)} nesta etapa` };
 
-  const togglePlay = (a: ScreeningAnswer) => {
-    if (playing === a.id) {
-      window.speechSynthesis?.cancel();
-      setPlaying(null);
-      return;
-    }
-    window.speechSynthesis?.cancel();
-    setPlaying(a.id);
-    speakFn(plainText(a.breathing), "en", speed, () => setPlaying(null));
-  };
-
-  const renderAnswer = (a: ScreeningAnswer) => {
-    const est = estimateSeconds(a.breathing);
-    const live = practice?.id === a.id ? (Date.now() - practice.start) / 1000 : null;
-    const last = lastTimes[a.id];
-    const shown = live ?? last;
-    const over = shown !== undefined && shown > est * 1.25;
-    return (
-      <div key={a.id} className="rounded-[4px] border border-[#292827]/10 bg-[#fffaf2] p-4">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#292827]/45">{a.source}</div>
-            <div className="mt-1 font-semibold text-[#292827]">“{a.question}”</div>
-            {a.why && <div className="mt-1 text-xs text-[#292827]/60">{a.why}</div>}
-          </div>
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="rounded-full bg-[#292827]/5 px-2.5 py-1 font-bold text-[#292827]/70">alvo ≈ {fmt(est)}</span>
-            <button onClick={() => togglePractice(a)} className={`inline-flex items-center gap-1 rounded-[3px] px-2.5 py-1 font-bold ${practice?.id === a.id ? "bg-[#d96c4f] text-white" : "border border-[#292827]/20"}`}>
-              <Timer size={12} /> {practice?.id === a.id ? `${fmt(live ?? 0)} · parar` : "Cronometrar"}
-            </button>
-            {shown !== undefined && practice?.id !== a.id && (
-              <span className={`font-bold ${over ? "text-red-600" : "text-emerald-700"}`}>
-                último: {fmt(shown)} {over ? "(longo demais)" : "✓"}
-              </span>
-            )}
-            <button onClick={() => togglePlay(a)} className="inline-flex items-center gap-1 rounded-[3px] border border-[#292827]/20 px-2.5 py-1 font-bold">
-              {playing === a.id ? <Pause size={12} /> : <Volume2 size={12} />} Ouvir
-            </button>
-            <button onClick={() => setShowPlain(s => ({ ...s, [a.id]: !s[a.id] }))} className="rounded-[3px] border border-[#292827]/20 px-2.5 py-1 font-bold">
-              {showPlain[a.id] ? "Com respiração" : "Texto corrido"}
-            </button>
-          </div>
-        </div>
-        <div className="mt-3">
-          {showPlain[a.id] ? <p className="text-[15px] leading-7 text-[#292827]">{plainText(a.breathing)}</p> : <BreathingText text={a.breathing} />}
-        </div>
-        {a.keywords && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {a.keywords.map(k => (
-              <span key={k} className="rounded-[3px] bg-[#292827] px-2 py-1 text-[11px] font-semibold text-[#f5f0e7]">
-                {k}
-              </span>
-            ))}
-          </div>
-        )}
-        {a.notes?.map(n => (
-          <div key={n} className="mt-3 flex gap-2 rounded-[3px] bg-amber-50 p-2.5 text-xs leading-5 text-amber-900">
-            <AlertTriangle size={14} className="mt-0.5 shrink-0" /> {n}
-          </div>
-        ))}
-      </div>
-    );
-  };
+  let flat = -1;
 
   return (
     <div className="space-y-8">
@@ -247,10 +266,10 @@ export function TuringScreeningModule({ speakFn, speed = 0.9 }: Props) {
           Roteiro da entrevista com a IA da Turing.
         </h2>
         <p className="mt-4 max-w-3xl text-base leading-7 text-[#292827]/65">
-          Entrevista de triagem conduzida por IA, com cerca de <strong>{totalMin} minutos</strong>. Ela é gravada e depois
-          revisada por um recrutador da Turing. Antes de começar há uma checagem de câmera, microfone e compartilhamento de tela. Na resposta, cada{" "}
+          Cerca de <strong>{totalMin} minutos</strong>, conduzida por IA, gravada e revisada depois por um recrutador. Uma resposta por pergunta, na ordem
+          da entrevista. Clique em <strong>Começar</strong> e avance com a <strong>barra de espaço</strong> (← volta). Cada{" "}
           <span className="font-bold text-[#d96c4f]">·</span> é uma pausa curta e cada{" "}
-          <span className="rounded-full bg-sky-100 px-1.5 text-[11px] font-bold text-sky-700">↻</span> é uma respiração completa: inspire pelo nariz e fale um pouco mais devagar que o natural.
+          <span className="rounded-full bg-sky-100 px-1.5 text-[11px] font-bold text-sky-700">↻</span> é uma respiração completa.
         </p>
       </div>
 
@@ -259,7 +278,7 @@ export function TuringScreeningModule({ speakFn, speed = 0.9 }: Props) {
         <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-[#292827]/10 px-5 py-3">
           <div className="text-[11px] font-extrabold uppercase tracking-wider text-[#d96c4f]">De-para: roadmap da Turing × seu roteiro</div>
           <div className="text-xs font-bold text-[#292827]/60">
-            Turing: ~{totalMin}:00 · seu plano: {fmt(screeningSteps.reduce((a, s) => a + stepPlan(s).plan, 0))}
+            Turing: ~{totalMin}:00 · seu plano: {fmt(screeningSteps.reduce((a, s, i) => a + stepPlan(itemsByStep[i], s.minutes).plan, 0))}
           </div>
         </div>
         <table className="w-full min-w-[640px] text-left text-sm">
@@ -275,14 +294,10 @@ export function TuringScreeningModule({ speakFn, speed = 0.9 }: Props) {
           </thead>
           <tbody>
             {screeningSteps.map((step, idx) => {
-              const p = stepPlan(step);
+              const p = stepPlan(itemsByStep[idx], step.minutes);
               const ok = p.plan <= p.budget;
               return (
-                <tr
-                  key={step.n}
-                  onClick={() => document.getElementById(`turing-step-${step.n}`)?.scrollIntoView({ behavior: "smooth" })}
-                  className="cursor-pointer border-t border-[#292827]/8 align-top hover:bg-[#fffaf2]"
-                >
+                <tr key={step.n} className="border-t border-[#292827]/8 align-top">
                   <td className="px-5 py-3 font-semibold text-[#292827]">
                     {step.n}. {step.title}
                     <div className="text-xs font-normal text-[#292827]/50">{step.titlePt}</div>
@@ -292,10 +307,9 @@ export function TuringScreeningModule({ speakFn, speed = 0.9 }: Props) {
                     {fmt(boundaries[idx].start)}–{fmt(boundaries[idx].end)}
                   </td>
                   <td className="px-3 py-3 text-xs leading-5 text-[#292827]/75">
-                    {p.core.map(a => (
+                    {itemsByStep[idx].map(a => (
                       <div key={a.id}>
-                        • {"title" in a && a.title ? String(a.title) : shortLabel(a.question)}{" "}
-                        <span className="text-[#292827]/45">({fmt(estimateSeconds(a.breathing))})</span>
+                        • {shortLabel(a)} <span className="text-[#292827]/45">({fmt(estimateSeconds(a.breathing))})</span>
                       </div>
                     ))}
                   </td>
@@ -340,128 +354,214 @@ export function TuringScreeningModule({ speakFn, speed = 0.9 }: Props) {
         </div>
       </div>
 
-      {/* Cronômetro da simulação */}
-      <div className="sticky top-2 z-10 flex flex-wrap items-center gap-4 rounded-[4px] border border-[#292827]/20 bg-[#292827] px-5 py-3 text-[#f5f0e7] shadow-md">
-        <Timer size={18} className="text-[#d96c4f]" />
-        <span className="font-mono text-2xl font-bold">{fmt(elapsed)}</span>
-        <span className="text-xs text-[#f5f0e7]/70">
-          de ~{totalMin}:00 ·{" "}
-          {currentStepIdx === -1
-            ? "tempo total esgotado"
-            : `agora: ${screeningSteps[currentStepIdx].n}. ${screeningSteps[currentStepIdx].title} (faltam ${fmt(boundaries[currentStepIdx].end - elapsed)} nesta etapa)`}
-        </span>
-        <div className="ml-auto flex gap-2">
+      {/* Barra de controle do roteiro corrido */}
+      <div className="sticky top-[76px] z-20 rounded-[4px] border border-[#292827]/20 bg-[#292827] px-4 py-3 text-[#f5f0e7] shadow-md">
+        <div className="flex flex-wrap items-center gap-2">
           <button onClick={() => setRunning(r => !r)} className="inline-flex items-center gap-1.5 rounded-[3px] bg-[#d96c4f] px-3 py-1.5 text-xs font-bold">
-            {running ? <Pause size={13} /> : <Play size={13} />} {running ? "Pausar" : "Simular entrevista"}
+            {running ? <Pause size={13} /> : <Play size={13} />} {running ? "Pausar" : elapsed ? "Continuar" : "Começar"}
+          </button>
+          <button onClick={() => goTo(cur - 1)} disabled={cur === 0} className="inline-flex items-center gap-1 rounded-[3px] border border-[#f5f0e7]/30 px-2.5 py-1.5 text-xs font-bold disabled:opacity-40" title="Voltar (←)">
+            <SkipBack size={13} />
+          </button>
+          <button onClick={() => goTo(cur + 1)} className="inline-flex items-center gap-1.5 rounded-[3px] bg-[#f5f0e7] px-3 py-1.5 text-xs font-bold text-[#292827]" title="Próxima (espaço)">
+            Próxima <SkipForward size={13} />
           </button>
           <button
-            onClick={() => {
-              setRunning(false);
-              setElapsed(0);
-            }}
-            className="inline-flex items-center gap-1.5 rounded-[3px] border border-[#f5f0e7]/30 px-3 py-1.5 text-xs font-bold"
+            onClick={() => setAutoRead(v => !v)}
+            className={`inline-flex items-center gap-1.5 rounded-[3px] px-2.5 py-1.5 text-xs font-bold ${autoRead ? "bg-sky-600" : "border border-[#f5f0e7]/30"}`}
+            title="Lê cada resposta em voz alta e avança sozinho"
           >
+            {autoRead ? <Volume2 size={13} /> : <VolumeX size={13} />} {autoRead ? "Lendo em voz alta" : "Só eu falo"}
+          </button>
+          <button onClick={() => setPlain(v => !v)} className="rounded-[3px] border border-[#f5f0e7]/30 px-2.5 py-1.5 text-xs font-bold">
+            {plain ? "Com respiração" : "Texto corrido"}
+          </button>
+          <button onClick={reset} className="ml-auto inline-flex items-center gap-1.5 rounded-[3px] border border-[#f5f0e7]/30 px-2.5 py-1.5 text-xs font-bold">
             <RotateCcw size={13} /> Zerar
           </button>
         </div>
+        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+          <span className="inline-flex items-center gap-1.5">
+            <Timer size={14} className="text-[#d96c4f]" />
+            <span className="font-mono text-lg font-bold">{fmt(elapsed)}</span>
+            <span className="text-[#f5f0e7]/60">/ {totalMin}:00</span>
+          </span>
+          <span className="font-bold">
+            Etapa {curStep.n} de {screeningSteps.length} · {curStep.title} · pergunta {cur + 1} de {seq.length}
+          </span>
+          <span className={itemElapsed > curTarget * 1.25 ? "font-bold text-red-300" : "text-[#f5f0e7]/75"}>
+            esta resposta {fmt(itemElapsed)} / alvo {fmt(curTarget)}
+          </span>
+          {pace && <span className={pace.ok ? "text-emerald-300" : "font-bold text-red-300"}>{pace.text}</span>}
+          {finished && <span className="font-bold text-emerald-300">✓ fim do roteiro em {fmt(elapsed)}</span>}
+        </div>
       </div>
 
-      {/* Timeline vertical */}
-      <ol className="relative ml-4 border-l-2 border-[#292827]/15">
-        {screeningSteps.map((step, idx) => {
-          const isCurrent = running && idx === currentStepIdx;
-          const isDone = elapsed > 0 && (currentStepIdx === -1 || idx < currentStepIdx);
-          const { studio, core, talk, asking, plan, budget } = stepPlan(step);
-          const planPct = Math.min(100, (plan / budget) * 100);
-          return (
-            <li key={step.n} id={`turing-step-${step.n}`} className="relative mb-10 scroll-mt-24 pl-8">
-              <span
-                className={`absolute -left-[19px] top-0 flex h-9 w-9 items-center justify-center rounded-full border-2 text-sm font-bold ${
-                  isCurrent
-                    ? "border-[#d96c4f] bg-[#d96c4f] text-white"
-                    : isDone
-                      ? "border-emerald-600 bg-emerald-600 text-white"
-                      : "border-[#292827]/25 bg-[#f5f0e7] text-[#292827]/70"
-                }`}
+      <div className="flex gap-4 sm:gap-6">
+      {/* Linha do tempo à esquerda: 20 min proporcionais, relógio e etapa atual */}
+      <aside className="sticky top-[190px] h-[calc(100vh-220px)] max-h-[620px] w-[84px] shrink-0 self-start sm:w-[120px]" aria-label="Linha do tempo">
+        <div className="relative h-full">
+          <div className="absolute bottom-0 left-[9px] top-0 w-[6px] rounded-full bg-[#292827]/10" />
+          <div
+            className="absolute left-[9px] top-0 w-[6px] rounded-full bg-[#d96c4f] transition-all duration-1000"
+            style={{ height: `${Math.min(100, (elapsed / (totalMin * 60)) * 100)}%` }}
+          />
+          {screeningSteps.map((step, idx) => {
+            const top = (boundaries[idx].start / (totalMin * 60)) * 100;
+            const height = (step.minutes / totalMin) * 100;
+            const here = idx === curItem.stepIdx && !finished;
+            const done = idx < curItem.stepIdx || finished;
+            return (
+              <button
+                key={step.n}
+                onClick={() => goTo(seq.findIndex(x => x.stepIdx === idx))}
+                className="absolute left-0 flex w-full items-start gap-2 text-left"
+                style={{ top: `${top}%`, height: `${height}%` }}
+                title={`Ir para ${step.title}`}
               >
-                {step.n}
-              </span>
-              <div className={`rounded-[4px] border p-5 sm:p-6 ${isCurrent ? "border-[#d96c4f] bg-white shadow-md" : "border-[#292827]/15 bg-white/70"}`}>
+                <span
+                  className={`relative z-10 mt-[-2px] flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-bold ${
+                    here ? "border-[#d96c4f] bg-[#d96c4f] text-white" : done ? "border-emerald-600 bg-emerald-600 text-white" : "border-[#292827]/25 bg-[#f5f0e7] text-[#292827]/70"
+                  }`}
+                >
+                  {done ? "✓" : step.n}
+                </span>
+                <span className="min-w-0 leading-tight">
+                  <span className={`block truncate text-[11px] font-bold ${here ? "text-[#d96c4f]" : "text-[#292827]/70"}`}>{step.title}</span>
+                  <span className="block font-mono text-[10px] text-[#292827]/45">
+                    {fmt(boundaries[idx].start)} · {step.minutes}m
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+          <span className="absolute bottom-[-6px] left-[2px] font-mono text-[10px] text-[#292827]/45">{totalMin}:00</span>
+          {elapsed > 0 && (
+            <span
+              className="absolute left-[-4px] z-20 -translate-y-1/2 rounded-[3px] bg-[#292827] px-1 font-mono text-[10px] font-bold text-[#f5f0e7] transition-all duration-1000"
+              style={{ top: `${Math.min(100, (elapsed / (totalMin * 60)) * 100)}%` }}
+            >
+              {fmt(elapsed)}
+            </span>
+          )}
+        </div>
+      </aside>
+
+      {/* Etapas → perguntas, na ordem */}
+      <ol className="min-w-0 flex-1">
+        {screeningSteps.map((step, idx) => {
+          const isCurrent = idx === curItem.stepIdx;
+          const p = stepPlan(itemsByStep[idx], step.minutes);
+          return (
+            <li key={step.n} className="mb-8">
+              <div className={`rounded-[4px] border p-4 sm:p-5 ${isCurrent && !finished ? "border-[#d96c4f] bg-white shadow-md" : "border-[#292827]/15 bg-white/60"}`}>
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <h3 className="font-serif text-2xl text-[#292827]">
                     {step.title} <span className="text-base text-[#292827]/50">· {step.titlePt}</span>
                   </h3>
                   <span className="rounded-full border border-[#292827]/15 px-3 py-1 text-xs font-bold text-[#292827]/70">
-                    ~{step.minutes} min · {fmt(boundaries[idx].start)}–{fmt(boundaries[idx].end)}
+                    ~{step.minutes} min · {fmt(boundaries[idx].start)}–{fmt(boundaries[idx].end)} · plano {fmt(p.plan)}
                   </span>
                 </div>
-                <p className="mt-2 text-sm leading-6 text-[#292827]/70">{step.goal}</p>
-                <ul className="mt-2 list-disc pl-5 text-xs leading-5 text-[#292827]/60">
-                  {step.tips.map(t => (
-                    <li key={t}>{t}</li>
-                  ))}
-                </ul>
-                <div className="mt-3 rounded-[3px] bg-[#292827]/5 p-3">
-                  <div className="flex flex-wrap justify-between gap-2 text-xs font-bold text-[#292827]/75">
-                    <span>
-                      Plano de tempo: fala {fmt(talk)} + perguntas da IA {fmt(asking)} ({core.length} × {QUESTION_BUFFER_SEC}s) = {fmt(plan)}
-                    </span>
-                    <span className={plan > budget ? "text-red-600" : budget - plan > 90 ? "text-amber-700" : "text-emerald-700"}>
-                      {plan > budget
-                        ? `estoura em ${fmt(plan - budget)}`
-                        : budget - plan > 90
-                          ? `sobra ${fmt(budget - plan)}: a IA vai aprofundar, desenvolva mais`
-                          : `cabe em ${fmt(budget)} ✓`}
-                    </span>
-                  </div>
-                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#292827]/10">
-                    <div className={`h-full ${plan > budget ? "bg-red-500" : "bg-emerald-600"}`} style={{ width: `${planPct}%` }} />
-                  </div>
-                </div>
-
-                <div className="mt-5 space-y-5">{step.answers.map(renderAnswer)}</div>
-
-                {studio.length > 0 && (
-                  <div className="mt-5 space-y-5">
-                    <div className="text-[11px] font-extrabold uppercase tracking-wider text-[#d96c4f]">
-                      Do Pitch Studio (Roleplay). Se editar lá, muda aqui também
-                    </div>
-                    {studio.map(renderAnswer)}
-                  </div>
-                )}
-
-                {step.extras && (
-                  <div className="mt-5 rounded-[4px] border border-dashed border-[#d96c4f]/50 p-4">
-                    <div className="text-[11px] font-extrabold uppercase tracking-wider text-[#d96c4f]">Reservas: outros cenários que você já treinou ou pode desenvolver</div>
-                    <ul className="mt-3 space-y-3">
-                      {step.extras.map(x => (
-                        <li key={x.title} className="text-sm">
-                          <div className="font-semibold text-[#292827]">{x.title}</div>
-                          <div className="text-[#292827]/70">{x.why}</div>
-                          <div className="text-xs text-[#292827]/50">↳ {x.where}</div>
-                        </li>
+                {isCurrent && (
+                  <>
+                    <p className="mt-2 text-sm leading-6 text-[#292827]/70">{step.goal}</p>
+                    <ul className="mt-1 list-disc pl-5 text-xs leading-5 text-[#292827]/60">
+                      {step.tips.map(t => (
+                        <li key={t}>{t}</li>
                       ))}
                     </ul>
-                  </div>
+                  </>
                 )}
 
-                <label className="mt-5 block">
-                  <span className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-[#292827]/55">
-                    <NotebookPen size={13} /> Minhas anotações: {step.title}
-                  </span>
-                  <textarea
-                    value={notes[`step-${step.n}`] ?? ""}
-                    onChange={e => saveNote(`step-${step.n}`, e.target.value)}
-                    rows={3}
-                    placeholder="O que treinar melhor, palavras que travaram, perguntas que a IA fez..."
-                    className="mt-1.5 w-full rounded-[3px] border border-[#292827]/15 bg-white p-2.5 text-sm"
-                  />
-                </label>
+                <ol className="mt-4 space-y-2">
+                  {itemsByStep[idx].map(a => {
+                    flat++;
+                    const i = flat;
+                    const active = i === cur && !finished;
+                    const last = times[a.id];
+                    const est = estimateSeconds(a.breathing);
+                    if (!active)
+                      return (
+                        <li key={a.id} id={`turing-item-${i}`} className="scroll-mt-[190px]">
+                          <button
+                            onClick={() => goTo(i)}
+                            className={`flex w-full items-center gap-3 rounded-[3px] border px-3 py-2 text-left text-sm hover:bg-[#fffaf2] ${i < cur ? "border-emerald-600/20 text-[#292827]/55" : "border-[#292827]/10 text-[#292827]/80"}`}
+                          >
+                            <span className="w-5 shrink-0 text-xs font-bold text-[#292827]/40">{i + 1}</span>
+                            <span className="min-w-0 flex-1 truncate">{shortLabel(a)}</span>
+                            <span className="shrink-0 text-xs text-[#292827]/45">alvo {fmt(est)}</span>
+                            {last !== undefined && (
+                              <span className={`shrink-0 text-xs font-bold ${last > est * 1.25 ? "text-red-600" : "text-emerald-700"}`}>
+                                {fmt(last)} {last > est * 1.25 ? "longo" : "✓"}
+                              </span>
+                            )}
+                          </button>
+                        </li>
+                      );
+                    return (
+                      <li key={a.id} id={`turing-item-${i}`} className="scroll-mt-[190px] rounded-[4px] border-2 border-[#d96c4f] bg-[#fffaf2] p-4 sm:p-5">
+                        <div className="flex flex-wrap items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#d96c4f]">
+                              Pergunta {i + 1} de {seq.length} · {a.source}
+                            </div>
+                            <div className="mt-1 text-lg font-semibold text-[#292827]">“{a.question}”</div>
+                            {a.why && <div className="mt-1 text-xs text-[#292827]/60">{a.why}</div>}
+                          </div>
+                          <span className="rounded-full bg-[#292827]/5 px-2.5 py-1 text-xs font-bold text-[#292827]/70">alvo ≈ {fmt(est)}</span>
+                        </div>
+                        <div className="mt-3">{plain ? <p className="text-[17px] leading-8 text-[#292827]">{plainText(a.breathing)}</p> : <BreathingText text={a.breathing} />}</div>
+                        {a.keywords && (
+                          <div className="mt-3 flex flex-wrap gap-1.5">
+                            {a.keywords.map(k => (
+                              <span key={k} className="rounded-[3px] bg-[#292827] px-2 py-1 text-[11px] font-semibold text-[#f5f0e7]">
+                                {k}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        {a.notes?.map(n => (
+                          <div key={n} className="mt-3 flex gap-2 rounded-[3px] bg-amber-50 p-2.5 text-xs leading-5 text-amber-900">
+                            <AlertTriangle size={14} className="mt-0.5 shrink-0" /> {n}
+                          </div>
+                        ))}
+                        {bridges[a.id] && seq[i + 1] && (
+                          <div className="mt-4 rounded-[3px] border-l-4 border-sky-500 bg-sky-50 p-3">
+                            <div className="text-[10px] font-extrabold uppercase tracking-wider text-sky-800">
+                              Ponte, se precisar → {shortLabel(seq[i + 1].a)}
+                            </div>
+                            <div className="mt-1">
+                              {plain ? <p className="text-[15px] leading-7 text-[#292827]">{plainText(bridges[a.id])}</p> : <BreathingText text={bridges[a.id]} />}
+                            </div>
+                          </div>
+                        )}
+                        <div className="mt-4 text-xs font-bold text-[#292827]/50">Espaço → próxima · ← volta</div>
+                      </li>
+                    );
+                  })}
+                </ol>
+
+                {isCurrent && (
+                  <label className="mt-4 block">
+                    <span className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-[#292827]/55">
+                      <NotebookPen size={13} /> Minhas anotações: {step.title}
+                    </span>
+                    <textarea
+                      value={notes[`step-${step.n}`] ?? ""}
+                      onChange={e => saveNote(`step-${step.n}`, e.target.value)}
+                      rows={2}
+                      placeholder="O que treinar melhor, palavras que travaram, perguntas que a IA fez..."
+                      className="mt-1.5 w-full rounded-[3px] border border-[#292827]/15 bg-white p-2.5 text-sm"
+                    />
+                  </label>
+                )}
               </div>
             </li>
           );
         })}
       </ol>
+      </div>
 
       {/* Registro pós-entrevista */}
       <div className="rounded-[4px] border border-[#292827]/18 bg-white/80 p-6">

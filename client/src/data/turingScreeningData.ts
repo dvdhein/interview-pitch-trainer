@@ -12,20 +12,13 @@ export type ScreeningAnswer = {
   notes?: string[];
   /** Por que esta história serve para esta entrevista. */
   why?: string;
-  /** false = versão alternativa, fora da conta do plano de tempo. */
-  core?: boolean;
   /** De onde veio o texto. */
   source:
     | "seu documento"
     | "baseado no seu CV"
     | "rascunho — complete com um caso real"
-    | "já está no Pitch Studio (Roleplay)";
-};
-
-export type ExtraScenario = {
-  title: string;
-  why: string;
-  where: string;
+    | "já está no Pitch Studio (Roleplay)"
+    | "versão curta do Pitch Studio";
 };
 
 export type ScreeningStep = {
@@ -37,8 +30,8 @@ export type ScreeningStep = {
   tips: string[];
   answers: ScreeningAnswer[];
   /** Histórias que já existem no Pitch Studio (Roleplay), puxadas pelo id. */
-  fromStudio?: { id: string; why: string }[];
-  extras?: ExtraScenario[];
+  /** breathing: a resposta do Pitch Studio com as marcas de respiração (mesmas palavras). */
+  fromStudio?: { id: string; why: string; breathing?: string }[];
 };
 
 /** Tempo médio da IA fazer cada pergunta + sua transição. */
@@ -70,7 +63,7 @@ export const screeningSteps: ScreeningStep[] = [
     title: "Introduction",
     titlePt: "Apresentação",
     minutes: 2,
-    goal: "Uma resposta só. A etapa tem 2:00 e a IA gasta ~20 s perguntando, então a fala precisa caber em ~1:40. Use a versão de 1:40; a completa (2:03) estoura a etapa.",
+    goal: "Uma resposta só. A etapa tem 2:00 e a IA gasta ~20 s perguntando, então a fala cabe em ~1:40.",
     tips: [
       "Comece devagar: a primeira frase define o ritmo da entrevista toda.",
       "Feche com a frase da vaga ('spotting what's missing…') e pare. Silêncio é ok.",
@@ -78,21 +71,10 @@ export const screeningSteps: ScreeningStep[] = [
     answers: [
       {
         id: "tmay-short",
-        question: "Tell me about yourself. (versão que cabe em 2:00)",
+        question: "Tell me about yourself.",
         source: "seu documento",
         breathing:
           "I'm David. // I have more than 22 years of experience / in technology and cybersecurity. // Mostly in regulated environments / like banking, / healthcare / and pharmaceuticals. // One example is my time at Banco BV. // There, I designed security for critical financial services, / like PIX and Open Banking. // Before that, at Atento, / I ran ISO 27001 and PCI DSS audits. // So I have a strong foundation / in how real systems fail. // From broken access control / to weak integrations. // Today, at Aché, / I'm a security architect, / and I use AI every day. // I built an LLM-assisted threat modeling tool. // One thing I learned / is that models can be confidently wrong. // They don't just miss things. / Sometimes, / they make things up. // So I always validate their outputs / with a second model / and a human expert. // That's why this role excites me. // I want to help AI models understand security / the way real practitioners do: // spotting what's missing, / what's wrong, / and what's dangerous.",
-        notes: [
-          "Igual à sua versão, com três cortes: tirei 'under Basel and NIST requirements' (Basel não está no CV), juntei as frases da Aché, e saíram 'I have worked across security architecture, identity and access management, and compliance' e 'and I create AI skills to help architects… from requirements to design reviews'. Se a IA perguntar o que você faz na Aché, use a frase das AI skills lá.",
-        ],
-      },
-      {
-        id: "tmay",
-        core: false,
-        question: "Tell me about yourself. (versão completa — 2:03, estoura a etapa)",
-        source: "seu documento",
-        breathing:
-          "I'm David. // I have more than 22 years of experience / in technology and cybersecurity. // Mostly in regulated environments / like banking, / healthcare / and pharmaceuticals. // I have worked across security architecture, / identity and access management, / and compliance. // One example is my time at Banco BV. // There, I designed security for critical financial services, / like PIX and Open Banking, / under Basel and NIST requirements. // Before that, at Atento, / I ran ISO 27001 and PCI DSS audits. // So I have a strong foundation / in how real systems fail. // From broken access control / to weak integrations. // In my current role at Aché, / I work as a security architect. // I use AI every day in my work. // I built an LLM-assisted threat modeling tool, / and I create AI skills to help architects / in their daily work, / from requirements to design reviews. // One thing I learned / is that models can be confidently wrong. // They don't just miss things. / Sometimes, / they make things up. // So I always validate their outputs / with a second model / and a human expert. // That's why this role excites me. // I want to help AI models understand security / the way real practitioners do: // spotting what's missing, / what's wrong, / and what's dangerous.",
         keywords: [
           "22 years · banking, healthcare, pharma",
           "Banco BV: PIX, Open Banking · Atento: ISO 27001, PCI DSS",
@@ -102,9 +84,8 @@ export const screeningSteps: ScreeningStep[] = [
           "This role excites (ek-SAI-ts) me · spotting (SPÓ-ting) what's missing",
         ],
         notes: [
-          "Pronúncia: \"I'm David\" (não \"I am a David\") · \"how real systems fail\" (não \"felt\") · \"identity and access management\" (sem \"the\") · \"with a human expert\" (não \"woman\").",
-          "Consistência com o CV: \"Basel\" não aparece no CV. No BV o CV fala em BACEN, CMN, NIST CSF e CIS. Considere \"under Central Bank and NIST requirements\".",
-          "O CV diz 22+ anos — bate. A ferramenta de threat modeling com LLM não está no CV: esteja pronto para detalhar se a IA perguntar.",
+          "Pronúncia: \"I'm David\" (não \"I am a David\") · \"how real systems fail\" (não \"felt\") · \"with a human expert\" (não \"woman\").",
+          "Se a IA perguntar o que você faz na Aché: \"I create AI skills to help architects in their daily work, from requirements to design reviews.\" A ferramenta de threat modeling com LLM não está no CV: esteja pronto para detalhar.",
         ],
       },
     ],
@@ -163,8 +144,8 @@ export const screeningSteps: ScreeningStep[] = [
       },
     ],
     fromStudio: [
-      { id: "about-why-cyber", why: "Por que segurança: começou por curiosidade e responsabilidade. Bom quando a IA pergunta como a formação levou você à área." },
-      { id: "exp-self-learned", why: "Aprendizado por conta própria (GenAI): mostra como você continua aprendendo além da formação formal." },
+      { id: "about-why-cyber", why: "Por que segurança: começou por curiosidade e responsabilidade. Bom quando a IA pergunta como a formação levou você à área.", breathing: "Honestly, / it started from curiosity. // Early in my career / I was building and running systems, / and I kept asking: / what happens if someone tries to break this? // I realized that security is where technology meets real consequences: / money, / health data, / people's trust. // In banking, / a single weak control / could affect millions of transactions. // That sense of responsibility / hooked me. // And what has kept me in security for more than 20 years / is that security is never finished: // the threats change, / the technology changes, / and you have to keep learning every year." },
+      { id: "exp-self-learned", why: "Aprendizado por conta própria (GenAI): mostra como você continua aprendendo além da formação formal.", breathing: "Generative AI engineering. // When LLMs became popular, / nobody at work had experience with them, / and there was no training program. // So I taught myself: / I read the documentation, / ran local models with Ollama, / built small prototypes with LangChain, / and studied the new risks, / like prompt injection. // My method is always the same: / learn the concept, / build something small, / break it, / and fix it. // In a few months / I moved from experiments to production: // that self-study became the AI copilot / that reviews architecture decisions at Aché." },
     ],
   },
   {
@@ -177,6 +158,7 @@ export const screeningSteps: ScreeningStep[] = [
       "Cada história: contexto (1 frase) → o que VOCÊ fez → resultado → correção/lição. 60–90 s.",
       "Use 'I', não 'we', quando foi você.",
       "Se pedirem 'a specific instance', dê detalhes técnicos simples: o pedido, o parâmetro, a resposta.",
+      "Na seleção de ferramentas diga 'selection', não 'operation': você escolheu SIEM/SOAR, não operou.",
     ],
     answers: [
       {
@@ -222,19 +204,7 @@ export const screeningSteps: ScreeningStep[] = [
       },
     ],
     fromStudio: [
-      { id: "exp-tech-evaluation", why: "Seleção de ferramentas (SIEM/SOAR no Boticário): matriz de critérios, demos e riscos. Mostra método baseado em evidência, o mesmo raciocínio de avaliar uma resposta de IA." },
-    ],
-    extras: [
-      {
-        title: "Se a IA aprofundar o IDOR",
-        why: "'Which OWASP category / CWE?' → A01:2021 Broken Access Control, CWE-639. 'How would you classify severity?' → CVSS, depende do dado exposto e se exige login.",
-        where: "Roleplay → AI Lab Security Analyst → 'Authentication & Access Flaws' e 'CVE, CWE and CVSS'",
-      },
-      {
-        title: "Se a IA aprofundar a seleção de ferramentas",
-        why: "Você mapeou a cobertura das soluções no MITRE ATT&CK. Diga 'selection', não 'operation'.",
-        where: "Roleplay → AI Lab Security Analyst → 'Map Behavior to MITRE ATT&CK'",
-      },
+      { id: "exp-tech-evaluation", why: "Seleção de ferramentas (SIEM/SOAR no Boticário): matriz de critérios, demos e riscos. Mostra método baseado em evidência, o mesmo raciocínio de avaliar uma resposta de IA.", breathing: "At Grupo Boticário, / we needed to improve our security monitoring / and incident response. // I was responsible for evaluating SIEM and SOAR solutions. // I started by gathering requirements / from security, / IT, / and management, // then created a comparison matrix / with criteria such as functionality, / integrations, / cost, / scalability, / and support. // I researched vendors, / requested demos, / reviewed documentation, / and assessed risks / like implementation complexity / and licensing costs. // After comparing the options, / I recommended the best solution / based on evidence and stakeholder needs. // As a result, / we chose a solution that improved visibility, / automated part of the incident response process, / and reduced manual work." },
     ],
   },
   {
@@ -242,7 +212,7 @@ export const screeningSteps: ScreeningStep[] = [
     title: "Role Fit",
     titlePt: "Encaixe na vaga",
     minutes: 3,
-    goal: "Por que você, por que esta vaga, e se você cumpre o formato. Respostas curtas (45–60 s).",
+    goal: "Por que você, pontos fortes, um ponto a melhorar, senioridade e formato. Respostas curtas (30–45 s): são 5 perguntas em 3 minutos, então a IA provavelmente não faz todas.",
     tips: [
       "Energia aqui: é o momento de mostrar vontade.",
       "Se vier a pergunta de disponibilidade, seja honesto e pergunte o modelo (horas, fuso, contrato).",
@@ -255,6 +225,24 @@ export const screeningSteps: ScreeningStep[] = [
         breathing:
           "I want to work with you / because this role combines my two passions: // security and AI. // I have spent many years / protecting real systems, / and now I use AI every day. // I know where models fail in security, / and I want to help make them better. // Working on a global team / is also a great opportunity for me / to grow / and to share my experience.",
         keywords: ["Combines (kom-BAINZ) security and AI", "Real systems → now (náu) AI every day", "Where models fail (fêil) → make them better", "Global team: grow + share"],
+      },
+      {
+        id: "strengths",
+        question: "What are your biggest strengths?",
+        source: "versão curta do Pitch Studio",
+        breathing:
+          "I'd highlight two. // The first: / I know how real systems fail. // In 22 years, / from banking to pharma, / I worked on access control, / integrations / and audits. // The second is clear communication. // I translate technical risk / into simple language, / for executives / and for developers. // Both matter here: / finding what's wrong, / and explaining why.",
+        keywords: ["Two strengths", "How real systems fail (fêil) · 22 years", "Clear communication · technical risk → simple language", "Find what's wrong + explain why"],
+        notes: ["Versão completa no Roleplay → Strengths & Weaknesses → 'Your Biggest Strengths' (Policy-as-Code e copilotos de IA na Aché)."],
+      },
+      {
+        id: "weakness",
+        question: "What is one weakness you're working on?",
+        source: "versão curta do Pitch Studio",
+        breathing:
+          "One thing I'm working on / is how I communicate under pressure. // With a new audience, / I tend to speed up / and add too much detail. // So I built a simple routine: / one key sentence first, / three points, / and I practice out loud before. // And I slow down on purpose. // Honestly, / I'm practicing this right now, / in this interview.",
+        keywords: ["Communication under pressure", "Speed up · too much detail", "Routine: 1 sentence · 3 points · practice out loud", "Slow down · practicing now"],
+        notes: ["Descreva o efeito, não um rótulo: evite 'I get nervous'. Versão completa no Roleplay → 'A Weakness You're Working On'."],
       },
       {
         id: "seniority",
@@ -294,3 +282,26 @@ export const screeningSteps: ScreeningStep[] = [
     ],
   },
 ];
+
+/**
+ * Frase-ponte no fim de cada resposta, para emendar no próximo assunto
+ * caso a IA não faça a próxima pergunta ou você precise conduzir. Chave = id da resposta.
+ */
+export const bridges: Record<string, string> = {
+  "tmay-short": "That's my professional side. // If it helps, / I can also tell you about my education.",
+  education: "Most of my courses / were on Google Cloud security.",
+  "edu-courses": "But courses are only one part. // I keep learning / mostly by practice.",
+  "edu-updated": "The MBA was also / an important step in my career.",
+  "edu-mba-use": "And security, / for me, / started from curiosity.",
+  "about-why-cyber": "AI is a good example / of how I keep learning on my own.",
+  "exp-self-learned": "That's how I learn. // Now, / let me give you a concrete example / from my work.",
+  idor: "Finding flaws like this / is one part of my work. // Today, / I also check when AI gets security wrong.",
+  "llm-wrong": "To judge an answer like this, / you need hands-on experience. // Mine started at LSITEC.",
+  "pentest-lsitec": "Besides testing, / I also evaluated / and selected security tools.",
+  "exp-tech-evaluation": "So, / evidence first, / then a decision. // That's exactly why this role makes sense to me.",
+  "why-us": "And I think my strengths / fit this work well.",
+  strengths: "Of course, / I also have things / I'm working on.",
+  weakness: "I know I have a lot of experience / for this role, / so let me explain why it fits.",
+  seniority: "About the format of the role, / let me be transparent.",
+  availability: "That's all from my side. // Just one more thing, / if I may.",
+};
